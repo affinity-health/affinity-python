@@ -1,0 +1,16 @@
+{
+  "cliVersion": "5.112.0",
+  "generatorName": "fernapi/fern-python-sdk",
+  "generatorVersion": "5.18.1",
+  "generatorConfig": {
+    "package_name": "affinity",
+    "client_class_name": "Affinity",
+    "skip_formatting": false,
+    "default_max_retries": 0,
+    "follow_redirects_by_default": false
+  },
+  "originGitCommit": "fcbfd1cc0491bb7199af4fb6db66c0455a5efe2e",
+  "originGitCommitIsDirty": true,
+  "invokedBy": "manual",
+  "requestedVersion": "0.1.0"
+}
