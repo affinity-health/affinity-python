@@ -1,11 +1,14 @@
 # Python SDK guide
 
-> **Unreleased SDK update.**
-  These examples match the new SDK implementation in the repository. They are not available in the
-  current published release yet. Release versions and installation updates will follow.
-
-
 Synchronous and asynchronous Python applications. These examples use the synchronous client, with Stripe-style `params` and `options` dictionaries. [Source repository](https://github.com/affinity-health/affinity-python) · [All SDKs](https://docs.joinaffinityai.com/guides/reference/sdks/)
+
+## Install
+
+```sh
+python -m pip install "git+https://github.com/affinity-health/affinity-python.git@main"
+```
+
+For reproducible builds, pin the Git dependency to a commit.
 
 ## Connect
 
