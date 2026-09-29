@@ -25,7 +25,7 @@ class RawAccountClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def get_account(
+    def get(
         self, *, org_id: typing.Optional[str] = None, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[GetAccountResponse]:
         """
@@ -152,7 +152,7 @@ class AsyncRawAccountClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def get_account(
+    async def get(
         self, *, org_id: typing.Optional[str] = None, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[GetAccountResponse]:
         """

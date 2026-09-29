@@ -16,7 +16,7 @@ if typing.TYPE_CHECKING:
     from .locations.client import AsyncLocationsClient, LocationsClient
     from .orders.client import AsyncOrdersClient, OrdersClient
     from .patients.client import AsyncPatientsClient, PatientsClient
-    from .platform_pricing.client import AsyncPlatformPricingClient, PlatformPricingClient
+    from .pharmacies.client import AsyncPharmaciesClient, PharmaciesClient
     from .practices.client import AsyncPracticesClient, PracticesClient
     from .team.client import AsyncTeamClient, TeamClient
     from .webhooks.client import AsyncWebhooksClient, WebhooksClient
@@ -81,7 +81,7 @@ class Affinity:
         *,
         base_url: typing.Optional[str] = None,
         environment: AffinityEnvironment = AffinityEnvironment.PRODUCTION,
-        affinity_version: typing.Optional[str] = None,
+        affinity_version: typing.Optional[str] = "2026-09-28",
         api_key: str,
         headers: typing.Optional[typing.Dict[str, str]] = None,
         timeout: typing.Optional[float] = None,
@@ -113,13 +113,13 @@ class Affinity:
         self._locations: typing.Optional[LocationsClient] = None
         self._api_keys: typing.Optional[ApiKeysClient] = None
         self._account: typing.Optional[AccountClient] = None
-        self._catalog: typing.Optional[CatalogClient] = None
+        self._pharmacies: typing.Optional[PharmaciesClient] = None
         self._orders: typing.Optional[OrdersClient] = None
-        self._webhooks: typing.Optional[WebhooksClient] = None
         self._team: typing.Optional[TeamClient] = None
-        self._patients: typing.Optional[PatientsClient] = None
         self._practices: typing.Optional[PracticesClient] = None
-        self._platform_pricing: typing.Optional[PlatformPricingClient] = None
+        self._patients: typing.Optional[PatientsClient] = None
+        self._catalog: typing.Optional[CatalogClient] = None
+        self._webhooks: typing.Optional[WebhooksClient] = None
 
     @property
     def locations(self):
@@ -146,12 +146,12 @@ class Affinity:
         return self._account
 
     @property
-    def catalog(self):
-        if self._catalog is None:
-            from .catalog.client import CatalogClient  # noqa: E402
+    def pharmacies(self):
+        if self._pharmacies is None:
+            from .pharmacies.client import PharmaciesClient  # noqa: E402
 
-            self._catalog = CatalogClient(client_wrapper=self._client_wrapper)
-        return self._catalog
+            self._pharmacies = PharmaciesClient(client_wrapper=self._client_wrapper)
+        return self._pharmacies
 
     @property
     def orders(self):
@@ -162,28 +162,12 @@ class Affinity:
         return self._orders
 
     @property
-    def webhooks(self):
-        if self._webhooks is None:
-            from .webhooks.client import WebhooksClient  # noqa: E402
-
-            self._webhooks = WebhooksClient(client_wrapper=self._client_wrapper)
-        return self._webhooks
-
-    @property
     def team(self):
         if self._team is None:
             from .team.client import TeamClient  # noqa: E402
 
             self._team = TeamClient(client_wrapper=self._client_wrapper)
         return self._team
-
-    @property
-    def patients(self):
-        if self._patients is None:
-            from .patients.client import PatientsClient  # noqa: E402
-
-            self._patients = PatientsClient(client_wrapper=self._client_wrapper)
-        return self._patients
 
     @property
     def practices(self):
@@ -194,12 +178,28 @@ class Affinity:
         return self._practices
 
     @property
-    def platform_pricing(self):
-        if self._platform_pricing is None:
-            from .platform_pricing.client import PlatformPricingClient  # noqa: E402
+    def patients(self):
+        if self._patients is None:
+            from .patients.client import PatientsClient  # noqa: E402
 
-            self._platform_pricing = PlatformPricingClient(client_wrapper=self._client_wrapper)
-        return self._platform_pricing
+            self._patients = PatientsClient(client_wrapper=self._client_wrapper)
+        return self._patients
+
+    @property
+    def catalog(self):
+        if self._catalog is None:
+            from .catalog.client import CatalogClient  # noqa: E402
+
+            self._catalog = CatalogClient(client_wrapper=self._client_wrapper)
+        return self._catalog
+
+    @property
+    def webhooks(self):
+        if self._webhooks is None:
+            from .webhooks.client import WebhooksClient  # noqa: E402
+
+            self._webhooks = WebhooksClient(client_wrapper=self._client_wrapper)
+        return self._webhooks
 
 
 def _make_default_async_client(
@@ -279,7 +279,7 @@ class AsyncAffinity:
         *,
         base_url: typing.Optional[str] = None,
         environment: AffinityEnvironment = AffinityEnvironment.PRODUCTION,
-        affinity_version: typing.Optional[str] = None,
+        affinity_version: typing.Optional[str] = "2026-09-28",
         api_key: str,
         headers: typing.Optional[typing.Dict[str, str]] = None,
         timeout: typing.Optional[float] = None,
@@ -309,13 +309,13 @@ class AsyncAffinity:
         self._locations: typing.Optional[AsyncLocationsClient] = None
         self._api_keys: typing.Optional[AsyncApiKeysClient] = None
         self._account: typing.Optional[AsyncAccountClient] = None
-        self._catalog: typing.Optional[AsyncCatalogClient] = None
+        self._pharmacies: typing.Optional[AsyncPharmaciesClient] = None
         self._orders: typing.Optional[AsyncOrdersClient] = None
-        self._webhooks: typing.Optional[AsyncWebhooksClient] = None
         self._team: typing.Optional[AsyncTeamClient] = None
-        self._patients: typing.Optional[AsyncPatientsClient] = None
         self._practices: typing.Optional[AsyncPracticesClient] = None
-        self._platform_pricing: typing.Optional[AsyncPlatformPricingClient] = None
+        self._patients: typing.Optional[AsyncPatientsClient] = None
+        self._catalog: typing.Optional[AsyncCatalogClient] = None
+        self._webhooks: typing.Optional[AsyncWebhooksClient] = None
 
     @property
     def locations(self):
@@ -342,12 +342,12 @@ class AsyncAffinity:
         return self._account
 
     @property
-    def catalog(self):
-        if self._catalog is None:
-            from .catalog.client import AsyncCatalogClient  # noqa: E402
+    def pharmacies(self):
+        if self._pharmacies is None:
+            from .pharmacies.client import AsyncPharmaciesClient  # noqa: E402
 
-            self._catalog = AsyncCatalogClient(client_wrapper=self._client_wrapper)
-        return self._catalog
+            self._pharmacies = AsyncPharmaciesClient(client_wrapper=self._client_wrapper)
+        return self._pharmacies
 
     @property
     def orders(self):
@@ -358,28 +358,12 @@ class AsyncAffinity:
         return self._orders
 
     @property
-    def webhooks(self):
-        if self._webhooks is None:
-            from .webhooks.client import AsyncWebhooksClient  # noqa: E402
-
-            self._webhooks = AsyncWebhooksClient(client_wrapper=self._client_wrapper)
-        return self._webhooks
-
-    @property
     def team(self):
         if self._team is None:
             from .team.client import AsyncTeamClient  # noqa: E402
 
             self._team = AsyncTeamClient(client_wrapper=self._client_wrapper)
         return self._team
-
-    @property
-    def patients(self):
-        if self._patients is None:
-            from .patients.client import AsyncPatientsClient  # noqa: E402
-
-            self._patients = AsyncPatientsClient(client_wrapper=self._client_wrapper)
-        return self._patients
 
     @property
     def practices(self):
@@ -390,12 +374,28 @@ class AsyncAffinity:
         return self._practices
 
     @property
-    def platform_pricing(self):
-        if self._platform_pricing is None:
-            from .platform_pricing.client import AsyncPlatformPricingClient  # noqa: E402
+    def patients(self):
+        if self._patients is None:
+            from .patients.client import AsyncPatientsClient  # noqa: E402
 
-            self._platform_pricing = AsyncPlatformPricingClient(client_wrapper=self._client_wrapper)
-        return self._platform_pricing
+            self._patients = AsyncPatientsClient(client_wrapper=self._client_wrapper)
+        return self._patients
+
+    @property
+    def catalog(self):
+        if self._catalog is None:
+            from .catalog.client import AsyncCatalogClient  # noqa: E402
+
+            self._catalog = AsyncCatalogClient(client_wrapper=self._client_wrapper)
+        return self._catalog
+
+    @property
+    def webhooks(self):
+        if self._webhooks is None:
+            from .webhooks.client import AsyncWebhooksClient  # noqa: E402
+
+            self._webhooks = AsyncWebhooksClient(client_wrapper=self._client_wrapper)
+        return self._webhooks
 
 
 def _get_base_url(*, base_url: typing.Optional[str] = None, environment: AffinityEnvironment) -> str:

@@ -23,7 +23,7 @@ class AccountClient:
         """
         return self._raw_client
 
-    def get_account(
+    def get(
         self, *, org_id: typing.Optional[str] = None, request_options: typing.Optional[RequestOptions] = None
     ) -> GetAccountResponse:
         """
@@ -49,11 +49,11 @@ class AccountClient:
             affinity_version="YOUR_AFFINITY_VERSION",
             api_key="YOUR_API_KEY",
         )
-        client.account.get_account(
+        client.account.get(
             org_id="acct_01j2y8m6jcc9tt24af5pw9x1bc",
         )
         """
-        _response = self._raw_client.get_account(org_id=org_id, request_options=request_options)
+        _response = self._raw_client.get(org_id=org_id, request_options=request_options)
         return _response.data
 
 
@@ -72,7 +72,7 @@ class AsyncAccountClient:
         """
         return self._raw_client
 
-    async def get_account(
+    async def get(
         self, *, org_id: typing.Optional[str] = None, request_options: typing.Optional[RequestOptions] = None
     ) -> GetAccountResponse:
         """
@@ -103,12 +103,12 @@ class AsyncAccountClient:
 
 
         async def main() -> None:
-            await client.account.get_account(
+            await client.account.get(
                 org_id="acct_01j2y8m6jcc9tt24af5pw9x1bc",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.get_account(org_id=org_id, request_options=request_options)
+        _response = await self._raw_client.get(org_id=org_id, request_options=request_options)
         return _response.data

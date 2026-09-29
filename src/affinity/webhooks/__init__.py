@@ -6,23 +6,27 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
-    from .types import (
+    from . import endpoints, events, grants
+    from .endpoints import (
         CreateWebhookEndpointRequestPayloadStyle,
         CreateWebhookEndpointRequestSubscribedEventsItem,
-        ListWebhookEventsRequestStatus,
-        SaveWebhookGrantRequestScopesItem,
         UpdateWebhookEndpointRequestPayloadStyle,
         UpdateWebhookEndpointRequestStatus,
         UpdateWebhookEndpointRequestSubscribedEventsItem,
     )
+    from .events import ListEventsRequestStatus
+    from .grants import SaveWebhookGrantRequestScopesItem
 _dynamic_imports: typing.Dict[str, str] = {
-    "CreateWebhookEndpointRequestPayloadStyle": ".types",
-    "CreateWebhookEndpointRequestSubscribedEventsItem": ".types",
-    "ListWebhookEventsRequestStatus": ".types",
-    "SaveWebhookGrantRequestScopesItem": ".types",
-    "UpdateWebhookEndpointRequestPayloadStyle": ".types",
-    "UpdateWebhookEndpointRequestStatus": ".types",
-    "UpdateWebhookEndpointRequestSubscribedEventsItem": ".types",
+    "CreateWebhookEndpointRequestPayloadStyle": ".endpoints",
+    "CreateWebhookEndpointRequestSubscribedEventsItem": ".endpoints",
+    "ListEventsRequestStatus": ".events",
+    "SaveWebhookGrantRequestScopesItem": ".grants",
+    "UpdateWebhookEndpointRequestPayloadStyle": ".endpoints",
+    "UpdateWebhookEndpointRequestStatus": ".endpoints",
+    "UpdateWebhookEndpointRequestSubscribedEventsItem": ".endpoints",
+    "endpoints": ".endpoints",
+    "events": ".events",
+    "grants": ".grants",
 }
 
 
@@ -50,9 +54,12 @@ def __dir__():
 __all__ = [
     "CreateWebhookEndpointRequestPayloadStyle",
     "CreateWebhookEndpointRequestSubscribedEventsItem",
-    "ListWebhookEventsRequestStatus",
+    "ListEventsRequestStatus",
     "SaveWebhookGrantRequestScopesItem",
     "UpdateWebhookEndpointRequestPayloadStyle",
     "UpdateWebhookEndpointRequestStatus",
     "UpdateWebhookEndpointRequestSubscribedEventsItem",
+    "endpoints",
+    "events",
+    "grants",
 ]

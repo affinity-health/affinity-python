@@ -18,20 +18,12 @@ from ..errors.not_found_error import NotFoundError
 from ..errors.too_many_requests_error import TooManyRequestsError
 from ..errors.unauthorized_error import UnauthorizedError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
-from ..types.archive_patient_address_response import ArchivePatientAddressResponse
-from ..types.create_patient_address_response import CreatePatientAddressResponse
 from ..types.create_patient_response import CreatePatientResponse
 from ..types.delete_patient_response import DeletePatientResponse
-from ..types.get_patient_allergies_response import GetPatientAllergiesResponse
 from ..types.get_patient_response import GetPatientResponse
-from ..types.list_patient_addresses_response import ListPatientAddressesResponse
 from ..types.list_patients_response import ListPatientsResponse
 from ..types.problem import Problem
-from ..types.replace_patient_allergies_response import ReplacePatientAllergiesResponse
-from ..types.set_default_patient_address_response import SetDefaultPatientAddressResponse
-from ..types.update_patient_address_response import UpdatePatientAddressResponse
 from ..types.update_patient_response import UpdatePatientResponse
-from .types.create_patient_address_request_address import CreatePatientAddressRequestAddress
 from .types.create_patient_request_address import CreatePatientRequestAddress
 from .types.create_patient_request_addresses_item import CreatePatientRequestAddressesItem
 from .types.create_patient_request_clinical_profile import CreatePatientRequestClinicalProfile
@@ -41,13 +33,9 @@ from .types.create_patient_request_gender import CreatePatientRequestGender
 from .types.create_patient_request_measurements_item import CreatePatientRequestMeasurementsItem
 from .types.create_patient_request_name import CreatePatientRequestName
 from .types.create_patient_request_programs_item import CreatePatientRequestProgramsItem
-from .types.list_patient_addresses_request_status import ListPatientAddressesRequestStatus
 from .types.list_patients_request_gender import ListPatientsRequestGender
 from .types.list_patients_request_sort import ListPatientsRequestSort
 from .types.list_patients_request_status import ListPatientsRequestStatus
-from .types.replace_patient_allergies_request_allergies_item import ReplacePatientAllergiesRequestAllergiesItem
-from .types.replace_patient_allergies_request_review_status import ReplacePatientAllergiesRequestReviewStatus
-from .types.update_patient_address_request_address import UpdatePatientAddressRequestAddress
 from .types.update_patient_request_address import UpdatePatientRequestAddress
 from .types.update_patient_request_addresses_item import UpdatePatientRequestAddressesItem
 from .types.update_patient_request_clinical_profile import UpdatePatientRequestClinicalProfile
@@ -68,720 +56,7 @@ class RawPatientsClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list_patient_addresses(
-        self,
-        practice_id: str,
-        patient_id: str,
-        *,
-        status: typing.Optional[ListPatientAddressesRequestStatus] = None,
-        starting_after: typing.Optional[str] = None,
-        ending_before: typing.Optional[str] = None,
-        limit: typing.Optional[int] = None,
-        affinity_actor_id: typing.Optional[str] = None,
-        affinity_actor_type: typing.Optional[str] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[ListPatientAddressesResponse]:
-        """
-        Parameters
-        ----------
-        practice_id : str
-
-        patient_id : str
-
-        status : typing.Optional[ListPatientAddressesRequestStatus]
-
-        starting_after : typing.Optional[str]
-
-        ending_before : typing.Optional[str]
-
-        limit : typing.Optional[int]
-
-        affinity_actor_id : typing.Optional[str]
-            Required for user actors and optional for system actors. Omit both actor headers to use the authenticated service account as a system actor.
-
-        affinity_actor_type : typing.Optional[str]
-            Use user when a person initiated the action and system for autonomous work. Omit both actor headers to default to system.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[ListPatientAddressesResponse]
-            HTTP 200
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"v1/practices/{encode_path_param(practice_id)}/patients/{encode_path_param(patient_id)}/addresses",
-            method="GET",
-            params={
-                "status": status,
-                "startingAfter": starting_after,
-                "endingBefore": ending_before,
-                "limit": limit,
-            },
-            headers={
-                "Affinity-Actor-Id": str(affinity_actor_id) if affinity_actor_id is not None else None,
-                "Affinity-Actor-Type": str(affinity_actor_type) if affinity_actor_type is not None else None,
-            },
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    ListPatientAddressesResponse,
-                    parse_obj_as(
-                        type_=ListPatientAddressesResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 409:
-                raise ConflictError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 429:
-                raise TooManyRequestsError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def create_patient_address(
-        self,
-        practice_id: str,
-        patient_id: str,
-        *,
-        idempotency_key: str,
-        address: CreatePatientAddressRequestAddress,
-        affinity_actor_id: typing.Optional[str] = None,
-        affinity_actor_type: typing.Optional[str] = None,
-        label: typing.Optional[str] = OMIT,
-        preferred_shipping: typing.Optional[bool] = OMIT,
-        recipient_name: typing.Optional[str] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[CreatePatientAddressResponse]:
-        """
-        Returns the existing active address for a normalized duplicate. The first address becomes the default. API keys require Idempotency-Key.
-
-        Parameters
-        ----------
-        practice_id : str
-
-        patient_id : str
-
-        idempotency_key : str
-
-        address : CreatePatientAddressRequestAddress
-
-        affinity_actor_id : typing.Optional[str]
-            Required for user actors and optional for system actors. Omit both actor headers to use the authenticated service account as a system actor.
-
-        affinity_actor_type : typing.Optional[str]
-            Use user when a person initiated the action and system for autonomous work. Omit both actor headers to default to system.
-
-        label : typing.Optional[str]
-
-        preferred_shipping : typing.Optional[bool]
-
-        recipient_name : typing.Optional[str]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[CreatePatientAddressResponse]
-            HTTP 200
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"v1/practices/{encode_path_param(practice_id)}/patients/{encode_path_param(patient_id)}/addresses",
-            method="POST",
-            json={
-                "address": convert_and_respect_annotation_metadata(
-                    object_=address, annotation=CreatePatientAddressRequestAddress, direction="write"
-                ),
-                "label": label,
-                "preferredShipping": preferred_shipping,
-                "recipientName": recipient_name,
-            },
-            headers={
-                "content-type": "application/json",
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
-                "Affinity-Actor-Id": str(affinity_actor_id) if affinity_actor_id is not None else None,
-                "Affinity-Actor-Type": str(affinity_actor_type) if affinity_actor_type is not None else None,
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    CreatePatientAddressResponse,
-                    parse_obj_as(
-                        type_=CreatePatientAddressResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 409:
-                raise ConflictError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 429:
-                raise TooManyRequestsError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def archive_patient_address(
-        self,
-        practice_id: str,
-        patient_id: str,
-        address_id: str,
-        *,
-        idempotency_key: str,
-        affinity_actor_id: typing.Optional[str] = None,
-        affinity_actor_type: typing.Optional[str] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[ArchivePatientAddressResponse]:
-        """
-        Preserves the address ID and history. Archiving the default selects the oldest remaining active address. Existing orders remain unchanged.
-
-        Parameters
-        ----------
-        practice_id : str
-
-        patient_id : str
-
-        address_id : str
-
-        idempotency_key : str
-
-        affinity_actor_id : typing.Optional[str]
-            Required for user actors and optional for system actors. Omit both actor headers to use the authenticated service account as a system actor.
-
-        affinity_actor_type : typing.Optional[str]
-            Use user when a person initiated the action and system for autonomous work. Omit both actor headers to default to system.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[ArchivePatientAddressResponse]
-            HTTP 200
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"v1/practices/{encode_path_param(practice_id)}/patients/{encode_path_param(patient_id)}/addresses/{encode_path_param(address_id)}",
-            method="DELETE",
-            headers={
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
-                "Affinity-Actor-Id": str(affinity_actor_id) if affinity_actor_id is not None else None,
-                "Affinity-Actor-Type": str(affinity_actor_type) if affinity_actor_type is not None else None,
-            },
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    ArchivePatientAddressResponse,
-                    parse_obj_as(
-                        type_=ArchivePatientAddressResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 409:
-                raise ConflictError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 429:
-                raise TooManyRequestsError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def update_patient_address(
-        self,
-        practice_id: str,
-        patient_id: str,
-        address_id: str,
-        *,
-        idempotency_key: str,
-        affinity_actor_id: typing.Optional[str] = None,
-        affinity_actor_type: typing.Optional[str] = None,
-        address: typing.Optional[UpdatePatientAddressRequestAddress] = OMIT,
-        label: typing.Optional[str] = OMIT,
-        recipient_name: typing.Optional[str] = OMIT,
-        preferred_shipping: typing.Optional[bool] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[UpdatePatientAddressResponse]:
-        """
-        Parameters
-        ----------
-        practice_id : str
-
-        patient_id : str
-
-        address_id : str
-
-        idempotency_key : str
-
-        affinity_actor_id : typing.Optional[str]
-            Required for user actors and optional for system actors. Omit both actor headers to use the authenticated service account as a system actor.
-
-        affinity_actor_type : typing.Optional[str]
-            Use user when a person initiated the action and system for autonomous work. Omit both actor headers to default to system.
-
-        address : typing.Optional[UpdatePatientAddressRequestAddress]
-
-        label : typing.Optional[str]
-
-        recipient_name : typing.Optional[str]
-
-        preferred_shipping : typing.Optional[bool]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[UpdatePatientAddressResponse]
-            HTTP 200
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"v1/practices/{encode_path_param(practice_id)}/patients/{encode_path_param(patient_id)}/addresses/{encode_path_param(address_id)}",
-            method="PATCH",
-            json={
-                "address": convert_and_respect_annotation_metadata(
-                    object_=address, annotation=typing.Optional[UpdatePatientAddressRequestAddress], direction="write"
-                ),
-                "label": label,
-                "recipientName": recipient_name,
-                "preferredShipping": preferred_shipping,
-            },
-            headers={
-                "content-type": "application/json",
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
-                "Affinity-Actor-Id": str(affinity_actor_id) if affinity_actor_id is not None else None,
-                "Affinity-Actor-Type": str(affinity_actor_type) if affinity_actor_type is not None else None,
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    UpdatePatientAddressResponse,
-                    parse_obj_as(
-                        type_=UpdatePatientAddressResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 409:
-                raise ConflictError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 429:
-                raise TooManyRequestsError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def set_default_patient_address(
-        self,
-        practice_id: str,
-        patient_id: str,
-        address_id: str,
-        *,
-        idempotency_key: str,
-        affinity_actor_id: typing.Optional[str] = None,
-        affinity_actor_type: typing.Optional[str] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[SetDefaultPatientAddressResponse]:
-        """
-        Changes delivery selection for future drafts, without changing patient clinical location or existing signed orders.
-
-        Parameters
-        ----------
-        practice_id : str
-
-        patient_id : str
-
-        address_id : str
-
-        idempotency_key : str
-
-        affinity_actor_id : typing.Optional[str]
-            Required for user actors and optional for system actors. Omit both actor headers to use the authenticated service account as a system actor.
-
-        affinity_actor_type : typing.Optional[str]
-            Use user when a person initiated the action and system for autonomous work. Omit both actor headers to default to system.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[SetDefaultPatientAddressResponse]
-            HTTP 200
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"v1/practices/{encode_path_param(practice_id)}/patients/{encode_path_param(patient_id)}/addresses/{encode_path_param(address_id)}/default",
-            method="PUT",
-            headers={
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
-                "Affinity-Actor-Id": str(affinity_actor_id) if affinity_actor_id is not None else None,
-                "Affinity-Actor-Type": str(affinity_actor_type) if affinity_actor_type is not None else None,
-            },
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    SetDefaultPatientAddressResponse,
-                    parse_obj_as(
-                        type_=SetDefaultPatientAddressResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 409:
-                raise ConflictError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 429:
-                raise TooManyRequestsError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def list_patients(
+    def list(
         self,
         practice_id: str,
         *,
@@ -973,13 +248,13 @@ class RawPatientsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def create_patient(
+    def create(
         self,
         practice_id: str,
         *,
-        idempotency_key: str,
         date_of_birth: str,
         name: CreatePatientRequestName,
+        idempotency_key: typing.Optional[str] = None,
         affinity_actor_id: typing.Optional[str] = None,
         affinity_actor_type: typing.Optional[str] = None,
         address: typing.Optional[CreatePatientRequestAddress] = OMIT,
@@ -1005,11 +280,12 @@ class RawPatientsClient:
         ----------
         practice_id : str
 
-        idempotency_key : str
-
         date_of_birth : str
 
         name : CreatePatientRequestName
+
+        idempotency_key : typing.Optional[str]
+            Optional in the SDK. A fresh key is generated once per call when omitted. Supply a stable key to retry across calls.
 
         affinity_actor_id : typing.Optional[str]
             Required for user actors and optional for system actors. Omit both actor headers to use the authenticated service account as a system actor.
@@ -1104,7 +380,8 @@ class RawPatientsClient:
             },
             headers={
                 "content-type": "application/json",
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
+                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else str(__import__("uuid").uuid4())  # affinity-sdk-auto-key
+,
                 "Affinity-Actor-Id": str(affinity_actor_id) if affinity_actor_id is not None else None,
                 "Affinity-Actor-Type": str(affinity_actor_type) if affinity_actor_type is not None else None,
             },
@@ -1207,7 +484,7 @@ class RawPatientsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def get_patient(
+    def get(
         self,
         practice_id: str,
         patient_id: str,
@@ -1344,12 +621,12 @@ class RawPatientsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def delete_patient(
+    def delete(
         self,
         practice_id: str,
         patient_id: str,
         *,
-        idempotency_key: str,
+        idempotency_key: typing.Optional[str] = None,
         affinity_actor_id: typing.Optional[str] = None,
         affinity_actor_type: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -1363,7 +640,8 @@ class RawPatientsClient:
 
         patient_id : str
 
-        idempotency_key : str
+        idempotency_key : typing.Optional[str]
+            Optional in the SDK. A fresh key is generated once per call when omitted. Supply a stable key to retry across calls.
 
         affinity_actor_id : typing.Optional[str]
             Required for user actors and optional for system actors. Omit both actor headers to use the authenticated service account as a system actor.
@@ -1383,7 +661,8 @@ class RawPatientsClient:
             f"v1/practices/{encode_path_param(practice_id)}/patients/{encode_path_param(patient_id)}",
             method="DELETE",
             headers={
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
+                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else str(__import__("uuid").uuid4())  # affinity-sdk-auto-key
+,
                 "Affinity-Actor-Id": str(affinity_actor_id) if affinity_actor_id is not None else None,
                 "Affinity-Actor-Type": str(affinity_actor_type) if affinity_actor_type is not None else None,
             },
@@ -1485,12 +764,12 @@ class RawPatientsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def update_patient(
+    def update(
         self,
         practice_id: str,
         patient_id: str,
         *,
-        idempotency_key: str,
+        idempotency_key: typing.Optional[str] = None,
         affinity_actor_id: typing.Optional[str] = None,
         affinity_actor_type: typing.Optional[str] = None,
         address: typing.Optional[UpdatePatientRequestAddress] = OMIT,
@@ -1521,7 +800,8 @@ class RawPatientsClient:
 
         patient_id : str
 
-        idempotency_key : str
+        idempotency_key : typing.Optional[str]
+            Optional in the SDK. A fresh key is generated once per call when omitted. Supply a stable key to retry across calls.
 
         affinity_actor_id : typing.Optional[str]
             Required for user actors and optional for system actors. Omit both actor headers to use the authenticated service account as a system actor.
@@ -1623,7 +903,8 @@ class RawPatientsClient:
             },
             headers={
                 "content-type": "application/json",
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
+                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else str(__import__("uuid").uuid4())  # affinity-sdk-auto-key
+,
                 "Affinity-Actor-Id": str(affinity_actor_id) if affinity_actor_id is not None else None,
                 "Affinity-Actor-Type": str(affinity_actor_type) if affinity_actor_type is not None else None,
             },
@@ -1726,1019 +1007,12 @@ class RawPatientsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def get_patient_allergies(
-        self,
-        practice_id: str,
-        patient_id: str,
-        *,
-        affinity_actor_id: typing.Optional[str] = None,
-        affinity_actor_type: typing.Optional[str] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[GetPatientAllergiesResponse]:
-        """
-        Returns the patient's structured allergy entries and review status. A not_reviewed status is not a no-known-allergies assertion and blocks clinical review and signing.
-
-        Parameters
-        ----------
-        practice_id : str
-
-        patient_id : str
-
-        affinity_actor_id : typing.Optional[str]
-            Required for user actors and optional for system actors. Omit both actor headers to use the authenticated service account as a system actor.
-
-        affinity_actor_type : typing.Optional[str]
-            Use user when a person initiated the action and system for autonomous work. Omit both actor headers to default to system.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[GetPatientAllergiesResponse]
-            HTTP 200
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"v1/practices/{encode_path_param(practice_id)}/patients/{encode_path_param(patient_id)}/allergies",
-            method="GET",
-            headers={
-                "Affinity-Actor-Id": str(affinity_actor_id) if affinity_actor_id is not None else None,
-                "Affinity-Actor-Type": str(affinity_actor_type) if affinity_actor_type is not None else None,
-            },
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    GetPatientAllergiesResponse,
-                    parse_obj_as(
-                        type_=GetPatientAllergiesResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 409:
-                raise ConflictError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 429:
-                raise TooManyRequestsError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def replace_patient_allergies(
-        self,
-        practice_id: str,
-        patient_id: str,
-        *,
-        idempotency_key: str,
-        allergies: typing.Sequence[ReplacePatientAllergiesRequestAllergiesItem],
-        review_status: ReplacePatientAllergiesRequestReviewStatus,
-        affinity_actor_id: typing.Optional[str] = None,
-        affinity_actor_type: typing.Optional[str] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[ReplacePatientAllergiesResponse]:
-        """
-        Replaces the patient's structured allergy record. Sending no_known is the explicit no-known-allergies acknowledgement; recorded requires at least one entry. Idempotency-Key is required.
-
-        Parameters
-        ----------
-        practice_id : str
-
-        patient_id : str
-
-        idempotency_key : str
-
-        allergies : typing.Sequence[ReplacePatientAllergiesRequestAllergiesItem]
-
-        review_status : ReplacePatientAllergiesRequestReviewStatus
-
-        affinity_actor_id : typing.Optional[str]
-            Required for user actors and optional for system actors. Omit both actor headers to use the authenticated service account as a system actor.
-
-        affinity_actor_type : typing.Optional[str]
-            Use user when a person initiated the action and system for autonomous work. Omit both actor headers to default to system.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[ReplacePatientAllergiesResponse]
-            HTTP 200
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"v1/practices/{encode_path_param(practice_id)}/patients/{encode_path_param(patient_id)}/allergies",
-            method="PUT",
-            json={
-                "allergies": convert_and_respect_annotation_metadata(
-                    object_=allergies,
-                    annotation=typing.Sequence[ReplacePatientAllergiesRequestAllergiesItem],
-                    direction="write",
-                ),
-                "reviewStatus": review_status,
-            },
-            headers={
-                "content-type": "application/json",
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
-                "Affinity-Actor-Id": str(affinity_actor_id) if affinity_actor_id is not None else None,
-                "Affinity-Actor-Type": str(affinity_actor_type) if affinity_actor_type is not None else None,
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    ReplacePatientAllergiesResponse,
-                    parse_obj_as(
-                        type_=ReplacePatientAllergiesResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 409:
-                raise ConflictError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 429:
-                raise TooManyRequestsError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
 
 class AsyncRawPatientsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list_patient_addresses(
-        self,
-        practice_id: str,
-        patient_id: str,
-        *,
-        status: typing.Optional[ListPatientAddressesRequestStatus] = None,
-        starting_after: typing.Optional[str] = None,
-        ending_before: typing.Optional[str] = None,
-        limit: typing.Optional[int] = None,
-        affinity_actor_id: typing.Optional[str] = None,
-        affinity_actor_type: typing.Optional[str] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[ListPatientAddressesResponse]:
-        """
-        Parameters
-        ----------
-        practice_id : str
-
-        patient_id : str
-
-        status : typing.Optional[ListPatientAddressesRequestStatus]
-
-        starting_after : typing.Optional[str]
-
-        ending_before : typing.Optional[str]
-
-        limit : typing.Optional[int]
-
-        affinity_actor_id : typing.Optional[str]
-            Required for user actors and optional for system actors. Omit both actor headers to use the authenticated service account as a system actor.
-
-        affinity_actor_type : typing.Optional[str]
-            Use user when a person initiated the action and system for autonomous work. Omit both actor headers to default to system.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[ListPatientAddressesResponse]
-            HTTP 200
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"v1/practices/{encode_path_param(practice_id)}/patients/{encode_path_param(patient_id)}/addresses",
-            method="GET",
-            params={
-                "status": status,
-                "startingAfter": starting_after,
-                "endingBefore": ending_before,
-                "limit": limit,
-            },
-            headers={
-                "Affinity-Actor-Id": str(affinity_actor_id) if affinity_actor_id is not None else None,
-                "Affinity-Actor-Type": str(affinity_actor_type) if affinity_actor_type is not None else None,
-            },
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    ListPatientAddressesResponse,
-                    parse_obj_as(
-                        type_=ListPatientAddressesResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 409:
-                raise ConflictError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 429:
-                raise TooManyRequestsError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def create_patient_address(
-        self,
-        practice_id: str,
-        patient_id: str,
-        *,
-        idempotency_key: str,
-        address: CreatePatientAddressRequestAddress,
-        affinity_actor_id: typing.Optional[str] = None,
-        affinity_actor_type: typing.Optional[str] = None,
-        label: typing.Optional[str] = OMIT,
-        preferred_shipping: typing.Optional[bool] = OMIT,
-        recipient_name: typing.Optional[str] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[CreatePatientAddressResponse]:
-        """
-        Returns the existing active address for a normalized duplicate. The first address becomes the default. API keys require Idempotency-Key.
-
-        Parameters
-        ----------
-        practice_id : str
-
-        patient_id : str
-
-        idempotency_key : str
-
-        address : CreatePatientAddressRequestAddress
-
-        affinity_actor_id : typing.Optional[str]
-            Required for user actors and optional for system actors. Omit both actor headers to use the authenticated service account as a system actor.
-
-        affinity_actor_type : typing.Optional[str]
-            Use user when a person initiated the action and system for autonomous work. Omit both actor headers to default to system.
-
-        label : typing.Optional[str]
-
-        preferred_shipping : typing.Optional[bool]
-
-        recipient_name : typing.Optional[str]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[CreatePatientAddressResponse]
-            HTTP 200
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"v1/practices/{encode_path_param(practice_id)}/patients/{encode_path_param(patient_id)}/addresses",
-            method="POST",
-            json={
-                "address": convert_and_respect_annotation_metadata(
-                    object_=address, annotation=CreatePatientAddressRequestAddress, direction="write"
-                ),
-                "label": label,
-                "preferredShipping": preferred_shipping,
-                "recipientName": recipient_name,
-            },
-            headers={
-                "content-type": "application/json",
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
-                "Affinity-Actor-Id": str(affinity_actor_id) if affinity_actor_id is not None else None,
-                "Affinity-Actor-Type": str(affinity_actor_type) if affinity_actor_type is not None else None,
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    CreatePatientAddressResponse,
-                    parse_obj_as(
-                        type_=CreatePatientAddressResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 409:
-                raise ConflictError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 429:
-                raise TooManyRequestsError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def archive_patient_address(
-        self,
-        practice_id: str,
-        patient_id: str,
-        address_id: str,
-        *,
-        idempotency_key: str,
-        affinity_actor_id: typing.Optional[str] = None,
-        affinity_actor_type: typing.Optional[str] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[ArchivePatientAddressResponse]:
-        """
-        Preserves the address ID and history. Archiving the default selects the oldest remaining active address. Existing orders remain unchanged.
-
-        Parameters
-        ----------
-        practice_id : str
-
-        patient_id : str
-
-        address_id : str
-
-        idempotency_key : str
-
-        affinity_actor_id : typing.Optional[str]
-            Required for user actors and optional for system actors. Omit both actor headers to use the authenticated service account as a system actor.
-
-        affinity_actor_type : typing.Optional[str]
-            Use user when a person initiated the action and system for autonomous work. Omit both actor headers to default to system.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[ArchivePatientAddressResponse]
-            HTTP 200
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"v1/practices/{encode_path_param(practice_id)}/patients/{encode_path_param(patient_id)}/addresses/{encode_path_param(address_id)}",
-            method="DELETE",
-            headers={
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
-                "Affinity-Actor-Id": str(affinity_actor_id) if affinity_actor_id is not None else None,
-                "Affinity-Actor-Type": str(affinity_actor_type) if affinity_actor_type is not None else None,
-            },
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    ArchivePatientAddressResponse,
-                    parse_obj_as(
-                        type_=ArchivePatientAddressResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 409:
-                raise ConflictError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 429:
-                raise TooManyRequestsError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def update_patient_address(
-        self,
-        practice_id: str,
-        patient_id: str,
-        address_id: str,
-        *,
-        idempotency_key: str,
-        affinity_actor_id: typing.Optional[str] = None,
-        affinity_actor_type: typing.Optional[str] = None,
-        address: typing.Optional[UpdatePatientAddressRequestAddress] = OMIT,
-        label: typing.Optional[str] = OMIT,
-        recipient_name: typing.Optional[str] = OMIT,
-        preferred_shipping: typing.Optional[bool] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[UpdatePatientAddressResponse]:
-        """
-        Parameters
-        ----------
-        practice_id : str
-
-        patient_id : str
-
-        address_id : str
-
-        idempotency_key : str
-
-        affinity_actor_id : typing.Optional[str]
-            Required for user actors and optional for system actors. Omit both actor headers to use the authenticated service account as a system actor.
-
-        affinity_actor_type : typing.Optional[str]
-            Use user when a person initiated the action and system for autonomous work. Omit both actor headers to default to system.
-
-        address : typing.Optional[UpdatePatientAddressRequestAddress]
-
-        label : typing.Optional[str]
-
-        recipient_name : typing.Optional[str]
-
-        preferred_shipping : typing.Optional[bool]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[UpdatePatientAddressResponse]
-            HTTP 200
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"v1/practices/{encode_path_param(practice_id)}/patients/{encode_path_param(patient_id)}/addresses/{encode_path_param(address_id)}",
-            method="PATCH",
-            json={
-                "address": convert_and_respect_annotation_metadata(
-                    object_=address, annotation=typing.Optional[UpdatePatientAddressRequestAddress], direction="write"
-                ),
-                "label": label,
-                "recipientName": recipient_name,
-                "preferredShipping": preferred_shipping,
-            },
-            headers={
-                "content-type": "application/json",
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
-                "Affinity-Actor-Id": str(affinity_actor_id) if affinity_actor_id is not None else None,
-                "Affinity-Actor-Type": str(affinity_actor_type) if affinity_actor_type is not None else None,
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    UpdatePatientAddressResponse,
-                    parse_obj_as(
-                        type_=UpdatePatientAddressResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 409:
-                raise ConflictError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 429:
-                raise TooManyRequestsError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def set_default_patient_address(
-        self,
-        practice_id: str,
-        patient_id: str,
-        address_id: str,
-        *,
-        idempotency_key: str,
-        affinity_actor_id: typing.Optional[str] = None,
-        affinity_actor_type: typing.Optional[str] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[SetDefaultPatientAddressResponse]:
-        """
-        Changes delivery selection for future drafts, without changing patient clinical location or existing signed orders.
-
-        Parameters
-        ----------
-        practice_id : str
-
-        patient_id : str
-
-        address_id : str
-
-        idempotency_key : str
-
-        affinity_actor_id : typing.Optional[str]
-            Required for user actors and optional for system actors. Omit both actor headers to use the authenticated service account as a system actor.
-
-        affinity_actor_type : typing.Optional[str]
-            Use user when a person initiated the action and system for autonomous work. Omit both actor headers to default to system.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[SetDefaultPatientAddressResponse]
-            HTTP 200
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"v1/practices/{encode_path_param(practice_id)}/patients/{encode_path_param(patient_id)}/addresses/{encode_path_param(address_id)}/default",
-            method="PUT",
-            headers={
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
-                "Affinity-Actor-Id": str(affinity_actor_id) if affinity_actor_id is not None else None,
-                "Affinity-Actor-Type": str(affinity_actor_type) if affinity_actor_type is not None else None,
-            },
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    SetDefaultPatientAddressResponse,
-                    parse_obj_as(
-                        type_=SetDefaultPatientAddressResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 409:
-                raise ConflictError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 429:
-                raise TooManyRequestsError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def list_patients(
+    async def list(
         self,
         practice_id: str,
         *,
@@ -2930,13 +1204,13 @@ class AsyncRawPatientsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def create_patient(
+    async def create(
         self,
         practice_id: str,
         *,
-        idempotency_key: str,
         date_of_birth: str,
         name: CreatePatientRequestName,
+        idempotency_key: typing.Optional[str] = None,
         affinity_actor_id: typing.Optional[str] = None,
         affinity_actor_type: typing.Optional[str] = None,
         address: typing.Optional[CreatePatientRequestAddress] = OMIT,
@@ -2962,11 +1236,12 @@ class AsyncRawPatientsClient:
         ----------
         practice_id : str
 
-        idempotency_key : str
-
         date_of_birth : str
 
         name : CreatePatientRequestName
+
+        idempotency_key : typing.Optional[str]
+            Optional in the SDK. A fresh key is generated once per call when omitted. Supply a stable key to retry across calls.
 
         affinity_actor_id : typing.Optional[str]
             Required for user actors and optional for system actors. Omit both actor headers to use the authenticated service account as a system actor.
@@ -3061,7 +1336,8 @@ class AsyncRawPatientsClient:
             },
             headers={
                 "content-type": "application/json",
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
+                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else str(__import__("uuid").uuid4())  # affinity-sdk-auto-key
+,
                 "Affinity-Actor-Id": str(affinity_actor_id) if affinity_actor_id is not None else None,
                 "Affinity-Actor-Type": str(affinity_actor_type) if affinity_actor_type is not None else None,
             },
@@ -3164,7 +1440,7 @@ class AsyncRawPatientsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def get_patient(
+    async def get(
         self,
         practice_id: str,
         patient_id: str,
@@ -3301,12 +1577,12 @@ class AsyncRawPatientsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def delete_patient(
+    async def delete(
         self,
         practice_id: str,
         patient_id: str,
         *,
-        idempotency_key: str,
+        idempotency_key: typing.Optional[str] = None,
         affinity_actor_id: typing.Optional[str] = None,
         affinity_actor_type: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -3320,7 +1596,8 @@ class AsyncRawPatientsClient:
 
         patient_id : str
 
-        idempotency_key : str
+        idempotency_key : typing.Optional[str]
+            Optional in the SDK. A fresh key is generated once per call when omitted. Supply a stable key to retry across calls.
 
         affinity_actor_id : typing.Optional[str]
             Required for user actors and optional for system actors. Omit both actor headers to use the authenticated service account as a system actor.
@@ -3340,7 +1617,8 @@ class AsyncRawPatientsClient:
             f"v1/practices/{encode_path_param(practice_id)}/patients/{encode_path_param(patient_id)}",
             method="DELETE",
             headers={
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
+                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else str(__import__("uuid").uuid4())  # affinity-sdk-auto-key
+,
                 "Affinity-Actor-Id": str(affinity_actor_id) if affinity_actor_id is not None else None,
                 "Affinity-Actor-Type": str(affinity_actor_type) if affinity_actor_type is not None else None,
             },
@@ -3442,12 +1720,12 @@ class AsyncRawPatientsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def update_patient(
+    async def update(
         self,
         practice_id: str,
         patient_id: str,
         *,
-        idempotency_key: str,
+        idempotency_key: typing.Optional[str] = None,
         affinity_actor_id: typing.Optional[str] = None,
         affinity_actor_type: typing.Optional[str] = None,
         address: typing.Optional[UpdatePatientRequestAddress] = OMIT,
@@ -3478,7 +1756,8 @@ class AsyncRawPatientsClient:
 
         patient_id : str
 
-        idempotency_key : str
+        idempotency_key : typing.Optional[str]
+            Optional in the SDK. A fresh key is generated once per call when omitted. Supply a stable key to retry across calls.
 
         affinity_actor_id : typing.Optional[str]
             Required for user actors and optional for system actors. Omit both actor headers to use the authenticated service account as a system actor.
@@ -3580,7 +1859,8 @@ class AsyncRawPatientsClient:
             },
             headers={
                 "content-type": "application/json",
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
+                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else str(__import__("uuid").uuid4())  # affinity-sdk-auto-key
+,
                 "Affinity-Actor-Id": str(affinity_actor_id) if affinity_actor_id is not None else None,
                 "Affinity-Actor-Type": str(affinity_actor_type) if affinity_actor_type is not None else None,
             },
@@ -3593,300 +1873,6 @@ class AsyncRawPatientsClient:
                     UpdatePatientResponse,
                     parse_obj_as(
                         type_=UpdatePatientResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 409:
-                raise ConflictError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 429:
-                raise TooManyRequestsError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def get_patient_allergies(
-        self,
-        practice_id: str,
-        patient_id: str,
-        *,
-        affinity_actor_id: typing.Optional[str] = None,
-        affinity_actor_type: typing.Optional[str] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[GetPatientAllergiesResponse]:
-        """
-        Returns the patient's structured allergy entries and review status. A not_reviewed status is not a no-known-allergies assertion and blocks clinical review and signing.
-
-        Parameters
-        ----------
-        practice_id : str
-
-        patient_id : str
-
-        affinity_actor_id : typing.Optional[str]
-            Required for user actors and optional for system actors. Omit both actor headers to use the authenticated service account as a system actor.
-
-        affinity_actor_type : typing.Optional[str]
-            Use user when a person initiated the action and system for autonomous work. Omit both actor headers to default to system.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[GetPatientAllergiesResponse]
-            HTTP 200
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"v1/practices/{encode_path_param(practice_id)}/patients/{encode_path_param(patient_id)}/allergies",
-            method="GET",
-            headers={
-                "Affinity-Actor-Id": str(affinity_actor_id) if affinity_actor_id is not None else None,
-                "Affinity-Actor-Type": str(affinity_actor_type) if affinity_actor_type is not None else None,
-            },
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    GetPatientAllergiesResponse,
-                    parse_obj_as(
-                        type_=GetPatientAllergiesResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 409:
-                raise ConflictError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 429:
-                raise TooManyRequestsError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def replace_patient_allergies(
-        self,
-        practice_id: str,
-        patient_id: str,
-        *,
-        idempotency_key: str,
-        allergies: typing.Sequence[ReplacePatientAllergiesRequestAllergiesItem],
-        review_status: ReplacePatientAllergiesRequestReviewStatus,
-        affinity_actor_id: typing.Optional[str] = None,
-        affinity_actor_type: typing.Optional[str] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[ReplacePatientAllergiesResponse]:
-        """
-        Replaces the patient's structured allergy record. Sending no_known is the explicit no-known-allergies acknowledgement; recorded requires at least one entry. Idempotency-Key is required.
-
-        Parameters
-        ----------
-        practice_id : str
-
-        patient_id : str
-
-        idempotency_key : str
-
-        allergies : typing.Sequence[ReplacePatientAllergiesRequestAllergiesItem]
-
-        review_status : ReplacePatientAllergiesRequestReviewStatus
-
-        affinity_actor_id : typing.Optional[str]
-            Required for user actors and optional for system actors. Omit both actor headers to use the authenticated service account as a system actor.
-
-        affinity_actor_type : typing.Optional[str]
-            Use user when a person initiated the action and system for autonomous work. Omit both actor headers to default to system.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[ReplacePatientAllergiesResponse]
-            HTTP 200
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"v1/practices/{encode_path_param(practice_id)}/patients/{encode_path_param(patient_id)}/allergies",
-            method="PUT",
-            json={
-                "allergies": convert_and_respect_annotation_metadata(
-                    object_=allergies,
-                    annotation=typing.Sequence[ReplacePatientAllergiesRequestAllergiesItem],
-                    direction="write",
-                ),
-                "reviewStatus": review_status,
-            },
-            headers={
-                "content-type": "application/json",
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
-                "Affinity-Actor-Id": str(affinity_actor_id) if affinity_actor_id is not None else None,
-                "Affinity-Actor-Type": str(affinity_actor_type) if affinity_actor_type is not None else None,
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    ReplacePatientAllergiesResponse,
-                    parse_obj_as(
-                        type_=ReplacePatientAllergiesResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

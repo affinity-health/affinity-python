@@ -6,8 +6,6 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
-    from .create_patient_address_request_address import CreatePatientAddressRequestAddress
-    from .create_patient_address_request_address_country import CreatePatientAddressRequestAddressCountry
     from .create_patient_request_address import CreatePatientRequestAddress
     from .create_patient_request_address_country import CreatePatientRequestAddressCountry
     from .create_patient_request_addresses_item import CreatePatientRequestAddressesItem
@@ -41,36 +39,9 @@ if typing.TYPE_CHECKING:
     from .create_patient_request_name import CreatePatientRequestName
     from .create_patient_request_programs_item import CreatePatientRequestProgramsItem
     from .create_patient_request_programs_item_status import CreatePatientRequestProgramsItemStatus
-    from .list_patient_addresses_request_status import ListPatientAddressesRequestStatus
     from .list_patients_request_gender import ListPatientsRequestGender
     from .list_patients_request_sort import ListPatientsRequestSort
     from .list_patients_request_status import ListPatientsRequestStatus
-    from .replace_patient_allergies_request_allergies_item import ReplacePatientAllergiesRequestAllergiesItem
-    from .replace_patient_allergies_request_allergies_item_category import (
-        ReplacePatientAllergiesRequestAllergiesItemCategory,
-    )
-    from .replace_patient_allergies_request_allergies_item_code_system import (
-        ReplacePatientAllergiesRequestAllergiesItemCodeSystem,
-    )
-    from .replace_patient_allergies_request_allergies_item_reactions_item import (
-        ReplacePatientAllergiesRequestAllergiesItemReactionsItem,
-    )
-    from .replace_patient_allergies_request_allergies_item_reactions_item_code_system import (
-        ReplacePatientAllergiesRequestAllergiesItemReactionsItemCodeSystem,
-    )
-    from .replace_patient_allergies_request_allergies_item_severity import (
-        ReplacePatientAllergiesRequestAllergiesItemSeverity,
-    )
-    from .replace_patient_allergies_request_allergies_item_source import (
-        ReplacePatientAllergiesRequestAllergiesItemSource,
-    )
-    from .replace_patient_allergies_request_allergies_item_type import ReplacePatientAllergiesRequestAllergiesItemType
-    from .replace_patient_allergies_request_allergies_item_verification_status import (
-        ReplacePatientAllergiesRequestAllergiesItemVerificationStatus,
-    )
-    from .replace_patient_allergies_request_review_status import ReplacePatientAllergiesRequestReviewStatus
-    from .update_patient_address_request_address import UpdatePatientAddressRequestAddress
-    from .update_patient_address_request_address_country import UpdatePatientAddressRequestAddressCountry
     from .update_patient_request_address import UpdatePatientRequestAddress
     from .update_patient_request_address_country import UpdatePatientRequestAddressCountry
     from .update_patient_request_addresses_item import UpdatePatientRequestAddressesItem
@@ -106,8 +77,6 @@ if typing.TYPE_CHECKING:
     from .update_patient_request_programs_item_status import UpdatePatientRequestProgramsItemStatus
     from .update_patient_request_status import UpdatePatientRequestStatus
 _dynamic_imports: typing.Dict[str, str] = {
-    "CreatePatientAddressRequestAddress": ".create_patient_address_request_address",
-    "CreatePatientAddressRequestAddressCountry": ".create_patient_address_request_address_country",
     "CreatePatientRequestAddress": ".create_patient_request_address",
     "CreatePatientRequestAddressCountry": ".create_patient_request_address_country",
     "CreatePatientRequestAddressesItem": ".create_patient_request_addresses_item",
@@ -129,22 +98,9 @@ _dynamic_imports: typing.Dict[str, str] = {
     "CreatePatientRequestName": ".create_patient_request_name",
     "CreatePatientRequestProgramsItem": ".create_patient_request_programs_item",
     "CreatePatientRequestProgramsItemStatus": ".create_patient_request_programs_item_status",
-    "ListPatientAddressesRequestStatus": ".list_patient_addresses_request_status",
     "ListPatientsRequestGender": ".list_patients_request_gender",
     "ListPatientsRequestSort": ".list_patients_request_sort",
     "ListPatientsRequestStatus": ".list_patients_request_status",
-    "ReplacePatientAllergiesRequestAllergiesItem": ".replace_patient_allergies_request_allergies_item",
-    "ReplacePatientAllergiesRequestAllergiesItemCategory": ".replace_patient_allergies_request_allergies_item_category",
-    "ReplacePatientAllergiesRequestAllergiesItemCodeSystem": ".replace_patient_allergies_request_allergies_item_code_system",
-    "ReplacePatientAllergiesRequestAllergiesItemReactionsItem": ".replace_patient_allergies_request_allergies_item_reactions_item",
-    "ReplacePatientAllergiesRequestAllergiesItemReactionsItemCodeSystem": ".replace_patient_allergies_request_allergies_item_reactions_item_code_system",
-    "ReplacePatientAllergiesRequestAllergiesItemSeverity": ".replace_patient_allergies_request_allergies_item_severity",
-    "ReplacePatientAllergiesRequestAllergiesItemSource": ".replace_patient_allergies_request_allergies_item_source",
-    "ReplacePatientAllergiesRequestAllergiesItemType": ".replace_patient_allergies_request_allergies_item_type",
-    "ReplacePatientAllergiesRequestAllergiesItemVerificationStatus": ".replace_patient_allergies_request_allergies_item_verification_status",
-    "ReplacePatientAllergiesRequestReviewStatus": ".replace_patient_allergies_request_review_status",
-    "UpdatePatientAddressRequestAddress": ".update_patient_address_request_address",
-    "UpdatePatientAddressRequestAddressCountry": ".update_patient_address_request_address_country",
     "UpdatePatientRequestAddress": ".update_patient_request_address",
     "UpdatePatientRequestAddressCountry": ".update_patient_request_address_country",
     "UpdatePatientRequestAddressesItem": ".update_patient_request_addresses_item",
@@ -192,8 +148,6 @@ def __dir__():
 
 
 __all__ = [
-    "CreatePatientAddressRequestAddress",
-    "CreatePatientAddressRequestAddressCountry",
     "CreatePatientRequestAddress",
     "CreatePatientRequestAddressCountry",
     "CreatePatientRequestAddressesItem",
@@ -215,22 +169,9 @@ __all__ = [
     "CreatePatientRequestName",
     "CreatePatientRequestProgramsItem",
     "CreatePatientRequestProgramsItemStatus",
-    "ListPatientAddressesRequestStatus",
     "ListPatientsRequestGender",
     "ListPatientsRequestSort",
     "ListPatientsRequestStatus",
-    "ReplacePatientAllergiesRequestAllergiesItem",
-    "ReplacePatientAllergiesRequestAllergiesItemCategory",
-    "ReplacePatientAllergiesRequestAllergiesItemCodeSystem",
-    "ReplacePatientAllergiesRequestAllergiesItemReactionsItem",
-    "ReplacePatientAllergiesRequestAllergiesItemReactionsItemCodeSystem",
-    "ReplacePatientAllergiesRequestAllergiesItemSeverity",
-    "ReplacePatientAllergiesRequestAllergiesItemSource",
-    "ReplacePatientAllergiesRequestAllergiesItemType",
-    "ReplacePatientAllergiesRequestAllergiesItemVerificationStatus",
-    "ReplacePatientAllergiesRequestReviewStatus",
-    "UpdatePatientAddressRequestAddress",
-    "UpdatePatientAddressRequestAddressCountry",
     "UpdatePatientRequestAddress",
     "UpdatePatientRequestAddressCountry",
     "UpdatePatientRequestAddressesItem",

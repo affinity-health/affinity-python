@@ -11,4 +11,4 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install .
-      - run: python tests/smoke.py
+      - run: ./tests/with-fixtures.sh sh -c 'python tests/smoke.py && python tests/approved.py && python tests/docs_approved.py'

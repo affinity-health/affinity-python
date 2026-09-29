@@ -39,7 +39,7 @@ class PracticesClient:
         """
         return self._raw_client
 
-    def list_practices(
+    def list(
         self,
         *,
         search: typing.Optional[str] = None,
@@ -78,12 +78,12 @@ class PracticesClient:
             affinity_version="YOUR_AFFINITY_VERSION",
             api_key="YOUR_API_KEY",
         )
-        client.practices.list_practices(
+        client.practices.list(
             ending_before="prac_01j2y8m6jcc9tt24af5pw9x1bc",
             starting_after="prac_01j2y8m6jcc9tt24af5pw9x1bc",
         )
         """
-        _response = self._raw_client.list_practices(
+        _response = self._raw_client.list(
             search=search,
             ending_before=ending_before,
             limit=limit,
@@ -92,7 +92,7 @@ class PracticesClient:
         )
         return _response.data
 
-    def create_practice(
+    def create(
         self,
         *,
         address: CreatePracticeRequestAddress,
@@ -168,7 +168,7 @@ class PracticesClient:
             affinity_version="YOUR_AFFINITY_VERSION",
             api_key="YOUR_API_KEY",
         )
-        client.practices.create_practice(
+        client.practices.create(
             address=CreatePracticeRequestAddress(
                 city="Los Angeles",
                 country="US",
@@ -201,7 +201,7 @@ class PracticesClient:
             support_email="support@example-practice.com",
         )
         """
-        _response = self._raw_client.create_practice(
+        _response = self._raw_client.create(
             address=address,
             attestations=attestations,
             name=name,
@@ -220,9 +220,7 @@ class PracticesClient:
         )
         return _response.data
 
-    def get_practice(
-        self, practice_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetPracticeResponse:
+    def get(self, practice_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> GetPracticeResponse:
         """
         Returns one practice that belongs to the platform.
 
@@ -246,14 +244,14 @@ class PracticesClient:
             affinity_version="YOUR_AFFINITY_VERSION",
             api_key="YOUR_API_KEY",
         )
-        client.practices.get_practice(
+        client.practices.get(
             practice_id="prac_01j2y8m6jcc9tt24af5pw9x1bc",
         )
         """
-        _response = self._raw_client.get_practice(practice_id, request_options=request_options)
+        _response = self._raw_client.get(practice_id, request_options=request_options)
         return _response.data
 
-    def update_practice(
+    def update(
         self,
         practice_id: str,
         *,
@@ -281,6 +279,7 @@ class PracticesClient:
         practice_id : str
 
         idempotency_key : typing.Optional[str]
+            Optional in the SDK. A fresh key is generated once per call when omitted. Supply a stable key to retry across calls.
 
         live_enabled : typing.Optional[bool]
             Enable or disable Live access for an owned practice. Requires an approved platform and a Live request. Affinity Admin decisions take precedence.
@@ -326,11 +325,11 @@ class PracticesClient:
             affinity_version="YOUR_AFFINITY_VERSION",
             api_key="YOUR_API_KEY",
         )
-        client.practices.update_practice(
+        client.practices.update(
             practice_id="prac_01j2y8m6jcc9tt24af5pw9x1bc",
         )
         """
-        _response = self._raw_client.update_practice(
+        _response = self._raw_client.update(
             practice_id,
             idempotency_key=idempotency_key,
             live_enabled=live_enabled,
@@ -366,7 +365,7 @@ class AsyncPracticesClient:
         """
         return self._raw_client
 
-    async def list_practices(
+    async def list(
         self,
         *,
         search: typing.Optional[str] = None,
@@ -410,7 +409,7 @@ class AsyncPracticesClient:
 
 
         async def main() -> None:
-            await client.practices.list_practices(
+            await client.practices.list(
                 ending_before="prac_01j2y8m6jcc9tt24af5pw9x1bc",
                 starting_after="prac_01j2y8m6jcc9tt24af5pw9x1bc",
             )
@@ -418,7 +417,7 @@ class AsyncPracticesClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.list_practices(
+        _response = await self._raw_client.list(
             search=search,
             ending_before=ending_before,
             limit=limit,
@@ -427,7 +426,7 @@ class AsyncPracticesClient:
         )
         return _response.data
 
-    async def create_practice(
+    async def create(
         self,
         *,
         address: CreatePracticeRequestAddress,
@@ -508,7 +507,7 @@ class AsyncPracticesClient:
 
 
         async def main() -> None:
-            await client.practices.create_practice(
+            await client.practices.create(
                 address=CreatePracticeRequestAddress(
                     city="Los Angeles",
                     country="US",
@@ -544,7 +543,7 @@ class AsyncPracticesClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.create_practice(
+        _response = await self._raw_client.create(
             address=address,
             attestations=attestations,
             name=name,
@@ -563,7 +562,7 @@ class AsyncPracticesClient:
         )
         return _response.data
 
-    async def get_practice(
+    async def get(
         self, practice_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> GetPracticeResponse:
         """
@@ -594,17 +593,17 @@ class AsyncPracticesClient:
 
 
         async def main() -> None:
-            await client.practices.get_practice(
+            await client.practices.get(
                 practice_id="prac_01j2y8m6jcc9tt24af5pw9x1bc",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.get_practice(practice_id, request_options=request_options)
+        _response = await self._raw_client.get(practice_id, request_options=request_options)
         return _response.data
 
-    async def update_practice(
+    async def update(
         self,
         practice_id: str,
         *,
@@ -632,6 +631,7 @@ class AsyncPracticesClient:
         practice_id : str
 
         idempotency_key : typing.Optional[str]
+            Optional in the SDK. A fresh key is generated once per call when omitted. Supply a stable key to retry across calls.
 
         live_enabled : typing.Optional[bool]
             Enable or disable Live access for an owned practice. Requires an approved platform and a Live request. Affinity Admin decisions take precedence.
@@ -682,14 +682,14 @@ class AsyncPracticesClient:
 
 
         async def main() -> None:
-            await client.practices.update_practice(
+            await client.practices.update(
                 practice_id="prac_01j2y8m6jcc9tt24af5pw9x1bc",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.update_practice(
+        _response = await self._raw_client.update(
             practice_id,
             idempotency_key=idempotency_key,
             live_enabled=live_enabled,

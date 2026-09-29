@@ -28,7 +28,7 @@ class ApiKeysClient:
         """
         return self._raw_client
 
-    def create_platform_practice_api_key(
+    def create(
         self,
         practice_id: str,
         *,
@@ -72,13 +72,13 @@ class ApiKeysClient:
             affinity_version="YOUR_AFFINITY_VERSION",
             api_key="YOUR_API_KEY",
         )
-        client.api_keys.create_platform_practice_api_key(
+        client.api_keys.create(
             practice_id="practiceId",
             idempotency_key="Idempotency-Key",
             name="name",
         )
         """
-        _response = self._raw_client.create_platform_practice_api_key(
+        _response = self._raw_client.create(
             practice_id,
             idempotency_key=idempotency_key,
             name=name,
@@ -89,7 +89,7 @@ class ApiKeysClient:
         )
         return _response.data
 
-    def get_api_access(self, *, request_options: typing.Optional[RequestOptions] = None) -> GetApiAccessResponse:
+    def get_access(self, *, request_options: typing.Optional[RequestOptions] = None) -> GetApiAccessResponse:
         """
         Returns the subject, mode, and scopes for the API key.
 
@@ -111,9 +111,9 @@ class ApiKeysClient:
             affinity_version="YOUR_AFFINITY_VERSION",
             api_key="YOUR_API_KEY",
         )
-        client.api_keys.get_api_access()
+        client.api_keys.get_access()
         """
-        _response = self._raw_client.get_api_access(request_options=request_options)
+        _response = self._raw_client.get_access(request_options=request_options)
         return _response.data
 
 
@@ -132,7 +132,7 @@ class AsyncApiKeysClient:
         """
         return self._raw_client
 
-    async def create_platform_practice_api_key(
+    async def create(
         self,
         practice_id: str,
         *,
@@ -181,7 +181,7 @@ class AsyncApiKeysClient:
 
 
         async def main() -> None:
-            await client.api_keys.create_platform_practice_api_key(
+            await client.api_keys.create(
                 practice_id="practiceId",
                 idempotency_key="Idempotency-Key",
                 name="name",
@@ -190,7 +190,7 @@ class AsyncApiKeysClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.create_platform_practice_api_key(
+        _response = await self._raw_client.create(
             practice_id,
             idempotency_key=idempotency_key,
             name=name,
@@ -201,7 +201,7 @@ class AsyncApiKeysClient:
         )
         return _response.data
 
-    async def get_api_access(self, *, request_options: typing.Optional[RequestOptions] = None) -> GetApiAccessResponse:
+    async def get_access(self, *, request_options: typing.Optional[RequestOptions] = None) -> GetApiAccessResponse:
         """
         Returns the subject, mode, and scopes for the API key.
 
@@ -228,10 +228,10 @@ class AsyncApiKeysClient:
 
 
         async def main() -> None:
-            await client.api_keys.get_api_access()
+            await client.api_keys.get_access()
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.get_api_access(request_options=request_options)
+        _response = await self._raw_client.get_access(request_options=request_options)
         return _response.data

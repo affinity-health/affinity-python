@@ -22,7 +22,7 @@ from ..types.get_practice_location_response import GetPracticeLocationResponse
 from ..types.list_practice_locations_response import ListPracticeLocationsResponse
 from ..types.problem import Problem
 from ..types.update_practice_location_response import UpdatePracticeLocationResponse
-from .types.list_practice_locations_request_status import ListPracticeLocationsRequestStatus
+from .types.list_locations_request_status import ListLocationsRequestStatus
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
@@ -33,14 +33,14 @@ class RawLocationsClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list_practice_locations(
+    def list(
         self,
         practice_id: str,
         *,
         limit: typing.Optional[int] = None,
         starting_after: typing.Optional[str] = None,
         ending_before: typing.Optional[str] = None,
-        status: typing.Optional[ListPracticeLocationsRequestStatus] = None,
+        status: typing.Optional[ListLocationsRequestStatus] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[ListPracticeLocationsResponse]:
         """
@@ -56,7 +56,7 @@ class RawLocationsClient:
 
         ending_before : typing.Optional[str]
 
-        status : typing.Optional[ListPracticeLocationsRequestStatus]
+        status : typing.Optional[ListLocationsRequestStatus]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -162,12 +162,12 @@ class RawLocationsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def create_practice_location(
+    def create(
         self,
         practice_id: str,
         *,
-        idempotency_key: str,
         name: str,
+        idempotency_key: typing.Optional[str] = None,
         city: typing.Optional[str] = OMIT,
         country: typing.Optional[str] = OMIT,
         line1: typing.Optional[str] = OMIT,
@@ -185,9 +185,10 @@ class RawLocationsClient:
         ----------
         practice_id : str
 
-        idempotency_key : str
-
         name : str
+
+        idempotency_key : typing.Optional[str]
+            Optional in the SDK. A fresh key is generated once per call when omitted. Supply a stable key to retry across calls.
 
         city : typing.Optional[str]
 
@@ -230,7 +231,8 @@ class RawLocationsClient:
             },
             headers={
                 "content-type": "application/json",
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
+                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else str(__import__("uuid").uuid4())  # affinity-sdk-auto-key
+,
             },
             request_options=request_options,
             omit=OMIT,
@@ -320,7 +322,7 @@ class RawLocationsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def get_practice_location(
+    def get(
         self, practice_id: str, location_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[GetPracticeLocationResponse]:
         """
@@ -430,12 +432,12 @@ class RawLocationsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def update_practice_location(
+    def update(
         self,
         practice_id: str,
         location_id: str,
         *,
-        idempotency_key: str,
+        idempotency_key: typing.Optional[str] = None,
         city: typing.Optional[str] = OMIT,
         country: typing.Optional[str] = OMIT,
         line1: typing.Optional[str] = OMIT,
@@ -456,7 +458,8 @@ class RawLocationsClient:
 
         location_id : str
 
-        idempotency_key : str
+        idempotency_key : typing.Optional[str]
+            Optional in the SDK. A fresh key is generated once per call when omitted. Supply a stable key to retry across calls.
 
         city : typing.Optional[str]
 
@@ -501,7 +504,8 @@ class RawLocationsClient:
             },
             headers={
                 "content-type": "application/json",
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
+                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else str(__import__("uuid").uuid4())  # affinity-sdk-auto-key
+,
             },
             request_options=request_options,
             omit=OMIT,
@@ -591,12 +595,12 @@ class RawLocationsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def archive_practice_location(
+    def archive(
         self,
         practice_id: str,
         location_id: str,
         *,
-        idempotency_key: str,
+        idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[ArchivePracticeLocationResponse]:
         """
@@ -608,7 +612,8 @@ class RawLocationsClient:
 
         location_id : str
 
-        idempotency_key : str
+        idempotency_key : typing.Optional[str]
+            Optional in the SDK. A fresh key is generated once per call when omitted. Supply a stable key to retry across calls.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -622,7 +627,8 @@ class RawLocationsClient:
             f"v1/practices/{encode_path_param(practice_id)}/locations/{encode_path_param(location_id)}/archive",
             method="POST",
             headers={
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
+                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else str(__import__("uuid").uuid4())  # affinity-sdk-auto-key
+,
             },
             request_options=request_options,
         )
@@ -716,14 +722,14 @@ class AsyncRawLocationsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list_practice_locations(
+    async def list(
         self,
         practice_id: str,
         *,
         limit: typing.Optional[int] = None,
         starting_after: typing.Optional[str] = None,
         ending_before: typing.Optional[str] = None,
-        status: typing.Optional[ListPracticeLocationsRequestStatus] = None,
+        status: typing.Optional[ListLocationsRequestStatus] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[ListPracticeLocationsResponse]:
         """
@@ -739,7 +745,7 @@ class AsyncRawLocationsClient:
 
         ending_before : typing.Optional[str]
 
-        status : typing.Optional[ListPracticeLocationsRequestStatus]
+        status : typing.Optional[ListLocationsRequestStatus]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -845,12 +851,12 @@ class AsyncRawLocationsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def create_practice_location(
+    async def create(
         self,
         practice_id: str,
         *,
-        idempotency_key: str,
         name: str,
+        idempotency_key: typing.Optional[str] = None,
         city: typing.Optional[str] = OMIT,
         country: typing.Optional[str] = OMIT,
         line1: typing.Optional[str] = OMIT,
@@ -868,9 +874,10 @@ class AsyncRawLocationsClient:
         ----------
         practice_id : str
 
-        idempotency_key : str
-
         name : str
+
+        idempotency_key : typing.Optional[str]
+            Optional in the SDK. A fresh key is generated once per call when omitted. Supply a stable key to retry across calls.
 
         city : typing.Optional[str]
 
@@ -913,7 +920,8 @@ class AsyncRawLocationsClient:
             },
             headers={
                 "content-type": "application/json",
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
+                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else str(__import__("uuid").uuid4())  # affinity-sdk-auto-key
+,
             },
             request_options=request_options,
             omit=OMIT,
@@ -1003,7 +1011,7 @@ class AsyncRawLocationsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def get_practice_location(
+    async def get(
         self, practice_id: str, location_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[GetPracticeLocationResponse]:
         """
@@ -1113,12 +1121,12 @@ class AsyncRawLocationsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def update_practice_location(
+    async def update(
         self,
         practice_id: str,
         location_id: str,
         *,
-        idempotency_key: str,
+        idempotency_key: typing.Optional[str] = None,
         city: typing.Optional[str] = OMIT,
         country: typing.Optional[str] = OMIT,
         line1: typing.Optional[str] = OMIT,
@@ -1139,7 +1147,8 @@ class AsyncRawLocationsClient:
 
         location_id : str
 
-        idempotency_key : str
+        idempotency_key : typing.Optional[str]
+            Optional in the SDK. A fresh key is generated once per call when omitted. Supply a stable key to retry across calls.
 
         city : typing.Optional[str]
 
@@ -1184,7 +1193,8 @@ class AsyncRawLocationsClient:
             },
             headers={
                 "content-type": "application/json",
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
+                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else str(__import__("uuid").uuid4())  # affinity-sdk-auto-key
+,
             },
             request_options=request_options,
             omit=OMIT,
@@ -1274,12 +1284,12 @@ class AsyncRawLocationsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def archive_practice_location(
+    async def archive(
         self,
         practice_id: str,
         location_id: str,
         *,
-        idempotency_key: str,
+        idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[ArchivePracticeLocationResponse]:
         """
@@ -1291,7 +1301,8 @@ class AsyncRawLocationsClient:
 
         location_id : str
 
-        idempotency_key : str
+        idempotency_key : typing.Optional[str]
+            Optional in the SDK. A fresh key is generated once per call when omitted. Supply a stable key to retry across calls.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1305,7 +1316,8 @@ class AsyncRawLocationsClient:
             f"v1/practices/{encode_path_param(practice_id)}/locations/{encode_path_param(location_id)}/archive",
             method="POST",
             headers={
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
+                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else str(__import__("uuid").uuid4())  # affinity-sdk-auto-key
+,
             },
             request_options=request_options,
         )

@@ -6,33 +6,6 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
-    from .invite_practice_team_person_request_address import InvitePracticeTeamPersonRequestAddress
-    from .invite_practice_team_person_request_licenses_item import InvitePracticeTeamPersonRequestLicensesItem
-    from .invite_practice_team_person_request_profile_details import InvitePracticeTeamPersonRequestProfileDetails
-    from .invite_practice_team_person_request_profile_details_addresses_item import (
-        InvitePracticeTeamPersonRequestProfileDetailsAddressesItem,
-    )
-    from .invite_practice_team_person_request_profile_details_certifications_item import (
-        InvitePracticeTeamPersonRequestProfileDetailsCertificationsItem,
-    )
-    from .invite_practice_team_person_request_profile_details_endpoints_item import (
-        InvitePracticeTeamPersonRequestProfileDetailsEndpointsItem,
-    )
-    from .invite_practice_team_person_request_profile_details_identifiers_item import (
-        InvitePracticeTeamPersonRequestProfileDetailsIdentifiersItem,
-    )
-    from .invite_practice_team_person_request_profile_details_other_names_item import (
-        InvitePracticeTeamPersonRequestProfileDetailsOtherNamesItem,
-    )
-    from .invite_practice_team_person_request_profile_details_specialties_item import (
-        InvitePracticeTeamPersonRequestProfileDetailsSpecialtiesItem,
-    )
-    from .invite_practice_team_person_request_role import InvitePracticeTeamPersonRequestRole
-    from .invite_practice_team_person_request_roles_item import InvitePracticeTeamPersonRequestRolesItem
-    from .list_practice_team_invitations_request_status import ListPracticeTeamInvitationsRequestStatus
-    from .list_practice_team_members_request_role import ListPracticeTeamMembersRequestRole
-    from .list_practice_team_members_request_status import ListPracticeTeamMembersRequestStatus
-    from .list_practice_team_prescribers_request_status import ListPracticeTeamPrescribersRequestStatus
     from .register_user_request_address import RegisterUserRequestAddress
     from .register_user_request_licenses_item import RegisterUserRequestLicensesItem
     from .register_user_request_profile_details import RegisterUserRequestProfileDetails
@@ -46,29 +19,7 @@ if typing.TYPE_CHECKING:
     from .register_user_request_profile_details_specialties_item import RegisterUserRequestProfileDetailsSpecialtiesItem
     from .register_user_request_role import RegisterUserRequestRole
     from .register_user_request_roles_item import RegisterUserRequestRolesItem
-    from .update_practice_team_member_request_role import UpdatePracticeTeamMemberRequestRole
-    from .update_practice_team_member_request_roles_item import UpdatePracticeTeamMemberRequestRolesItem
-    from .update_practice_team_member_request_status import UpdatePracticeTeamMemberRequestStatus
-    from .update_practice_team_prescriber_request_address import UpdatePracticeTeamPrescriberRequestAddress
-    from .update_practice_team_prescriber_request_practice_status import (
-        UpdatePracticeTeamPrescriberRequestPracticeStatus,
-    )
 _dynamic_imports: typing.Dict[str, str] = {
-    "InvitePracticeTeamPersonRequestAddress": ".invite_practice_team_person_request_address",
-    "InvitePracticeTeamPersonRequestLicensesItem": ".invite_practice_team_person_request_licenses_item",
-    "InvitePracticeTeamPersonRequestProfileDetails": ".invite_practice_team_person_request_profile_details",
-    "InvitePracticeTeamPersonRequestProfileDetailsAddressesItem": ".invite_practice_team_person_request_profile_details_addresses_item",
-    "InvitePracticeTeamPersonRequestProfileDetailsCertificationsItem": ".invite_practice_team_person_request_profile_details_certifications_item",
-    "InvitePracticeTeamPersonRequestProfileDetailsEndpointsItem": ".invite_practice_team_person_request_profile_details_endpoints_item",
-    "InvitePracticeTeamPersonRequestProfileDetailsIdentifiersItem": ".invite_practice_team_person_request_profile_details_identifiers_item",
-    "InvitePracticeTeamPersonRequestProfileDetailsOtherNamesItem": ".invite_practice_team_person_request_profile_details_other_names_item",
-    "InvitePracticeTeamPersonRequestProfileDetailsSpecialtiesItem": ".invite_practice_team_person_request_profile_details_specialties_item",
-    "InvitePracticeTeamPersonRequestRole": ".invite_practice_team_person_request_role",
-    "InvitePracticeTeamPersonRequestRolesItem": ".invite_practice_team_person_request_roles_item",
-    "ListPracticeTeamInvitationsRequestStatus": ".list_practice_team_invitations_request_status",
-    "ListPracticeTeamMembersRequestRole": ".list_practice_team_members_request_role",
-    "ListPracticeTeamMembersRequestStatus": ".list_practice_team_members_request_status",
-    "ListPracticeTeamPrescribersRequestStatus": ".list_practice_team_prescribers_request_status",
     "RegisterUserRequestAddress": ".register_user_request_address",
     "RegisterUserRequestLicensesItem": ".register_user_request_licenses_item",
     "RegisterUserRequestProfileDetails": ".register_user_request_profile_details",
@@ -80,11 +31,6 @@ _dynamic_imports: typing.Dict[str, str] = {
     "RegisterUserRequestProfileDetailsSpecialtiesItem": ".register_user_request_profile_details_specialties_item",
     "RegisterUserRequestRole": ".register_user_request_role",
     "RegisterUserRequestRolesItem": ".register_user_request_roles_item",
-    "UpdatePracticeTeamMemberRequestRole": ".update_practice_team_member_request_role",
-    "UpdatePracticeTeamMemberRequestRolesItem": ".update_practice_team_member_request_roles_item",
-    "UpdatePracticeTeamMemberRequestStatus": ".update_practice_team_member_request_status",
-    "UpdatePracticeTeamPrescriberRequestAddress": ".update_practice_team_prescriber_request_address",
-    "UpdatePracticeTeamPrescriberRequestPracticeStatus": ".update_practice_team_prescriber_request_practice_status",
 }
 
 
@@ -110,21 +56,6 @@ def __dir__():
 
 
 __all__ = [
-    "InvitePracticeTeamPersonRequestAddress",
-    "InvitePracticeTeamPersonRequestLicensesItem",
-    "InvitePracticeTeamPersonRequestProfileDetails",
-    "InvitePracticeTeamPersonRequestProfileDetailsAddressesItem",
-    "InvitePracticeTeamPersonRequestProfileDetailsCertificationsItem",
-    "InvitePracticeTeamPersonRequestProfileDetailsEndpointsItem",
-    "InvitePracticeTeamPersonRequestProfileDetailsIdentifiersItem",
-    "InvitePracticeTeamPersonRequestProfileDetailsOtherNamesItem",
-    "InvitePracticeTeamPersonRequestProfileDetailsSpecialtiesItem",
-    "InvitePracticeTeamPersonRequestRole",
-    "InvitePracticeTeamPersonRequestRolesItem",
-    "ListPracticeTeamInvitationsRequestStatus",
-    "ListPracticeTeamMembersRequestRole",
-    "ListPracticeTeamMembersRequestStatus",
-    "ListPracticeTeamPrescribersRequestStatus",
     "RegisterUserRequestAddress",
     "RegisterUserRequestLicensesItem",
     "RegisterUserRequestProfileDetails",
@@ -136,9 +67,4 @@ __all__ = [
     "RegisterUserRequestProfileDetailsSpecialtiesItem",
     "RegisterUserRequestRole",
     "RegisterUserRequestRolesItem",
-    "UpdatePracticeTeamMemberRequestRole",
-    "UpdatePracticeTeamMemberRequestRolesItem",
-    "UpdatePracticeTeamMemberRequestStatus",
-    "UpdatePracticeTeamPrescriberRequestAddress",
-    "UpdatePracticeTeamPrescriberRequestPracticeStatus",
 ]

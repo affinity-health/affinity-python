@@ -10,7 +10,7 @@ from ..types.get_practice_location_response import GetPracticeLocationResponse
 from ..types.list_practice_locations_response import ListPracticeLocationsResponse
 from ..types.update_practice_location_response import UpdatePracticeLocationResponse
 from .raw_client import AsyncRawLocationsClient, RawLocationsClient
-from .types.list_practice_locations_request_status import ListPracticeLocationsRequestStatus
+from .types.list_locations_request_status import ListLocationsRequestStatus
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -31,14 +31,14 @@ class LocationsClient:
         """
         return self._raw_client
 
-    def list_practice_locations(
+    def list(
         self,
         practice_id: str,
         *,
         limit: typing.Optional[int] = None,
         starting_after: typing.Optional[str] = None,
         ending_before: typing.Optional[str] = None,
-        status: typing.Optional[ListPracticeLocationsRequestStatus] = None,
+        status: typing.Optional[ListLocationsRequestStatus] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ListPracticeLocationsResponse:
         """
@@ -54,7 +54,7 @@ class LocationsClient:
 
         ending_before : typing.Optional[str]
 
-        status : typing.Optional[ListPracticeLocationsRequestStatus]
+        status : typing.Optional[ListLocationsRequestStatus]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -72,13 +72,13 @@ class LocationsClient:
             affinity_version="YOUR_AFFINITY_VERSION",
             api_key="YOUR_API_KEY",
         )
-        client.locations.list_practice_locations(
+        client.locations.list(
             practice_id="prac_01j2y8m6jcc9tt24af5pw9x1bc",
             starting_after="loc_01j2y8m6jcc9tt24af5pw9x1bc",
             ending_before="loc_01j2y8m6jcc9tt24af5pw9x1bc",
         )
         """
-        _response = self._raw_client.list_practice_locations(
+        _response = self._raw_client.list(
             practice_id,
             limit=limit,
             starting_after=starting_after,
@@ -88,12 +88,12 @@ class LocationsClient:
         )
         return _response.data
 
-    def create_practice_location(
+    def create(
         self,
         practice_id: str,
         *,
-        idempotency_key: str,
         name: str,
+        idempotency_key: typing.Optional[str] = None,
         city: typing.Optional[str] = OMIT,
         country: typing.Optional[str] = OMIT,
         line1: typing.Optional[str] = OMIT,
@@ -111,9 +111,10 @@ class LocationsClient:
         ----------
         practice_id : str
 
-        idempotency_key : str
-
         name : str
+
+        idempotency_key : typing.Optional[str]
+            Optional in the SDK. A fresh key is generated once per call when omitted. Supply a stable key to retry across calls.
 
         city : typing.Optional[str]
 
@@ -148,16 +149,15 @@ class LocationsClient:
             affinity_version="YOUR_AFFINITY_VERSION",
             api_key="YOUR_API_KEY",
         )
-        client.locations.create_practice_location(
+        client.locations.create(
             practice_id="prac_01j2y8m6jcc9tt24af5pw9x1bc",
-            idempotency_key="Idempotency-Key",
             name="name",
         )
         """
-        _response = self._raw_client.create_practice_location(
+        _response = self._raw_client.create(
             practice_id,
-            idempotency_key=idempotency_key,
             name=name,
+            idempotency_key=idempotency_key,
             city=city,
             country=country,
             line1=line1,
@@ -170,7 +170,7 @@ class LocationsClient:
         )
         return _response.data
 
-    def get_practice_location(
+    def get(
         self, practice_id: str, location_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> GetPracticeLocationResponse:
         """
@@ -198,20 +198,20 @@ class LocationsClient:
             affinity_version="YOUR_AFFINITY_VERSION",
             api_key="YOUR_API_KEY",
         )
-        client.locations.get_practice_location(
+        client.locations.get(
             practice_id="prac_01j2y8m6jcc9tt24af5pw9x1bc",
             location_id="loc_01j2y8m6jcc9tt24af5pw9x1bc",
         )
         """
-        _response = self._raw_client.get_practice_location(practice_id, location_id, request_options=request_options)
+        _response = self._raw_client.get(practice_id, location_id, request_options=request_options)
         return _response.data
 
-    def update_practice_location(
+    def update(
         self,
         practice_id: str,
         location_id: str,
         *,
-        idempotency_key: str,
+        idempotency_key: typing.Optional[str] = None,
         city: typing.Optional[str] = OMIT,
         country: typing.Optional[str] = OMIT,
         line1: typing.Optional[str] = OMIT,
@@ -232,7 +232,8 @@ class LocationsClient:
 
         location_id : str
 
-        idempotency_key : str
+        idempotency_key : typing.Optional[str]
+            Optional in the SDK. A fresh key is generated once per call when omitted. Supply a stable key to retry across calls.
 
         city : typing.Optional[str]
 
@@ -269,13 +270,12 @@ class LocationsClient:
             affinity_version="YOUR_AFFINITY_VERSION",
             api_key="YOUR_API_KEY",
         )
-        client.locations.update_practice_location(
+        client.locations.update(
             practice_id="prac_01j2y8m6jcc9tt24af5pw9x1bc",
             location_id="loc_01j2y8m6jcc9tt24af5pw9x1bc",
-            idempotency_key="Idempotency-Key",
         )
         """
-        _response = self._raw_client.update_practice_location(
+        _response = self._raw_client.update(
             practice_id,
             location_id,
             idempotency_key=idempotency_key,
@@ -292,12 +292,12 @@ class LocationsClient:
         )
         return _response.data
 
-    def archive_practice_location(
+    def archive(
         self,
         practice_id: str,
         location_id: str,
         *,
-        idempotency_key: str,
+        idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ArchivePracticeLocationResponse:
         """
@@ -309,7 +309,8 @@ class LocationsClient:
 
         location_id : str
 
-        idempotency_key : str
+        idempotency_key : typing.Optional[str]
+            Optional in the SDK. A fresh key is generated once per call when omitted. Supply a stable key to retry across calls.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -327,13 +328,12 @@ class LocationsClient:
             affinity_version="YOUR_AFFINITY_VERSION",
             api_key="YOUR_API_KEY",
         )
-        client.locations.archive_practice_location(
+        client.locations.archive(
             practice_id="prac_01j2y8m6jcc9tt24af5pw9x1bc",
             location_id="loc_01j2y8m6jcc9tt24af5pw9x1bc",
-            idempotency_key="Idempotency-Key",
         )
         """
-        _response = self._raw_client.archive_practice_location(
+        _response = self._raw_client.archive(
             practice_id, location_id, idempotency_key=idempotency_key, request_options=request_options
         )
         return _response.data
@@ -354,14 +354,14 @@ class AsyncLocationsClient:
         """
         return self._raw_client
 
-    async def list_practice_locations(
+    async def list(
         self,
         practice_id: str,
         *,
         limit: typing.Optional[int] = None,
         starting_after: typing.Optional[str] = None,
         ending_before: typing.Optional[str] = None,
-        status: typing.Optional[ListPracticeLocationsRequestStatus] = None,
+        status: typing.Optional[ListLocationsRequestStatus] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ListPracticeLocationsResponse:
         """
@@ -377,7 +377,7 @@ class AsyncLocationsClient:
 
         ending_before : typing.Optional[str]
 
-        status : typing.Optional[ListPracticeLocationsRequestStatus]
+        status : typing.Optional[ListLocationsRequestStatus]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -400,7 +400,7 @@ class AsyncLocationsClient:
 
 
         async def main() -> None:
-            await client.locations.list_practice_locations(
+            await client.locations.list(
                 practice_id="prac_01j2y8m6jcc9tt24af5pw9x1bc",
                 starting_after="loc_01j2y8m6jcc9tt24af5pw9x1bc",
                 ending_before="loc_01j2y8m6jcc9tt24af5pw9x1bc",
@@ -409,7 +409,7 @@ class AsyncLocationsClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.list_practice_locations(
+        _response = await self._raw_client.list(
             practice_id,
             limit=limit,
             starting_after=starting_after,
@@ -419,12 +419,12 @@ class AsyncLocationsClient:
         )
         return _response.data
 
-    async def create_practice_location(
+    async def create(
         self,
         practice_id: str,
         *,
-        idempotency_key: str,
         name: str,
+        idempotency_key: typing.Optional[str] = None,
         city: typing.Optional[str] = OMIT,
         country: typing.Optional[str] = OMIT,
         line1: typing.Optional[str] = OMIT,
@@ -442,9 +442,10 @@ class AsyncLocationsClient:
         ----------
         practice_id : str
 
-        idempotency_key : str
-
         name : str
+
+        idempotency_key : typing.Optional[str]
+            Optional in the SDK. A fresh key is generated once per call when omitted. Supply a stable key to retry across calls.
 
         city : typing.Optional[str]
 
@@ -484,19 +485,18 @@ class AsyncLocationsClient:
 
 
         async def main() -> None:
-            await client.locations.create_practice_location(
+            await client.locations.create(
                 practice_id="prac_01j2y8m6jcc9tt24af5pw9x1bc",
-                idempotency_key="Idempotency-Key",
                 name="name",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.create_practice_location(
+        _response = await self._raw_client.create(
             practice_id,
-            idempotency_key=idempotency_key,
             name=name,
+            idempotency_key=idempotency_key,
             city=city,
             country=country,
             line1=line1,
@@ -509,7 +509,7 @@ class AsyncLocationsClient:
         )
         return _response.data
 
-    async def get_practice_location(
+    async def get(
         self, practice_id: str, location_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> GetPracticeLocationResponse:
         """
@@ -542,7 +542,7 @@ class AsyncLocationsClient:
 
 
         async def main() -> None:
-            await client.locations.get_practice_location(
+            await client.locations.get(
                 practice_id="prac_01j2y8m6jcc9tt24af5pw9x1bc",
                 location_id="loc_01j2y8m6jcc9tt24af5pw9x1bc",
             )
@@ -550,17 +550,15 @@ class AsyncLocationsClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.get_practice_location(
-            practice_id, location_id, request_options=request_options
-        )
+        _response = await self._raw_client.get(practice_id, location_id, request_options=request_options)
         return _response.data
 
-    async def update_practice_location(
+    async def update(
         self,
         practice_id: str,
         location_id: str,
         *,
-        idempotency_key: str,
+        idempotency_key: typing.Optional[str] = None,
         city: typing.Optional[str] = OMIT,
         country: typing.Optional[str] = OMIT,
         line1: typing.Optional[str] = OMIT,
@@ -581,7 +579,8 @@ class AsyncLocationsClient:
 
         location_id : str
 
-        idempotency_key : str
+        idempotency_key : typing.Optional[str]
+            Optional in the SDK. A fresh key is generated once per call when omitted. Supply a stable key to retry across calls.
 
         city : typing.Optional[str]
 
@@ -623,16 +622,15 @@ class AsyncLocationsClient:
 
 
         async def main() -> None:
-            await client.locations.update_practice_location(
+            await client.locations.update(
                 practice_id="prac_01j2y8m6jcc9tt24af5pw9x1bc",
                 location_id="loc_01j2y8m6jcc9tt24af5pw9x1bc",
-                idempotency_key="Idempotency-Key",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.update_practice_location(
+        _response = await self._raw_client.update(
             practice_id,
             location_id,
             idempotency_key=idempotency_key,
@@ -649,12 +647,12 @@ class AsyncLocationsClient:
         )
         return _response.data
 
-    async def archive_practice_location(
+    async def archive(
         self,
         practice_id: str,
         location_id: str,
         *,
-        idempotency_key: str,
+        idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ArchivePracticeLocationResponse:
         """
@@ -666,7 +664,8 @@ class AsyncLocationsClient:
 
         location_id : str
 
-        idempotency_key : str
+        idempotency_key : typing.Optional[str]
+            Optional in the SDK. A fresh key is generated once per call when omitted. Supply a stable key to retry across calls.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -689,16 +688,15 @@ class AsyncLocationsClient:
 
 
         async def main() -> None:
-            await client.locations.archive_practice_location(
+            await client.locations.archive(
                 practice_id="prac_01j2y8m6jcc9tt24af5pw9x1bc",
                 location_id="loc_01j2y8m6jcc9tt24af5pw9x1bc",
-                idempotency_key="Idempotency-Key",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.archive_practice_location(
+        _response = await self._raw_client.archive(
             practice_id, location_id, idempotency_key=idempotency_key, request_options=request_options
         )
         return _response.data

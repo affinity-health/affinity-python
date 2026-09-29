@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "affinity-health-sdk"
-version = "0.1.0"
+version = "0.2.0"
 description = "Python client for the Affinity API"
 requires-python = ">=3.10"
 dependencies = ["httpx>=0.21.2,<1", "pydantic>=1.9.2,<3", "typing-extensions>=4.0.0,<5"]

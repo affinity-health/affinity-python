@@ -43,7 +43,7 @@ class RawPracticesClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list_practices(
+    def list(
         self,
         *,
         search: typing.Optional[str] = None,
@@ -181,7 +181,7 @@ class RawPracticesClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def create_practice(
+    def create(
         self,
         *,
         address: CreatePracticeRequestAddress,
@@ -380,7 +380,7 @@ class RawPracticesClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def get_practice(
+    def get(
         self, practice_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[GetPracticeResponse]:
         """
@@ -499,7 +499,7 @@ class RawPracticesClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def update_practice(
+    def update(
         self,
         practice_id: str,
         *,
@@ -527,6 +527,7 @@ class RawPracticesClient:
         practice_id : str
 
         idempotency_key : typing.Optional[str]
+            Optional in the SDK. A fresh key is generated once per call when omitted. Supply a stable key to retry across calls.
 
         live_enabled : typing.Optional[bool]
             Enable or disable Live access for an owned practice. Requires an approved platform and a Live request. Affinity Admin decisions take precedence.
@@ -602,7 +603,8 @@ class RawPracticesClient:
             },
             headers={
                 "content-type": "application/json",
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
+                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else str(__import__("uuid").uuid4())  # affinity-sdk-auto-key
+,
             },
             request_options=request_options,
             omit=OMIT,
@@ -708,7 +710,7 @@ class AsyncRawPracticesClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list_practices(
+    async def list(
         self,
         *,
         search: typing.Optional[str] = None,
@@ -846,7 +848,7 @@ class AsyncRawPracticesClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def create_practice(
+    async def create(
         self,
         *,
         address: CreatePracticeRequestAddress,
@@ -1045,7 +1047,7 @@ class AsyncRawPracticesClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def get_practice(
+    async def get(
         self, practice_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[GetPracticeResponse]:
         """
@@ -1164,7 +1166,7 @@ class AsyncRawPracticesClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def update_practice(
+    async def update(
         self,
         practice_id: str,
         *,
@@ -1192,6 +1194,7 @@ class AsyncRawPracticesClient:
         practice_id : str
 
         idempotency_key : typing.Optional[str]
+            Optional in the SDK. A fresh key is generated once per call when omitted. Supply a stable key to retry across calls.
 
         live_enabled : typing.Optional[bool]
             Enable or disable Live access for an owned practice. Requires an approved platform and a Live request. Affinity Admin decisions take precedence.
@@ -1267,7 +1270,8 @@ class AsyncRawPracticesClient:
             },
             headers={
                 "content-type": "application/json",
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
+                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else str(__import__("uuid").uuid4())  # affinity-sdk-auto-key
+,
             },
             request_options=request_options,
             omit=OMIT,

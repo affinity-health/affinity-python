@@ -30,7 +30,7 @@ class RawApiKeysClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def create_platform_practice_api_key(
+    def create(
         self,
         practice_id: str,
         *,
@@ -167,7 +167,7 @@ class RawApiKeysClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def get_api_access(
+    def get_access(
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[GetApiAccessResponse]:
         """
@@ -256,7 +256,7 @@ class AsyncRawApiKeysClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def create_platform_practice_api_key(
+    async def create(
         self,
         practice_id: str,
         *,
@@ -393,7 +393,7 @@ class AsyncRawApiKeysClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def get_api_access(
+    async def get_access(
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[GetApiAccessResponse]:
         """
