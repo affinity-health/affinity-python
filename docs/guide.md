@@ -5,7 +5,7 @@
   current release. Package versions and migration steps will follow approval.
 
 
-Synchronous and asynchronous Python applications. These examples use the synchronous client. [Source repository](https://github.com/affinity-health/affinity-python) · [All SDKs](https://docs.joinaffinityai.com/guides/reference/sdks/) · [Shared conventions](https://docs.joinaffinityai.com/guides/reference/sdks/methods/)
+Synchronous and asynchronous Python applications. These examples use the synchronous client, with Stripe-style `params` and `options` dictionaries. [Source repository](https://github.com/affinity-health/affinity-python) · [All SDKs](https://docs.joinaffinityai.com/guides/reference/sdks/) · [Shared conventions](https://docs.joinaffinityai.com/guides/reference/sdks/methods/)
 
 ## Connect
 
@@ -15,7 +15,7 @@ Set `AFFINITY_API_KEY` to a Test API key on your server. The key selects Test or
 import os
 from affinity import Affinity, AffinityError
 
-api = Affinity(api_key=os.environ["AFFINITY_API_KEY"])
+api = Affinity(os.environ['AFFINITY_API_KEY'])
 ```
 
 ## With a practice key
@@ -25,35 +25,27 @@ The resource IDs below come from records in that practice.
 Each section is a separate usage example, not one script to concatenate.
 
 ```python
-patients = api.patients.list(limit=20)
+patients = api.patients.list(params={'limit': 20})
 patient = api.patients.get(patient_id)
-items = api.catalog.items.list(limit=20)
-```
-
-For a recoverable update, pass your persisted key without a practice ID. `job` is your application's saved workflow record.
-
-```python
-api.patients.update(
-    patient_id,
-    email="alex@example.com",
-    idempotency_key=job.update_patient_key,
-)
+items = api.catalog.items.list(params={'limit': 20})
 ```
 
 ## With a platform key
 
 Pass the target practice with each practice-scoped request. Keep record data separate from request context and idempotency options.
-The update key below comes from your persisted workflow job.
 
 ```python
-patients = api.patients.list(limit=20, practice_id=practice_id)
-patient = api.patients.get(patient_id, practice_id=practice_id)
+patients = api.patients.list(params={'limit': 20}, options={'practice_id': practice_id})
+patient = api.patients.get(patient_id, options={'practice_id': practice_id})
 
 api.patients.update(
     patient_id,
-    email="alex@example.com",
-    practice_id=practice_id,
-    idempotency_key=job.update_patient_key,
+    params={
+        'email': 'alex@example.com',
+    },
+    options={
+        'practice_id': practice_id,
+    },
 )
 ```
 
@@ -64,8 +56,9 @@ A conflicting practice ID produces an error. Scoping never grants access to anot
 
 ```python
 practice = api.for_practice(practice_id)
-patients = practice.patients.list(limit=20)
-items = practice.catalog.items.list(limit=20)
+
+patients = practice.patients.list(params={'limit': 20})
+items = practice.catalog.items.list(params={'limit': 20})
 ```
 
 The following examples use this scoped client. A practice-key client supports the same calls without the scoping step.
@@ -77,32 +70,41 @@ Supply your own persisted key when retrying across calls or process restarts.
 
 ```python
 patient = practice.patients.create(
-    name={"first": "Alex", "last": "Example"},
-    date_of_birth="1990-01-01",
+    params={
+        'name': {'first': 'Alex', 'last': 'Example'},
+        'date_of_birth': '1990-01-01',
+    },
 )
+
 saved = practice.patients.get(patient.id)
-practice.patients.update(patient.id, email="alex@example.com")
-practice.patients.update(patient.id, status="archived")
+practice.patients.update(patient.id, params={'email': 'alex@example.com'})
+practice.patients.update(patient.id, params={'status': 'archived'})
 ```
 
-Archive patients whose records you need to retain. Permanent deletion is available only for patients without order history and requires an explicit key.
+Archive patients whose records you need to retain. Permanent deletion is available only for patients without order history. No explicit idempotency key is needed.
 
 ```python
-practice.patients.delete(patient_id, idempotency_key=job.delete_patient_key)
+practice.patients.delete(patient_id)
 ```
 
 ## Create an order draft
 
 `draft` is your application's prepared prescription data, using catalog and prescribing options from this practice.
 An order contains 1–20 complete prescriptions for one patient. This example creates an unsigned draft.
+It shows a platform call without a scoped client: practice context and the persisted key belong together in request options.
 
 `job` is your persisted workflow record. Generate and save a unique key for each action before making its first request.
 
 ```python
-order = practice.orders.create(
-    patient_id=patient_id,
-    prescriptions=draft.prescriptions,
-    idempotency_key=job.create_order_key,
+order = api.orders.create(
+    params={
+        'patient_id': patient_id,
+        'prescriptions': draft.prescriptions,
+    },
+    options={
+        'practice_id': practice_id,
+        'idempotency_key': job.create_order_key,
+    },
 )
 ```
 
@@ -115,14 +117,21 @@ Your API key needs `orders:sign`. Never infer consent or automatically replace a
 ```python
 practice.orders.sign(
     order_id,
-    prescriber={"id": review.prescriber_id},
-    expected_revision=review.order_revision,
-    signature_attestation=review.signature_attestation,
-    idempotency_key=job.sign_order_key,
+    params={
+        'prescriber': {'id': review.prescriber_id},
+        'expected_revision': review.order_revision,
+        'signature_attestation': review.signature_attestation,
+    },
+    options={
+        'idempotency_key': job.sign_order_key,
+    },
 )
+
 submission = practice.orders.submit(
     order_id,
-    idempotency_key=job.submit_order_key,
+    options={
+        'idempotency_key': job.submit_order_key,
+    },
 )
 ```
 
@@ -139,11 +148,17 @@ The iterator fetches pages as you consume records; it does not load the full col
 `syncPatient` or its language equivalent represents your application's record handler.
 
 ```python
-page = practice.patients.list(limit=20)
-if page.has_more and page.data:
-    next_page = practice.patients.list(limit=20, starting_after=page.data[-1].id)
+page = practice.patients.list(params={'limit': 20})
 
-for patient in practice.patients.iterate(limit=100):
+if page.has_more and page.data:
+    next_page = practice.patients.list(
+        params={
+            'limit': 20,
+            'starting_after': page.data[-1].id,
+        },
+    )
+
+for patient in practice.patients.iterate(params={'limit': 100}):
     sync_patient(patient)
 ```
 
@@ -156,8 +171,7 @@ Log those fields without logging patient data or credentials. Transport failures
 try:
     practice.patients.get(patient_id)
 except AffinityError as error:
-    print(error.status, error.code, error.request_id,
-          error.retryable, error.retry_after)
+    print(error.status, error.code, error.request_id, error.retryable, error.retry_after)
 ```
 
 Retryability is a transport hint, not permission to repeat a clinical action with a new key.
@@ -170,9 +184,9 @@ Use the root platform client to list its practices and webhook endpoints. These 
 The webhook list belongs to the platform itself. Access to another organization's endpoints still requires an explicit grant.
 
 ```python
-practices = api.practices.list(limit=20)
+practices = api.practices.list(params={'limit': 20})
 selected = api.practices.get(practice_id)
-endpoints = api.webhooks.endpoints.list(limit=20)
+endpoints = api.webhooks.endpoints.list(params={'limit': 20})
 ```
 
 ## More resources
