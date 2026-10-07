@@ -2,4 +2,4 @@
 
 import typing
 
-AddOrderPrescriptionRequestPrescriptionQuantityOne = typing.Union[typing.Literal["Infinity", "NaN"], typing.Any]
+AddOrderPrescriptionRequestPrescriptionQuantityOne = typing.Union[typing.Literal["NaN", "Infinity"], typing.Any]

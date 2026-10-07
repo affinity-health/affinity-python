@@ -2,4 +2,4 @@
 
 import typing
 
-GetWebhookEventResponseAttemptsItemDurationMsOne = typing.Union[typing.Literal["Infinity", "NaN"], typing.Any]
+GetWebhookEventResponseAttemptsItemDurationMsOne = typing.Union[typing.Literal["NaN", "Infinity"], typing.Any]

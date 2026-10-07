@@ -2,4 +2,4 @@
 
 import typing
 
-GetPracticeTeamResponseMembersDisabledOne = typing.Union[typing.Literal["Infinity", "NaN"], typing.Any]
+GetPracticeTeamResponseMembersDisabledOne = typing.Union[typing.Literal["NaN", "Infinity"], typing.Any]

@@ -9,7 +9,7 @@ from ..core.serialization import FieldMetadata
 from .cancel_order_response_cancellation import CancelOrderResponseCancellation
 from .cancel_order_response_fulfillments_item import CancelOrderResponseFulfillmentsItem
 from .cancel_order_response_lifecycle_events_item import CancelOrderResponseLifecycleEventsItem
-from .cancel_order_response_metadata import CancelOrderResponseMetadata
+from .cancel_order_response_metadata_value import CancelOrderResponseMetadataValue
 from .cancel_order_response_object import CancelOrderResponseObject
 from .cancel_order_response_otc_items_item import CancelOrderResponseOtcItemsItem
 from .cancel_order_response_prescriptions_item import CancelOrderResponsePrescriptionsItem
@@ -41,7 +41,7 @@ class CancelOrderResponse(UniversalBaseModel):
     external_order_id: typing_extensions.Annotated[
         typing.Optional[str], FieldMetadata(alias="externalOrderId"), pydantic.Field(alias="externalOrderId")
     ] = None
-    metadata: CancelOrderResponseMetadata
+    metadata: typing.Dict[str, typing.Optional[CancelOrderResponseMetadataValue]]
     created_at: typing_extensions.Annotated[str, FieldMetadata(alias="createdAt"), pydantic.Field(alias="createdAt")]
     fulfillments: typing.List[CancelOrderResponseFulfillmentsItem]
     id: str

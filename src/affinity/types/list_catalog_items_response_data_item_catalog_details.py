@@ -3,16 +3,33 @@
 import typing
 
 import pydantic
+import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
+from ..core.serialization import FieldMetadata
 from .list_catalog_items_response_data_item_catalog_details_attributes_value import (
     ListCatalogItemsResponseDataItemCatalogDetailsAttributesValue,
 )
 from .list_catalog_items_response_data_item_catalog_details_directions_item import (
     ListCatalogItemsResponseDataItemCatalogDetailsDirectionsItem,
 )
+from .list_catalog_items_response_data_item_catalog_details_package_components_item import (
+    ListCatalogItemsResponseDataItemCatalogDetailsPackageComponentsItem,
+)
 
 
 class ListCatalogItemsResponseDataItemCatalogDetails(UniversalBaseModel):
+    package_components: typing_extensions.Annotated[
+        typing.Optional[typing.List[ListCatalogItemsResponseDataItemCatalogDetailsPackageComponentsItem]],
+        FieldMetadata(alias="packageComponents"),
+        pydantic.Field(
+            alias="packageComponents",
+            description="Confirmed physical containers and contents. Empty or absent means container count cannot be inferred from dispense quantity.",
+        ),
+    ] = None
+    """
+    Confirmed physical containers and contents. Empty or absent means container count cannot be inferred from dispense quantity.
+    """
+
     attributes: typing.Dict[str, ListCatalogItemsResponseDataItemCatalogDetailsAttributesValue]
     directions: typing.List[ListCatalogItemsResponseDataItemCatalogDetailsDirectionsItem]
 

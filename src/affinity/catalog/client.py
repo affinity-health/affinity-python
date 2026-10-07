@@ -10,6 +10,7 @@ from .raw_client import AsyncRawCatalogClient, RawCatalogClient
 if typing.TYPE_CHECKING:
     from .items.client import AsyncItemsClient, ItemsClient
     from .prescribing_options.client import AsyncPrescribingOptionsClient, PrescribingOptionsClient
+    from .presentation_prices.client import AsyncPresentationPricesClient, PresentationPricesClient
     from .selling_prices.client import AsyncSellingPricesClient, SellingPricesClient
     from .shipping_options.client import AsyncShippingOptionsClient, ShippingOptionsClient
 
@@ -22,6 +23,7 @@ class CatalogClient:
         self._shipping_options: typing.Optional[ShippingOptionsClient] = None
         self._prescribing_options: typing.Optional[PrescribingOptionsClient] = None
         self._selling_prices: typing.Optional[SellingPricesClient] = None
+        self._presentation_prices: typing.Optional[PresentationPricesClient] = None
 
     @property
     def with_raw_response(self) -> RawCatalogClient:
@@ -66,6 +68,14 @@ class CatalogClient:
             self._selling_prices = SellingPricesClient(client_wrapper=self._client_wrapper)
         return self._selling_prices
 
+    @property
+    def presentation_prices(self):
+        if self._presentation_prices is None:
+            from .presentation_prices.client import PresentationPricesClient  # noqa: E402
+
+            self._presentation_prices = PresentationPricesClient(client_wrapper=self._client_wrapper)
+        return self._presentation_prices
+
 
 class AsyncCatalogClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
@@ -75,6 +85,7 @@ class AsyncCatalogClient:
         self._shipping_options: typing.Optional[AsyncShippingOptionsClient] = None
         self._prescribing_options: typing.Optional[AsyncPrescribingOptionsClient] = None
         self._selling_prices: typing.Optional[AsyncSellingPricesClient] = None
+        self._presentation_prices: typing.Optional[AsyncPresentationPricesClient] = None
 
     @property
     def with_raw_response(self) -> AsyncRawCatalogClient:
@@ -118,3 +129,11 @@ class AsyncCatalogClient:
 
             self._selling_prices = AsyncSellingPricesClient(client_wrapper=self._client_wrapper)
         return self._selling_prices
+
+    @property
+    def presentation_prices(self):
+        if self._presentation_prices is None:
+            from .presentation_prices.client import AsyncPresentationPricesClient  # noqa: E402
+
+            self._presentation_prices = AsyncPresentationPricesClient(client_wrapper=self._client_wrapper)
+        return self._presentation_prices

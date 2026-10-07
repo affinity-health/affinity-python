@@ -7,13 +7,7 @@ from ...core.request_options import RequestOptions
 from ...types.platform_public_api_selling_prices_read_selling_price_response import (
     PlatformPublicApiSellingPricesReadSellingPriceResponse,
 )
-from ...types.platform_public_api_selling_prices_update_selling_price_response import (
-    PlatformPublicApiSellingPricesUpdateSellingPriceResponse,
-)
 from .raw_client import AsyncRawSellingPricesClient, RawSellingPricesClient
-
-# this is used as the default value for optional parameters
-OMIT = typing.cast(typing.Any, ...)
 
 
 class SellingPricesClient:
@@ -39,7 +33,7 @@ class SellingPricesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> PlatformPublicApiSellingPricesReadSellingPriceResponse:
         """
-        Requires selling_prices:read. Omit practiceId for the platform default, or supply a managed practice. A null amount inherits the next applicable price. Amounts use the catalog pricing basis, in USD cents. purchaseAmountCents is the platform's Affinity purchase price for that same basis. requiresReview indicates changed product pricing terms, not a below-purchase-price discount.
+        Requires selling_prices:read. Reads the Affinity-managed purchase-price override inherited by this platform's practices unless Affinity sets a practice override. Use the practice-scoped catalog for effective practice prices and presentation-price when an Affinity default may be absent. Platforms cannot edit purchase prices.
 
         Parameters
         ----------
@@ -71,63 +65,6 @@ class SellingPricesClient:
         _response = self._raw_client.get(catalog_item_id, practice_id=practice_id, request_options=request_options)
         return _response.data
 
-    def update(
-        self,
-        catalog_item_id: str,
-        *,
-        idempotency_key: str,
-        base_version: int,
-        practice_id: typing.Optional[str] = OMIT,
-        amount_cents: typing.Optional[int] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> PlatformPublicApiSellingPricesUpdateSellingPriceResponse:
-        """
-        Requires selling_prices:write. Sets a platform default or managed practice override in the current Test/Live mode. Send baseVersion from Read selling price. Null removes the override. Prices use the catalog pricing basis. Intentional discounts below purchaseAmountCents are allowed; compare these amounts to warn about selling below your Affinity purchase price. This does not change the platform's Affinity purchase price or collect practice payments.
-
-        Parameters
-        ----------
-        catalog_item_id : str
-
-        idempotency_key : str
-
-        base_version : int
-
-        practice_id : typing.Optional[str]
-
-        amount_cents : typing.Optional[int]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        PlatformPublicApiSellingPricesUpdateSellingPriceResponse
-            HTTP 200
-
-        Examples
-        --------
-        from affinity import Affinity
-
-        client = Affinity(
-            affinity_version="YOUR_AFFINITY_VERSION",
-            api_key="YOUR_API_KEY",
-        )
-        client.catalog.selling_prices.update(
-            catalog_item_id="cat_01j2y8m6jcc9tt24af5pw9x1bc",
-            idempotency_key="Idempotency-Key",
-            base_version=1,
-        )
-        """
-        _response = self._raw_client.update(
-            catalog_item_id,
-            idempotency_key=idempotency_key,
-            base_version=base_version,
-            practice_id=practice_id,
-            amount_cents=amount_cents,
-            request_options=request_options,
-        )
-        return _response.data
-
 
 class AsyncSellingPricesClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
@@ -152,7 +89,7 @@ class AsyncSellingPricesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> PlatformPublicApiSellingPricesReadSellingPriceResponse:
         """
-        Requires selling_prices:read. Omit practiceId for the platform default, or supply a managed practice. A null amount inherits the next applicable price. Amounts use the catalog pricing basis, in USD cents. purchaseAmountCents is the platform's Affinity purchase price for that same basis. requiresReview indicates changed product pricing terms, not a below-purchase-price discount.
+        Requires selling_prices:read. Reads the Affinity-managed purchase-price override inherited by this platform's practices unless Affinity sets a practice override. Use the practice-scoped catalog for effective practice prices and presentation-price when an Affinity default may be absent. Platforms cannot edit purchase prices.
 
         Parameters
         ----------
@@ -191,70 +128,5 @@ class AsyncSellingPricesClient:
         """
         _response = await self._raw_client.get(
             catalog_item_id, practice_id=practice_id, request_options=request_options
-        )
-        return _response.data
-
-    async def update(
-        self,
-        catalog_item_id: str,
-        *,
-        idempotency_key: str,
-        base_version: int,
-        practice_id: typing.Optional[str] = OMIT,
-        amount_cents: typing.Optional[int] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> PlatformPublicApiSellingPricesUpdateSellingPriceResponse:
-        """
-        Requires selling_prices:write. Sets a platform default or managed practice override in the current Test/Live mode. Send baseVersion from Read selling price. Null removes the override. Prices use the catalog pricing basis. Intentional discounts below purchaseAmountCents are allowed; compare these amounts to warn about selling below your Affinity purchase price. This does not change the platform's Affinity purchase price or collect practice payments.
-
-        Parameters
-        ----------
-        catalog_item_id : str
-
-        idempotency_key : str
-
-        base_version : int
-
-        practice_id : typing.Optional[str]
-
-        amount_cents : typing.Optional[int]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        PlatformPublicApiSellingPricesUpdateSellingPriceResponse
-            HTTP 200
-
-        Examples
-        --------
-        import asyncio
-
-        from affinity import AsyncAffinity
-
-        client = AsyncAffinity(
-            affinity_version="YOUR_AFFINITY_VERSION",
-            api_key="YOUR_API_KEY",
-        )
-
-
-        async def main() -> None:
-            await client.catalog.selling_prices.update(
-                catalog_item_id="cat_01j2y8m6jcc9tt24af5pw9x1bc",
-                idempotency_key="Idempotency-Key",
-                base_version=1,
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.update(
-            catalog_item_id,
-            idempotency_key=idempotency_key,
-            base_version=base_version,
-            practice_id=practice_id,
-            amount_cents=amount_cents,
-            request_options=request_options,
         )
         return _response.data

@@ -2,4 +2,4 @@
 
 import typing
 
-ListPharmaciesResponseDataItemProfileRatingOne = typing.Union[typing.Literal["Infinity", "NaN"], typing.Any]
+ListPharmaciesResponseDataItemProfileRatingOne = typing.Union[typing.Literal["NaN", "Infinity"], typing.Any]

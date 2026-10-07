@@ -7,8 +7,12 @@ import typing
 import pydantic
 import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
+from ..core.serialization import FieldMetadata
 from .platform_public_api_selling_prices_read_selling_price_response_basis_item_quantity import (
     PlatformPublicApiSellingPricesReadSellingPriceResponseBasisItemQuantity,
+)
+from .platform_public_api_selling_prices_read_selling_price_response_basis_item_quantity_prices_item import (
+    PlatformPublicApiSellingPricesReadSellingPriceResponseBasisItemQuantityPricesItem,
 )
 from .platform_public_api_selling_prices_read_selling_price_response_basis_unit_quantity import (
     PlatformPublicApiSellingPricesReadSellingPriceResponseBasisUnitQuantity,
@@ -19,6 +23,11 @@ class PlatformPublicApiSellingPricesReadSellingPriceResponseBasis_Item(Universal
     kind: typing.Literal["item"] = "item"
     quantity: PlatformPublicApiSellingPricesReadSellingPriceResponseBasisItemQuantity
     unit: str
+    quantity_prices: typing_extensions.Annotated[
+        typing.Optional[typing.List[PlatformPublicApiSellingPricesReadSellingPriceResponseBasisItemQuantityPricesItem]],
+        FieldMetadata(alias="quantityPrices"),
+        pydantic.Field(alias="quantityPrices"),
+    ] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

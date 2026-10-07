@@ -2,4 +2,4 @@
 
 import typing
 
-ReplayWebhookEventResponseAttemptsItemResponseStatusOne = typing.Union[typing.Literal["Infinity", "NaN"], typing.Any]
+ReplayWebhookEventResponseAttemptsItemResponseStatusOne = typing.Union[typing.Literal["NaN", "Infinity"], typing.Any]

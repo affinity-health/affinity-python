@@ -6,7 +6,7 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
-    from . import items, prescribing_options, selling_prices, shipping_options
+    from . import items, prescribing_options, presentation_prices, selling_prices, shipping_options
     from .items import (
         ListItemsRequestAvailability,
         ListItemsRequestCatalogKind,
@@ -38,6 +38,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ListShippingOptionsRequestDestinationType": ".shipping_options",
     "items": ".items",
     "prescribing_options": ".prescribing_options",
+    "presentation_prices": ".presentation_prices",
     "selling_prices": ".selling_prices",
     "shipping_options": ".shipping_options",
 }
@@ -80,6 +81,7 @@ __all__ = [
     "ListShippingOptionsRequestDestinationType",
     "items",
     "prescribing_options",
+    "presentation_prices",
     "selling_prices",
     "shipping_options",
 ]

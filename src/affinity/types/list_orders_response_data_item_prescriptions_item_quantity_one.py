@@ -2,4 +2,4 @@
 
 import typing
 
-ListOrdersResponseDataItemPrescriptionsItemQuantityOne = typing.Union[typing.Literal["Infinity", "NaN"], typing.Any]
+ListOrdersResponseDataItemPrescriptionsItemQuantityOne = typing.Union[typing.Literal["NaN", "Infinity"], typing.Any]

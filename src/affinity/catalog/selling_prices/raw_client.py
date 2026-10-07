@@ -19,14 +19,8 @@ from ...errors.unauthorized_error import UnauthorizedError
 from ...types.platform_public_api_selling_prices_read_selling_price_response import (
     PlatformPublicApiSellingPricesReadSellingPriceResponse,
 )
-from ...types.platform_public_api_selling_prices_update_selling_price_response import (
-    PlatformPublicApiSellingPricesUpdateSellingPriceResponse,
-)
 from ...types.problem import Problem
 from pydantic import ValidationError
-
-# this is used as the default value for optional parameters
-OMIT = typing.cast(typing.Any, ...)
 
 
 class RawSellingPricesClient:
@@ -41,7 +35,7 @@ class RawSellingPricesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[PlatformPublicApiSellingPricesReadSellingPriceResponse]:
         """
-        Requires selling_prices:read. Omit practiceId for the platform default, or supply a managed practice. A null amount inherits the next applicable price. Amounts use the catalog pricing basis, in USD cents. purchaseAmountCents is the platform's Affinity purchase price for that same basis. requiresReview indicates changed product pricing terms, not a below-purchase-price discount.
+        Requires selling_prices:read. Reads the Affinity-managed purchase-price override inherited by this platform's practices unless Affinity sets a practice override. Use the practice-scoped catalog for effective practice prices and presentation-price when an Affinity default may be absent. Platforms cannot edit purchase prices.
 
         Parameters
         ----------
@@ -150,139 +144,6 @@ class RawSellingPricesClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def update(
-        self,
-        catalog_item_id: str,
-        *,
-        idempotency_key: str,
-        base_version: int,
-        practice_id: typing.Optional[str] = OMIT,
-        amount_cents: typing.Optional[int] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[PlatformPublicApiSellingPricesUpdateSellingPriceResponse]:
-        """
-        Requires selling_prices:write. Sets a platform default or managed practice override in the current Test/Live mode. Send baseVersion from Read selling price. Null removes the override. Prices use the catalog pricing basis. Intentional discounts below purchaseAmountCents are allowed; compare these amounts to warn about selling below your Affinity purchase price. This does not change the platform's Affinity purchase price or collect practice payments.
-
-        Parameters
-        ----------
-        catalog_item_id : str
-
-        idempotency_key : str
-
-        base_version : int
-
-        practice_id : typing.Optional[str]
-
-        amount_cents : typing.Optional[int]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[PlatformPublicApiSellingPricesUpdateSellingPriceResponse]
-            HTTP 200
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"v1/catalog/items/{encode_path_param(catalog_item_id)}/selling-price",
-            method="PUT",
-            json={
-                "practiceId": practice_id,
-                "amountCents": amount_cents,
-                "baseVersion": base_version,
-            },
-            headers={
-                "content-type": "application/json",
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    PlatformPublicApiSellingPricesUpdateSellingPriceResponse,
-                    parse_obj_as(
-                        type_=PlatformPublicApiSellingPricesUpdateSellingPriceResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 409:
-                raise ConflictError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 429:
-                raise TooManyRequestsError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
 
 class AsyncRawSellingPricesClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
@@ -296,7 +157,7 @@ class AsyncRawSellingPricesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[PlatformPublicApiSellingPricesReadSellingPriceResponse]:
         """
-        Requires selling_prices:read. Omit practiceId for the platform default, or supply a managed practice. A null amount inherits the next applicable price. Amounts use the catalog pricing basis, in USD cents. purchaseAmountCents is the platform's Affinity purchase price for that same basis. requiresReview indicates changed product pricing terms, not a below-purchase-price discount.
+        Requires selling_prices:read. Reads the Affinity-managed purchase-price override inherited by this platform's practices unless Affinity sets a practice override. Use the practice-scoped catalog for effective practice prices and presentation-price when an Affinity default may be absent. Platforms cannot edit purchase prices.
 
         Parameters
         ----------
@@ -326,139 +187,6 @@ class AsyncRawSellingPricesClient:
                     PlatformPublicApiSellingPricesReadSellingPriceResponse,
                     parse_obj_as(
                         type_=PlatformPublicApiSellingPricesReadSellingPriceResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 409:
-                raise ConflictError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 429:
-                raise TooManyRequestsError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def update(
-        self,
-        catalog_item_id: str,
-        *,
-        idempotency_key: str,
-        base_version: int,
-        practice_id: typing.Optional[str] = OMIT,
-        amount_cents: typing.Optional[int] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[PlatformPublicApiSellingPricesUpdateSellingPriceResponse]:
-        """
-        Requires selling_prices:write. Sets a platform default or managed practice override in the current Test/Live mode. Send baseVersion from Read selling price. Null removes the override. Prices use the catalog pricing basis. Intentional discounts below purchaseAmountCents are allowed; compare these amounts to warn about selling below your Affinity purchase price. This does not change the platform's Affinity purchase price or collect practice payments.
-
-        Parameters
-        ----------
-        catalog_item_id : str
-
-        idempotency_key : str
-
-        base_version : int
-
-        practice_id : typing.Optional[str]
-
-        amount_cents : typing.Optional[int]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[PlatformPublicApiSellingPricesUpdateSellingPriceResponse]
-            HTTP 200
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"v1/catalog/items/{encode_path_param(catalog_item_id)}/selling-price",
-            method="PUT",
-            json={
-                "practiceId": practice_id,
-                "amountCents": amount_cents,
-                "baseVersion": base_version,
-            },
-            headers={
-                "content-type": "application/json",
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    PlatformPublicApiSellingPricesUpdateSellingPriceResponse,
-                    parse_obj_as(
-                        type_=PlatformPublicApiSellingPricesUpdateSellingPriceResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

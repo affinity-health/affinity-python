@@ -6,6 +6,9 @@ import pydantic
 import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 from ..core.serialization import FieldMetadata
+from .platform_public_api_selling_prices_read_selling_price_response_affinity_basis import (
+    PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasis,
+)
 from .platform_public_api_selling_prices_read_selling_price_response_basis import (
     PlatformPublicApiSellingPricesReadSellingPriceResponseBasis,
 )
@@ -20,6 +23,14 @@ class PlatformPublicApiSellingPricesReadSellingPriceResponse(UniversalBaseModel)
     ] = None
     version: int
     currency: PlatformPublicApiSellingPricesReadSellingPriceResponseCurrency
+    affinity_price_cents: typing_extensions.Annotated[
+        typing.Optional[int], FieldMetadata(alias="affinityPriceCents"), pydantic.Field(alias="affinityPriceCents")
+    ] = None
+    affinity_basis: typing_extensions.Annotated[
+        typing.Optional[PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasis],
+        FieldMetadata(alias="affinityBasis"),
+        pydantic.Field(alias="affinityBasis"),
+    ] = None
     basis: PlatformPublicApiSellingPricesReadSellingPriceResponseBasis
     purchase_amount_cents: typing_extensions.Annotated[
         int, FieldMetadata(alias="purchaseAmountCents"), pydantic.Field(alias="purchaseAmountCents")

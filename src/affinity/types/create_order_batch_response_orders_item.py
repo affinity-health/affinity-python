@@ -6,7 +6,7 @@ import pydantic
 import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 from ..core.serialization import FieldMetadata
-from .create_order_batch_response_orders_item_metadata import CreateOrderBatchResponseOrdersItemMetadata
+from .create_order_batch_response_orders_item_metadata_value import CreateOrderBatchResponseOrdersItemMetadataValue
 from .create_order_batch_response_orders_item_object import CreateOrderBatchResponseOrdersItemObject
 from .create_order_batch_response_orders_item_otc_items_item import CreateOrderBatchResponseOrdersItemOtcItemsItem
 from .create_order_batch_response_orders_item_prescriptions_item import (
@@ -29,7 +29,7 @@ class CreateOrderBatchResponseOrdersItem(UniversalBaseModel):
     external_order_id: typing_extensions.Annotated[
         typing.Optional[str], FieldMetadata(alias="externalOrderId"), pydantic.Field(alias="externalOrderId")
     ] = None
-    metadata: CreateOrderBatchResponseOrdersItemMetadata
+    metadata: typing.Dict[str, typing.Optional[CreateOrderBatchResponseOrdersItemMetadataValue]]
     created_at: typing_extensions.Annotated[str, FieldMetadata(alias="createdAt"), pydantic.Field(alias="createdAt")]
     id: str
     livemode: bool

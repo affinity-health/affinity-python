@@ -9,7 +9,7 @@ if typing.TYPE_CHECKING:
     from .act_on_order_exception_response import ActOnOrderExceptionResponse
     from .act_on_order_exception_response_status import ActOnOrderExceptionResponseStatus
     from .add_order_prescription_response import AddOrderPrescriptionResponse
-    from .add_order_prescription_response_metadata import AddOrderPrescriptionResponseMetadata
+    from .add_order_prescription_response_metadata_value import AddOrderPrescriptionResponseMetadataValue
     from .add_order_prescription_response_object import AddOrderPrescriptionResponseObject
     from .add_order_prescription_response_prescriptions_item import AddOrderPrescriptionResponsePrescriptionsItem
     from .archive_patient_address_response import ArchivePatientAddressResponse
@@ -74,7 +74,7 @@ if typing.TYPE_CHECKING:
     )
     from .cancel_order_response_lifecycle_events_item import CancelOrderResponseLifecycleEventsItem
     from .cancel_order_response_lifecycle_events_item_source import CancelOrderResponseLifecycleEventsItemSource
-    from .cancel_order_response_metadata import CancelOrderResponseMetadata
+    from .cancel_order_response_metadata_value import CancelOrderResponseMetadataValue
     from .cancel_order_response_object import CancelOrderResponseObject
     from .cancel_order_response_otc_items_item import CancelOrderResponseOtcItemsItem
     from .cancel_order_response_prescriptions_item import CancelOrderResponsePrescriptionsItem
@@ -141,7 +141,7 @@ if typing.TYPE_CHECKING:
     from .create_order_batch_response import CreateOrderBatchResponse
     from .create_order_batch_response_object import CreateOrderBatchResponseObject
     from .create_order_batch_response_orders_item import CreateOrderBatchResponseOrdersItem
-    from .create_order_batch_response_orders_item_metadata import CreateOrderBatchResponseOrdersItemMetadata
+    from .create_order_batch_response_orders_item_metadata_value import CreateOrderBatchResponseOrdersItemMetadataValue
     from .create_order_batch_response_orders_item_object import CreateOrderBatchResponseOrdersItemObject
     from .create_order_batch_response_orders_item_otc_items_item import CreateOrderBatchResponseOrdersItemOtcItemsItem
     from .create_order_batch_response_orders_item_prescriptions_item import (
@@ -161,7 +161,7 @@ if typing.TYPE_CHECKING:
     )
     from .create_order_batch_response_orders_item_status import CreateOrderBatchResponseOrdersItemStatus
     from .create_order_response import CreateOrderResponse
-    from .create_order_response_metadata import CreateOrderResponseMetadata
+    from .create_order_response_metadata_value import CreateOrderResponseMetadataValue
     from .create_order_response_object import CreateOrderResponseObject
     from .create_order_response_otc_items_item import CreateOrderResponseOtcItemsItem
     from .create_order_response_prescriptions_item import CreateOrderResponsePrescriptionsItem
@@ -317,7 +317,7 @@ if typing.TYPE_CHECKING:
     )
     from .get_order_response_lifecycle_events_item import GetOrderResponseLifecycleEventsItem
     from .get_order_response_lifecycle_events_item_source import GetOrderResponseLifecycleEventsItemSource
-    from .get_order_response_metadata import GetOrderResponseMetadata
+    from .get_order_response_metadata_value import GetOrderResponseMetadataValue
     from .get_order_response_object import GetOrderResponseObject
     from .get_order_response_otc_items_item import GetOrderResponseOtcItemsItem
     from .get_order_response_prescriptions_item import GetOrderResponsePrescriptionsItem
@@ -580,6 +580,15 @@ if typing.TYPE_CHECKING:
     from .list_catalog_items_response_data_item_catalog_details_directions_item_kind import (
         ListCatalogItemsResponseDataItemCatalogDetailsDirectionsItemKind,
     )
+    from .list_catalog_items_response_data_item_catalog_details_package_components_item import (
+        ListCatalogItemsResponseDataItemCatalogDetailsPackageComponentsItem,
+    )
+    from .list_catalog_items_response_data_item_catalog_details_package_components_item_contents_per_container import (
+        ListCatalogItemsResponseDataItemCatalogDetailsPackageComponentsItemContentsPerContainer,
+    )
+    from .list_catalog_items_response_data_item_catalog_details_package_components_item_contents_per_container_unit import (
+        ListCatalogItemsResponseDataItemCatalogDetailsPackageComponentsItemContentsPerContainerUnit,
+    )
     from .list_catalog_items_response_data_item_composition import ListCatalogItemsResponseDataItemComposition
     from .list_catalog_items_response_data_item_composition_ingredients_item import (
         ListCatalogItemsResponseDataItemCompositionIngredientsItem,
@@ -729,6 +738,9 @@ if typing.TYPE_CHECKING:
     from .list_catalog_items_response_data_item_pricing_basis_item_quantity import (
         ListCatalogItemsResponseDataItemPricingBasisItemQuantity,
     )
+    from .list_catalog_items_response_data_item_pricing_basis_item_quantity_prices_item import (
+        ListCatalogItemsResponseDataItemPricingBasisItemQuantityPricesItem,
+    )
     from .list_catalog_items_response_data_item_pricing_basis_package import (
         ListCatalogItemsResponseDataItemPricingBasisPackage,
     )
@@ -840,7 +852,7 @@ if typing.TYPE_CHECKING:
     from .list_orders_response_data_item_lifecycle_events_item_source import (
         ListOrdersResponseDataItemLifecycleEventsItemSource,
     )
-    from .list_orders_response_data_item_metadata import ListOrdersResponseDataItemMetadata
+    from .list_orders_response_data_item_metadata_value import ListOrdersResponseDataItemMetadataValue
     from .list_orders_response_data_item_object import ListOrdersResponseDataItemObject
     from .list_orders_response_data_item_otc_items_item import ListOrdersResponseDataItemOtcItemsItem
     from .list_orders_response_data_item_prescriptions_item import ListOrdersResponseDataItemPrescriptionsItem
@@ -1106,8 +1118,86 @@ if typing.TYPE_CHECKING:
     from .list_webhook_grants_response_data_item_scopes_item import ListWebhookGrantsResponseDataItemScopesItem
     from .list_webhook_grants_response_object import ListWebhookGrantsResponseObject
     from .list_webhook_grants_response_url import ListWebhookGrantsResponseUrl
+    from .platform_public_api_selling_prices_read_presentation_price_response import (
+        PlatformPublicApiSellingPricesReadPresentationPriceResponse,
+    )
+    from .platform_public_api_selling_prices_read_presentation_price_response_affinity_basis import (
+        PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasis,
+        PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasis_Item,
+        PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasis_Package,
+        PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasis_Unit,
+    )
+    from .platform_public_api_selling_prices_read_presentation_price_response_affinity_basis_item import (
+        PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasisItem,
+    )
+    from .platform_public_api_selling_prices_read_presentation_price_response_affinity_basis_item_quantity import (
+        PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasisItemQuantity,
+    )
+    from .platform_public_api_selling_prices_read_presentation_price_response_affinity_basis_item_quantity_prices_item import (
+        PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasisItemQuantityPricesItem,
+    )
+    from .platform_public_api_selling_prices_read_presentation_price_response_affinity_basis_package import (
+        PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasisPackage,
+    )
+    from .platform_public_api_selling_prices_read_presentation_price_response_affinity_basis_unit import (
+        PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasisUnit,
+    )
+    from .platform_public_api_selling_prices_read_presentation_price_response_affinity_basis_unit_quantity import (
+        PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasisUnitQuantity,
+    )
+    from .platform_public_api_selling_prices_read_presentation_price_response_basis import (
+        PlatformPublicApiSellingPricesReadPresentationPriceResponseBasis,
+        PlatformPublicApiSellingPricesReadPresentationPriceResponseBasis_Item,
+        PlatformPublicApiSellingPricesReadPresentationPriceResponseBasis_Package,
+        PlatformPublicApiSellingPricesReadPresentationPriceResponseBasis_Unit,
+    )
+    from .platform_public_api_selling_prices_read_presentation_price_response_basis_item import (
+        PlatformPublicApiSellingPricesReadPresentationPriceResponseBasisItem,
+    )
+    from .platform_public_api_selling_prices_read_presentation_price_response_basis_item_quantity import (
+        PlatformPublicApiSellingPricesReadPresentationPriceResponseBasisItemQuantity,
+    )
+    from .platform_public_api_selling_prices_read_presentation_price_response_basis_item_quantity_prices_item import (
+        PlatformPublicApiSellingPricesReadPresentationPriceResponseBasisItemQuantityPricesItem,
+    )
+    from .platform_public_api_selling_prices_read_presentation_price_response_basis_package import (
+        PlatformPublicApiSellingPricesReadPresentationPriceResponseBasisPackage,
+    )
+    from .platform_public_api_selling_prices_read_presentation_price_response_basis_unit import (
+        PlatformPublicApiSellingPricesReadPresentationPriceResponseBasisUnit,
+    )
+    from .platform_public_api_selling_prices_read_presentation_price_response_basis_unit_quantity import (
+        PlatformPublicApiSellingPricesReadPresentationPriceResponseBasisUnitQuantity,
+    )
+    from .platform_public_api_selling_prices_read_presentation_price_response_currency import (
+        PlatformPublicApiSellingPricesReadPresentationPriceResponseCurrency,
+    )
     from .platform_public_api_selling_prices_read_selling_price_response import (
         PlatformPublicApiSellingPricesReadSellingPriceResponse,
+    )
+    from .platform_public_api_selling_prices_read_selling_price_response_affinity_basis import (
+        PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasis,
+        PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasis_Item,
+        PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasis_Package,
+        PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasis_Unit,
+    )
+    from .platform_public_api_selling_prices_read_selling_price_response_affinity_basis_item import (
+        PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasisItem,
+    )
+    from .platform_public_api_selling_prices_read_selling_price_response_affinity_basis_item_quantity import (
+        PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasisItemQuantity,
+    )
+    from .platform_public_api_selling_prices_read_selling_price_response_affinity_basis_item_quantity_prices_item import (
+        PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasisItemQuantityPricesItem,
+    )
+    from .platform_public_api_selling_prices_read_selling_price_response_affinity_basis_package import (
+        PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasisPackage,
+    )
+    from .platform_public_api_selling_prices_read_selling_price_response_affinity_basis_unit import (
+        PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasisUnit,
+    )
+    from .platform_public_api_selling_prices_read_selling_price_response_affinity_basis_unit_quantity import (
+        PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasisUnitQuantity,
     )
     from .platform_public_api_selling_prices_read_selling_price_response_basis import (
         PlatformPublicApiSellingPricesReadSellingPriceResponseBasis,
@@ -1121,6 +1211,9 @@ if typing.TYPE_CHECKING:
     from .platform_public_api_selling_prices_read_selling_price_response_basis_item_quantity import (
         PlatformPublicApiSellingPricesReadSellingPriceResponseBasisItemQuantity,
     )
+    from .platform_public_api_selling_prices_read_selling_price_response_basis_item_quantity_prices_item import (
+        PlatformPublicApiSellingPricesReadSellingPriceResponseBasisItemQuantityPricesItem,
+    )
     from .platform_public_api_selling_prices_read_selling_price_response_basis_package import (
         PlatformPublicApiSellingPricesReadSellingPriceResponseBasisPackage,
     )
@@ -1132,33 +1225,6 @@ if typing.TYPE_CHECKING:
     )
     from .platform_public_api_selling_prices_read_selling_price_response_currency import (
         PlatformPublicApiSellingPricesReadSellingPriceResponseCurrency,
-    )
-    from .platform_public_api_selling_prices_update_selling_price_response import (
-        PlatformPublicApiSellingPricesUpdateSellingPriceResponse,
-    )
-    from .platform_public_api_selling_prices_update_selling_price_response_basis import (
-        PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasis,
-        PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasis_Item,
-        PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasis_Package,
-        PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasis_Unit,
-    )
-    from .platform_public_api_selling_prices_update_selling_price_response_basis_item import (
-        PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasisItem,
-    )
-    from .platform_public_api_selling_prices_update_selling_price_response_basis_item_quantity import (
-        PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasisItemQuantity,
-    )
-    from .platform_public_api_selling_prices_update_selling_price_response_basis_package import (
-        PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasisPackage,
-    )
-    from .platform_public_api_selling_prices_update_selling_price_response_basis_unit import (
-        PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasisUnit,
-    )
-    from .platform_public_api_selling_prices_update_selling_price_response_basis_unit_quantity import (
-        PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasisUnitQuantity,
-    )
-    from .platform_public_api_selling_prices_update_selling_price_response_currency import (
-        PlatformPublicApiSellingPricesUpdateSellingPriceResponseCurrency,
     )
     from .preview_order_response import PreviewOrderResponse
     from .preview_order_response_clinical_issues_item import PreviewOrderResponseClinicalIssuesItem
@@ -1411,6 +1477,15 @@ if typing.TYPE_CHECKING:
     from .retrieve_prescribing_options_response_catalog_catalog_details_directions_item_kind import (
         RetrievePrescribingOptionsResponseCatalogCatalogDetailsDirectionsItemKind,
     )
+    from .retrieve_prescribing_options_response_catalog_catalog_details_package_components_item import (
+        RetrievePrescribingOptionsResponseCatalogCatalogDetailsPackageComponentsItem,
+    )
+    from .retrieve_prescribing_options_response_catalog_catalog_details_package_components_item_contents_per_container import (
+        RetrievePrescribingOptionsResponseCatalogCatalogDetailsPackageComponentsItemContentsPerContainer,
+    )
+    from .retrieve_prescribing_options_response_catalog_catalog_details_package_components_item_contents_per_container_unit import (
+        RetrievePrescribingOptionsResponseCatalogCatalogDetailsPackageComponentsItemContentsPerContainerUnit,
+    )
     from .retrieve_prescribing_options_response_catalog_composition import (
         RetrievePrescribingOptionsResponseCatalogComposition,
     )
@@ -1565,6 +1640,9 @@ if typing.TYPE_CHECKING:
     )
     from .retrieve_prescribing_options_response_catalog_pricing_basis_item_quantity import (
         RetrievePrescribingOptionsResponseCatalogPricingBasisItemQuantity,
+    )
+    from .retrieve_prescribing_options_response_catalog_pricing_basis_item_quantity_prices_item import (
+        RetrievePrescribingOptionsResponseCatalogPricingBasisItemQuantityPricesItem,
     )
     from .retrieve_prescribing_options_response_catalog_pricing_basis_package import (
         RetrievePrescribingOptionsResponseCatalogPricingBasisPackage,
@@ -1772,7 +1850,7 @@ if typing.TYPE_CHECKING:
     from .submit_order_response_status import SubmitOrderResponseStatus
     from .test_webhook_endpoint_response import TestWebhookEndpointResponse
     from .update_order_prescription_response import UpdateOrderPrescriptionResponse
-    from .update_order_prescription_response_metadata import UpdateOrderPrescriptionResponseMetadata
+    from .update_order_prescription_response_metadata_value import UpdateOrderPrescriptionResponseMetadataValue
     from .update_order_prescription_response_object import UpdateOrderPrescriptionResponseObject
     from .update_order_prescription_response_prescriptions_item import UpdateOrderPrescriptionResponsePrescriptionsItem
     from .update_order_test_simulation_response import UpdateOrderTestSimulationResponse
@@ -1861,7 +1939,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ActOnOrderExceptionResponse": ".act_on_order_exception_response",
     "ActOnOrderExceptionResponseStatus": ".act_on_order_exception_response_status",
     "AddOrderPrescriptionResponse": ".add_order_prescription_response",
-    "AddOrderPrescriptionResponseMetadata": ".add_order_prescription_response_metadata",
+    "AddOrderPrescriptionResponseMetadataValue": ".add_order_prescription_response_metadata_value",
     "AddOrderPrescriptionResponseObject": ".add_order_prescription_response_object",
     "AddOrderPrescriptionResponsePrescriptionsItem": ".add_order_prescription_response_prescriptions_item",
     "ArchivePatientAddressResponse": ".archive_patient_address_response",
@@ -1894,7 +1972,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "CancelOrderResponseFulfillmentsItemShippingOptionTemperature": ".cancel_order_response_fulfillments_item_shipping_option_temperature",
     "CancelOrderResponseLifecycleEventsItem": ".cancel_order_response_lifecycle_events_item",
     "CancelOrderResponseLifecycleEventsItemSource": ".cancel_order_response_lifecycle_events_item_source",
-    "CancelOrderResponseMetadata": ".cancel_order_response_metadata",
+    "CancelOrderResponseMetadataValue": ".cancel_order_response_metadata_value",
     "CancelOrderResponseObject": ".cancel_order_response_object",
     "CancelOrderResponseOtcItemsItem": ".cancel_order_response_otc_items_item",
     "CancelOrderResponsePrescriptionsItem": ".cancel_order_response_prescriptions_item",
@@ -1927,7 +2005,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "CreateOrderBatchResponse": ".create_order_batch_response",
     "CreateOrderBatchResponseObject": ".create_order_batch_response_object",
     "CreateOrderBatchResponseOrdersItem": ".create_order_batch_response_orders_item",
-    "CreateOrderBatchResponseOrdersItemMetadata": ".create_order_batch_response_orders_item_metadata",
+    "CreateOrderBatchResponseOrdersItemMetadataValue": ".create_order_batch_response_orders_item_metadata_value",
     "CreateOrderBatchResponseOrdersItemObject": ".create_order_batch_response_orders_item_object",
     "CreateOrderBatchResponseOrdersItemOtcItemsItem": ".create_order_batch_response_orders_item_otc_items_item",
     "CreateOrderBatchResponseOrdersItemPrescriptionsItem": ".create_order_batch_response_orders_item_prescriptions_item",
@@ -1937,7 +2015,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "CreateOrderBatchResponseOrdersItemPrescriptionsItemStatus": ".create_order_batch_response_orders_item_prescriptions_item_status",
     "CreateOrderBatchResponseOrdersItemStatus": ".create_order_batch_response_orders_item_status",
     "CreateOrderResponse": ".create_order_response",
-    "CreateOrderResponseMetadata": ".create_order_response_metadata",
+    "CreateOrderResponseMetadataValue": ".create_order_response_metadata_value",
     "CreateOrderResponseObject": ".create_order_response_object",
     "CreateOrderResponseOtcItemsItem": ".create_order_response_otc_items_item",
     "CreateOrderResponsePrescriptionsItem": ".create_order_response_prescriptions_item",
@@ -2043,7 +2121,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "GetOrderResponseFulfillmentsItemShippingOptionTemperature": ".get_order_response_fulfillments_item_shipping_option_temperature",
     "GetOrderResponseLifecycleEventsItem": ".get_order_response_lifecycle_events_item",
     "GetOrderResponseLifecycleEventsItemSource": ".get_order_response_lifecycle_events_item_source",
-    "GetOrderResponseMetadata": ".get_order_response_metadata",
+    "GetOrderResponseMetadataValue": ".get_order_response_metadata_value",
     "GetOrderResponseObject": ".get_order_response_object",
     "GetOrderResponseOtcItemsItem": ".get_order_response_otc_items_item",
     "GetOrderResponsePrescriptionsItem": ".get_order_response_prescriptions_item",
@@ -2202,6 +2280,9 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ListCatalogItemsResponseDataItemCatalogDetailsAttributesValue": ".list_catalog_items_response_data_item_catalog_details_attributes_value",
     "ListCatalogItemsResponseDataItemCatalogDetailsDirectionsItem": ".list_catalog_items_response_data_item_catalog_details_directions_item",
     "ListCatalogItemsResponseDataItemCatalogDetailsDirectionsItemKind": ".list_catalog_items_response_data_item_catalog_details_directions_item_kind",
+    "ListCatalogItemsResponseDataItemCatalogDetailsPackageComponentsItem": ".list_catalog_items_response_data_item_catalog_details_package_components_item",
+    "ListCatalogItemsResponseDataItemCatalogDetailsPackageComponentsItemContentsPerContainer": ".list_catalog_items_response_data_item_catalog_details_package_components_item_contents_per_container",
+    "ListCatalogItemsResponseDataItemCatalogDetailsPackageComponentsItemContentsPerContainerUnit": ".list_catalog_items_response_data_item_catalog_details_package_components_item_contents_per_container_unit",
     "ListCatalogItemsResponseDataItemComposition": ".list_catalog_items_response_data_item_composition",
     "ListCatalogItemsResponseDataItemCompositionIngredientsItem": ".list_catalog_items_response_data_item_composition_ingredients_item",
     "ListCatalogItemsResponseDataItemCompositionIngredientsItemBasisOfStrengthSubstance": ".list_catalog_items_response_data_item_composition_ingredients_item_basis_of_strength_substance",
@@ -2256,6 +2337,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ListCatalogItemsResponseDataItemPricingBasis": ".list_catalog_items_response_data_item_pricing_basis",
     "ListCatalogItemsResponseDataItemPricingBasisItem": ".list_catalog_items_response_data_item_pricing_basis_item",
     "ListCatalogItemsResponseDataItemPricingBasisItemQuantity": ".list_catalog_items_response_data_item_pricing_basis_item_quantity",
+    "ListCatalogItemsResponseDataItemPricingBasisItemQuantityPricesItem": ".list_catalog_items_response_data_item_pricing_basis_item_quantity_prices_item",
     "ListCatalogItemsResponseDataItemPricingBasisPackage": ".list_catalog_items_response_data_item_pricing_basis_package",
     "ListCatalogItemsResponseDataItemPricingBasisUnit": ".list_catalog_items_response_data_item_pricing_basis_unit",
     "ListCatalogItemsResponseDataItemPricingBasisUnitQuantity": ".list_catalog_items_response_data_item_pricing_basis_unit_quantity",
@@ -2306,7 +2388,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ListOrdersResponseDataItemFulfillmentsItemShippingOptionTemperature": ".list_orders_response_data_item_fulfillments_item_shipping_option_temperature",
     "ListOrdersResponseDataItemLifecycleEventsItem": ".list_orders_response_data_item_lifecycle_events_item",
     "ListOrdersResponseDataItemLifecycleEventsItemSource": ".list_orders_response_data_item_lifecycle_events_item_source",
-    "ListOrdersResponseDataItemMetadata": ".list_orders_response_data_item_metadata",
+    "ListOrdersResponseDataItemMetadataValue": ".list_orders_response_data_item_metadata_value",
     "ListOrdersResponseDataItemObject": ".list_orders_response_data_item_object",
     "ListOrdersResponseDataItemOtcItemsItem": ".list_orders_response_data_item_otc_items_item",
     "ListOrdersResponseDataItemPrescriptionsItem": ".list_orders_response_data_item_prescriptions_item",
@@ -2454,10 +2536,43 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ListWebhookGrantsResponseDataItemScopesItem": ".list_webhook_grants_response_data_item_scopes_item",
     "ListWebhookGrantsResponseObject": ".list_webhook_grants_response_object",
     "ListWebhookGrantsResponseUrl": ".list_webhook_grants_response_url",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponse": ".platform_public_api_selling_prices_read_presentation_price_response",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasis": ".platform_public_api_selling_prices_read_presentation_price_response_affinity_basis",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasisItem": ".platform_public_api_selling_prices_read_presentation_price_response_affinity_basis_item",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasisItemQuantity": ".platform_public_api_selling_prices_read_presentation_price_response_affinity_basis_item_quantity",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasisItemQuantityPricesItem": ".platform_public_api_selling_prices_read_presentation_price_response_affinity_basis_item_quantity_prices_item",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasisPackage": ".platform_public_api_selling_prices_read_presentation_price_response_affinity_basis_package",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasisUnit": ".platform_public_api_selling_prices_read_presentation_price_response_affinity_basis_unit",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasisUnitQuantity": ".platform_public_api_selling_prices_read_presentation_price_response_affinity_basis_unit_quantity",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasis_Item": ".platform_public_api_selling_prices_read_presentation_price_response_affinity_basis",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasis_Package": ".platform_public_api_selling_prices_read_presentation_price_response_affinity_basis",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasis_Unit": ".platform_public_api_selling_prices_read_presentation_price_response_affinity_basis",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseBasis": ".platform_public_api_selling_prices_read_presentation_price_response_basis",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseBasisItem": ".platform_public_api_selling_prices_read_presentation_price_response_basis_item",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseBasisItemQuantity": ".platform_public_api_selling_prices_read_presentation_price_response_basis_item_quantity",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseBasisItemQuantityPricesItem": ".platform_public_api_selling_prices_read_presentation_price_response_basis_item_quantity_prices_item",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseBasisPackage": ".platform_public_api_selling_prices_read_presentation_price_response_basis_package",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseBasisUnit": ".platform_public_api_selling_prices_read_presentation_price_response_basis_unit",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseBasisUnitQuantity": ".platform_public_api_selling_prices_read_presentation_price_response_basis_unit_quantity",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseBasis_Item": ".platform_public_api_selling_prices_read_presentation_price_response_basis",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseBasis_Package": ".platform_public_api_selling_prices_read_presentation_price_response_basis",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseBasis_Unit": ".platform_public_api_selling_prices_read_presentation_price_response_basis",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseCurrency": ".platform_public_api_selling_prices_read_presentation_price_response_currency",
     "PlatformPublicApiSellingPricesReadSellingPriceResponse": ".platform_public_api_selling_prices_read_selling_price_response",
+    "PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasis": ".platform_public_api_selling_prices_read_selling_price_response_affinity_basis",
+    "PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasisItem": ".platform_public_api_selling_prices_read_selling_price_response_affinity_basis_item",
+    "PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasisItemQuantity": ".platform_public_api_selling_prices_read_selling_price_response_affinity_basis_item_quantity",
+    "PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasisItemQuantityPricesItem": ".platform_public_api_selling_prices_read_selling_price_response_affinity_basis_item_quantity_prices_item",
+    "PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasisPackage": ".platform_public_api_selling_prices_read_selling_price_response_affinity_basis_package",
+    "PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasisUnit": ".platform_public_api_selling_prices_read_selling_price_response_affinity_basis_unit",
+    "PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasisUnitQuantity": ".platform_public_api_selling_prices_read_selling_price_response_affinity_basis_unit_quantity",
+    "PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasis_Item": ".platform_public_api_selling_prices_read_selling_price_response_affinity_basis",
+    "PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasis_Package": ".platform_public_api_selling_prices_read_selling_price_response_affinity_basis",
+    "PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasis_Unit": ".platform_public_api_selling_prices_read_selling_price_response_affinity_basis",
     "PlatformPublicApiSellingPricesReadSellingPriceResponseBasis": ".platform_public_api_selling_prices_read_selling_price_response_basis",
     "PlatformPublicApiSellingPricesReadSellingPriceResponseBasisItem": ".platform_public_api_selling_prices_read_selling_price_response_basis_item",
     "PlatformPublicApiSellingPricesReadSellingPriceResponseBasisItemQuantity": ".platform_public_api_selling_prices_read_selling_price_response_basis_item_quantity",
+    "PlatformPublicApiSellingPricesReadSellingPriceResponseBasisItemQuantityPricesItem": ".platform_public_api_selling_prices_read_selling_price_response_basis_item_quantity_prices_item",
     "PlatformPublicApiSellingPricesReadSellingPriceResponseBasisPackage": ".platform_public_api_selling_prices_read_selling_price_response_basis_package",
     "PlatformPublicApiSellingPricesReadSellingPriceResponseBasisUnit": ".platform_public_api_selling_prices_read_selling_price_response_basis_unit",
     "PlatformPublicApiSellingPricesReadSellingPriceResponseBasisUnitQuantity": ".platform_public_api_selling_prices_read_selling_price_response_basis_unit_quantity",
@@ -2465,17 +2580,6 @@ _dynamic_imports: typing.Dict[str, str] = {
     "PlatformPublicApiSellingPricesReadSellingPriceResponseBasis_Package": ".platform_public_api_selling_prices_read_selling_price_response_basis",
     "PlatformPublicApiSellingPricesReadSellingPriceResponseBasis_Unit": ".platform_public_api_selling_prices_read_selling_price_response_basis",
     "PlatformPublicApiSellingPricesReadSellingPriceResponseCurrency": ".platform_public_api_selling_prices_read_selling_price_response_currency",
-    "PlatformPublicApiSellingPricesUpdateSellingPriceResponse": ".platform_public_api_selling_prices_update_selling_price_response",
-    "PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasis": ".platform_public_api_selling_prices_update_selling_price_response_basis",
-    "PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasisItem": ".platform_public_api_selling_prices_update_selling_price_response_basis_item",
-    "PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasisItemQuantity": ".platform_public_api_selling_prices_update_selling_price_response_basis_item_quantity",
-    "PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasisPackage": ".platform_public_api_selling_prices_update_selling_price_response_basis_package",
-    "PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasisUnit": ".platform_public_api_selling_prices_update_selling_price_response_basis_unit",
-    "PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasisUnitQuantity": ".platform_public_api_selling_prices_update_selling_price_response_basis_unit_quantity",
-    "PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasis_Item": ".platform_public_api_selling_prices_update_selling_price_response_basis",
-    "PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasis_Package": ".platform_public_api_selling_prices_update_selling_price_response_basis",
-    "PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasis_Unit": ".platform_public_api_selling_prices_update_selling_price_response_basis",
-    "PlatformPublicApiSellingPricesUpdateSellingPriceResponseCurrency": ".platform_public_api_selling_prices_update_selling_price_response_currency",
     "PreviewOrderResponse": ".preview_order_response",
     "PreviewOrderResponseClinicalIssuesItem": ".preview_order_response_clinical_issues_item",
     "PreviewOrderResponseClinicalRequirementsItem": ".preview_order_response_clinical_requirements_item",
@@ -2589,6 +2693,9 @@ _dynamic_imports: typing.Dict[str, str] = {
     "RetrievePrescribingOptionsResponseCatalogCatalogDetailsAttributesValue": ".retrieve_prescribing_options_response_catalog_catalog_details_attributes_value",
     "RetrievePrescribingOptionsResponseCatalogCatalogDetailsDirectionsItem": ".retrieve_prescribing_options_response_catalog_catalog_details_directions_item",
     "RetrievePrescribingOptionsResponseCatalogCatalogDetailsDirectionsItemKind": ".retrieve_prescribing_options_response_catalog_catalog_details_directions_item_kind",
+    "RetrievePrescribingOptionsResponseCatalogCatalogDetailsPackageComponentsItem": ".retrieve_prescribing_options_response_catalog_catalog_details_package_components_item",
+    "RetrievePrescribingOptionsResponseCatalogCatalogDetailsPackageComponentsItemContentsPerContainer": ".retrieve_prescribing_options_response_catalog_catalog_details_package_components_item_contents_per_container",
+    "RetrievePrescribingOptionsResponseCatalogCatalogDetailsPackageComponentsItemContentsPerContainerUnit": ".retrieve_prescribing_options_response_catalog_catalog_details_package_components_item_contents_per_container_unit",
     "RetrievePrescribingOptionsResponseCatalogComposition": ".retrieve_prescribing_options_response_catalog_composition",
     "RetrievePrescribingOptionsResponseCatalogCompositionIngredientsItem": ".retrieve_prescribing_options_response_catalog_composition_ingredients_item",
     "RetrievePrescribingOptionsResponseCatalogCompositionIngredientsItemBasisOfStrengthSubstance": ".retrieve_prescribing_options_response_catalog_composition_ingredients_item_basis_of_strength_substance",
@@ -2643,6 +2750,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "RetrievePrescribingOptionsResponseCatalogPricingBasis": ".retrieve_prescribing_options_response_catalog_pricing_basis",
     "RetrievePrescribingOptionsResponseCatalogPricingBasisItem": ".retrieve_prescribing_options_response_catalog_pricing_basis_item",
     "RetrievePrescribingOptionsResponseCatalogPricingBasisItemQuantity": ".retrieve_prescribing_options_response_catalog_pricing_basis_item_quantity",
+    "RetrievePrescribingOptionsResponseCatalogPricingBasisItemQuantityPricesItem": ".retrieve_prescribing_options_response_catalog_pricing_basis_item_quantity_prices_item",
     "RetrievePrescribingOptionsResponseCatalogPricingBasisPackage": ".retrieve_prescribing_options_response_catalog_pricing_basis_package",
     "RetrievePrescribingOptionsResponseCatalogPricingBasisUnit": ".retrieve_prescribing_options_response_catalog_pricing_basis_unit",
     "RetrievePrescribingOptionsResponseCatalogPricingBasisUnitQuantity": ".retrieve_prescribing_options_response_catalog_pricing_basis_unit_quantity",
@@ -2742,7 +2850,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "SubmitOrderResponseStatus": ".submit_order_response_status",
     "TestWebhookEndpointResponse": ".test_webhook_endpoint_response",
     "UpdateOrderPrescriptionResponse": ".update_order_prescription_response",
-    "UpdateOrderPrescriptionResponseMetadata": ".update_order_prescription_response_metadata",
+    "UpdateOrderPrescriptionResponseMetadataValue": ".update_order_prescription_response_metadata_value",
     "UpdateOrderPrescriptionResponseObject": ".update_order_prescription_response_object",
     "UpdateOrderPrescriptionResponsePrescriptionsItem": ".update_order_prescription_response_prescriptions_item",
     "UpdateOrderTestSimulationResponse": ".update_order_test_simulation_response",
@@ -2831,7 +2939,7 @@ __all__ = [
     "ActOnOrderExceptionResponse",
     "ActOnOrderExceptionResponseStatus",
     "AddOrderPrescriptionResponse",
-    "AddOrderPrescriptionResponseMetadata",
+    "AddOrderPrescriptionResponseMetadataValue",
     "AddOrderPrescriptionResponseObject",
     "AddOrderPrescriptionResponsePrescriptionsItem",
     "ArchivePatientAddressResponse",
@@ -2864,7 +2972,7 @@ __all__ = [
     "CancelOrderResponseFulfillmentsItemShippingOptionTemperature",
     "CancelOrderResponseLifecycleEventsItem",
     "CancelOrderResponseLifecycleEventsItemSource",
-    "CancelOrderResponseMetadata",
+    "CancelOrderResponseMetadataValue",
     "CancelOrderResponseObject",
     "CancelOrderResponseOtcItemsItem",
     "CancelOrderResponsePrescriptionsItem",
@@ -2897,7 +3005,7 @@ __all__ = [
     "CreateOrderBatchResponse",
     "CreateOrderBatchResponseObject",
     "CreateOrderBatchResponseOrdersItem",
-    "CreateOrderBatchResponseOrdersItemMetadata",
+    "CreateOrderBatchResponseOrdersItemMetadataValue",
     "CreateOrderBatchResponseOrdersItemObject",
     "CreateOrderBatchResponseOrdersItemOtcItemsItem",
     "CreateOrderBatchResponseOrdersItemPrescriptionsItem",
@@ -2907,7 +3015,7 @@ __all__ = [
     "CreateOrderBatchResponseOrdersItemPrescriptionsItemStatus",
     "CreateOrderBatchResponseOrdersItemStatus",
     "CreateOrderResponse",
-    "CreateOrderResponseMetadata",
+    "CreateOrderResponseMetadataValue",
     "CreateOrderResponseObject",
     "CreateOrderResponseOtcItemsItem",
     "CreateOrderResponsePrescriptionsItem",
@@ -3013,7 +3121,7 @@ __all__ = [
     "GetOrderResponseFulfillmentsItemShippingOptionTemperature",
     "GetOrderResponseLifecycleEventsItem",
     "GetOrderResponseLifecycleEventsItemSource",
-    "GetOrderResponseMetadata",
+    "GetOrderResponseMetadataValue",
     "GetOrderResponseObject",
     "GetOrderResponseOtcItemsItem",
     "GetOrderResponsePrescriptionsItem",
@@ -3172,6 +3280,9 @@ __all__ = [
     "ListCatalogItemsResponseDataItemCatalogDetailsAttributesValue",
     "ListCatalogItemsResponseDataItemCatalogDetailsDirectionsItem",
     "ListCatalogItemsResponseDataItemCatalogDetailsDirectionsItemKind",
+    "ListCatalogItemsResponseDataItemCatalogDetailsPackageComponentsItem",
+    "ListCatalogItemsResponseDataItemCatalogDetailsPackageComponentsItemContentsPerContainer",
+    "ListCatalogItemsResponseDataItemCatalogDetailsPackageComponentsItemContentsPerContainerUnit",
     "ListCatalogItemsResponseDataItemComposition",
     "ListCatalogItemsResponseDataItemCompositionIngredientsItem",
     "ListCatalogItemsResponseDataItemCompositionIngredientsItemBasisOfStrengthSubstance",
@@ -3226,6 +3337,7 @@ __all__ = [
     "ListCatalogItemsResponseDataItemPricingBasis",
     "ListCatalogItemsResponseDataItemPricingBasisItem",
     "ListCatalogItemsResponseDataItemPricingBasisItemQuantity",
+    "ListCatalogItemsResponseDataItemPricingBasisItemQuantityPricesItem",
     "ListCatalogItemsResponseDataItemPricingBasisPackage",
     "ListCatalogItemsResponseDataItemPricingBasisUnit",
     "ListCatalogItemsResponseDataItemPricingBasisUnitQuantity",
@@ -3276,7 +3388,7 @@ __all__ = [
     "ListOrdersResponseDataItemFulfillmentsItemShippingOptionTemperature",
     "ListOrdersResponseDataItemLifecycleEventsItem",
     "ListOrdersResponseDataItemLifecycleEventsItemSource",
-    "ListOrdersResponseDataItemMetadata",
+    "ListOrdersResponseDataItemMetadataValue",
     "ListOrdersResponseDataItemObject",
     "ListOrdersResponseDataItemOtcItemsItem",
     "ListOrdersResponseDataItemPrescriptionsItem",
@@ -3424,10 +3536,43 @@ __all__ = [
     "ListWebhookGrantsResponseDataItemScopesItem",
     "ListWebhookGrantsResponseObject",
     "ListWebhookGrantsResponseUrl",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponse",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasis",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasisItem",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasisItemQuantity",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasisItemQuantityPricesItem",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasisPackage",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasisUnit",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasisUnitQuantity",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasis_Item",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasis_Package",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasis_Unit",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseBasis",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseBasisItem",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseBasisItemQuantity",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseBasisItemQuantityPricesItem",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseBasisPackage",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseBasisUnit",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseBasisUnitQuantity",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseBasis_Item",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseBasis_Package",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseBasis_Unit",
+    "PlatformPublicApiSellingPricesReadPresentationPriceResponseCurrency",
     "PlatformPublicApiSellingPricesReadSellingPriceResponse",
+    "PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasis",
+    "PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasisItem",
+    "PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasisItemQuantity",
+    "PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasisItemQuantityPricesItem",
+    "PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasisPackage",
+    "PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasisUnit",
+    "PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasisUnitQuantity",
+    "PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasis_Item",
+    "PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasis_Package",
+    "PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasis_Unit",
     "PlatformPublicApiSellingPricesReadSellingPriceResponseBasis",
     "PlatformPublicApiSellingPricesReadSellingPriceResponseBasisItem",
     "PlatformPublicApiSellingPricesReadSellingPriceResponseBasisItemQuantity",
+    "PlatformPublicApiSellingPricesReadSellingPriceResponseBasisItemQuantityPricesItem",
     "PlatformPublicApiSellingPricesReadSellingPriceResponseBasisPackage",
     "PlatformPublicApiSellingPricesReadSellingPriceResponseBasisUnit",
     "PlatformPublicApiSellingPricesReadSellingPriceResponseBasisUnitQuantity",
@@ -3435,17 +3580,6 @@ __all__ = [
     "PlatformPublicApiSellingPricesReadSellingPriceResponseBasis_Package",
     "PlatformPublicApiSellingPricesReadSellingPriceResponseBasis_Unit",
     "PlatformPublicApiSellingPricesReadSellingPriceResponseCurrency",
-    "PlatformPublicApiSellingPricesUpdateSellingPriceResponse",
-    "PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasis",
-    "PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasisItem",
-    "PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasisItemQuantity",
-    "PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasisPackage",
-    "PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasisUnit",
-    "PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasisUnitQuantity",
-    "PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasis_Item",
-    "PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasis_Package",
-    "PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasis_Unit",
-    "PlatformPublicApiSellingPricesUpdateSellingPriceResponseCurrency",
     "PreviewOrderResponse",
     "PreviewOrderResponseClinicalIssuesItem",
     "PreviewOrderResponseClinicalRequirementsItem",
@@ -3559,6 +3693,9 @@ __all__ = [
     "RetrievePrescribingOptionsResponseCatalogCatalogDetailsAttributesValue",
     "RetrievePrescribingOptionsResponseCatalogCatalogDetailsDirectionsItem",
     "RetrievePrescribingOptionsResponseCatalogCatalogDetailsDirectionsItemKind",
+    "RetrievePrescribingOptionsResponseCatalogCatalogDetailsPackageComponentsItem",
+    "RetrievePrescribingOptionsResponseCatalogCatalogDetailsPackageComponentsItemContentsPerContainer",
+    "RetrievePrescribingOptionsResponseCatalogCatalogDetailsPackageComponentsItemContentsPerContainerUnit",
     "RetrievePrescribingOptionsResponseCatalogComposition",
     "RetrievePrescribingOptionsResponseCatalogCompositionIngredientsItem",
     "RetrievePrescribingOptionsResponseCatalogCompositionIngredientsItemBasisOfStrengthSubstance",
@@ -3613,6 +3750,7 @@ __all__ = [
     "RetrievePrescribingOptionsResponseCatalogPricingBasis",
     "RetrievePrescribingOptionsResponseCatalogPricingBasisItem",
     "RetrievePrescribingOptionsResponseCatalogPricingBasisItemQuantity",
+    "RetrievePrescribingOptionsResponseCatalogPricingBasisItemQuantityPricesItem",
     "RetrievePrescribingOptionsResponseCatalogPricingBasisPackage",
     "RetrievePrescribingOptionsResponseCatalogPricingBasisUnit",
     "RetrievePrescribingOptionsResponseCatalogPricingBasisUnitQuantity",
@@ -3712,7 +3850,7 @@ __all__ = [
     "SubmitOrderResponseStatus",
     "TestWebhookEndpointResponse",
     "UpdateOrderPrescriptionResponse",
-    "UpdateOrderPrescriptionResponseMetadata",
+    "UpdateOrderPrescriptionResponseMetadataValue",
     "UpdateOrderPrescriptionResponseObject",
     "UpdateOrderPrescriptionResponsePrescriptionsItem",
     "UpdateOrderTestSimulationResponse",

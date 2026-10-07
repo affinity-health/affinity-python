@@ -3,15 +3,25 @@
 import typing
 
 import pydantic
+import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
+from ..core.serialization import FieldMetadata
 from .retrieve_prescribing_options_response_catalog_pricing_basis_item_quantity import (
     RetrievePrescribingOptionsResponseCatalogPricingBasisItemQuantity,
+)
+from .retrieve_prescribing_options_response_catalog_pricing_basis_item_quantity_prices_item import (
+    RetrievePrescribingOptionsResponseCatalogPricingBasisItemQuantityPricesItem,
 )
 
 
 class RetrievePrescribingOptionsResponseCatalogPricingBasisItem(UniversalBaseModel):
     quantity: RetrievePrescribingOptionsResponseCatalogPricingBasisItemQuantity
     unit: str
+    quantity_prices: typing_extensions.Annotated[
+        typing.Optional[typing.List[RetrievePrescribingOptionsResponseCatalogPricingBasisItemQuantityPricesItem]],
+        FieldMetadata(alias="quantityPrices"),
+        pydantic.Field(alias="quantityPrices"),
+    ] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

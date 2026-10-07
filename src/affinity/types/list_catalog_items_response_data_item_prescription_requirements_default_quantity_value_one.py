@@ -3,5 +3,5 @@
 import typing
 
 ListCatalogItemsResponseDataItemPrescriptionRequirementsDefaultQuantityValueOne = typing.Union[
-    typing.Literal["Infinity", "NaN"], typing.Any
+    typing.Literal["NaN", "Infinity"], typing.Any
 ]

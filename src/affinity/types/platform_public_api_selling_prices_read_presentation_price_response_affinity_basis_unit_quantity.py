@@ -2,6 +2,6 @@
 
 import typing
 
-PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasisUnitQuantity = typing.Union[
+PlatformPublicApiSellingPricesReadPresentationPriceResponseAffinityBasisUnitQuantity = typing.Union[
     typing.Literal["1"], typing.Any
 ]

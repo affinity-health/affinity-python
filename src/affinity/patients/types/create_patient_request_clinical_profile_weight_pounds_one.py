@@ -2,4 +2,4 @@
 
 import typing
 
-CreatePatientRequestClinicalProfileWeightPoundsOne = typing.Union[typing.Literal["Infinity", "NaN"], typing.Any]
+CreatePatientRequestClinicalProfileWeightPoundsOne = typing.Union[typing.Literal["NaN", "Infinity"], typing.Any]

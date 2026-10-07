@@ -4,9 +4,15 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
+from .platform_public_api_selling_prices_read_presentation_price_response_basis_unit_quantity import (
+    PlatformPublicApiSellingPricesReadPresentationPriceResponseBasisUnitQuantity,
+)
 
 
-class ListOrdersResponseDataItemMetadata(UniversalBaseModel):
+class PlatformPublicApiSellingPricesReadPresentationPriceResponseBasisUnit(UniversalBaseModel):
+    quantity: PlatformPublicApiSellingPricesReadPresentationPriceResponseBasisUnitQuantity
+    unit: str
+
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
     else:

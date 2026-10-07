@@ -2,4 +2,4 @@
 
 import typing
 
-GetPracticeTeamResponseInvitationsPendingOne = typing.Union[typing.Literal["Infinity", "NaN"], typing.Any]
+GetPracticeTeamResponseInvitationsPendingOne = typing.Union[typing.Literal["NaN", "Infinity"], typing.Any]

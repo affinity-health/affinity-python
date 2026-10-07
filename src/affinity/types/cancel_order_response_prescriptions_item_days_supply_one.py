@@ -2,4 +2,4 @@
 
 import typing
 
-CancelOrderResponsePrescriptionsItemDaysSupplyOne = typing.Union[typing.Literal["Infinity", "NaN"], typing.Any]
+CancelOrderResponsePrescriptionsItemDaysSupplyOne = typing.Union[typing.Literal["NaN", "Infinity"], typing.Any]

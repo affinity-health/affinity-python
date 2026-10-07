@@ -6,7 +6,7 @@ import pydantic
 import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 from ..core.serialization import FieldMetadata
-from .update_order_prescription_response_metadata import UpdateOrderPrescriptionResponseMetadata
+from .update_order_prescription_response_metadata_value import UpdateOrderPrescriptionResponseMetadataValue
 from .update_order_prescription_response_object import UpdateOrderPrescriptionResponseObject
 from .update_order_prescription_response_prescriptions_item import UpdateOrderPrescriptionResponsePrescriptionsItem
 
@@ -21,7 +21,7 @@ class UpdateOrderPrescriptionResponse(UniversalBaseModel):
     external_order_id: typing_extensions.Annotated[
         typing.Optional[str], FieldMetadata(alias="externalOrderId"), pydantic.Field(alias="externalOrderId")
     ] = None
-    metadata: UpdateOrderPrescriptionResponseMetadata
+    metadata: typing.Dict[str, typing.Optional[UpdateOrderPrescriptionResponseMetadataValue]]
     order_id: typing_extensions.Annotated[str, FieldMetadata(alias="orderId"), pydantic.Field(alias="orderId")]
     prescription_id: typing_extensions.Annotated[
         str, FieldMetadata(alias="prescriptionId"), pydantic.Field(alias="prescriptionId")

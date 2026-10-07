@@ -4,11 +4,14 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
+from .list_catalog_items_response_data_item_catalog_details_package_components_item_contents_per_container_unit import (
+    ListCatalogItemsResponseDataItemCatalogDetailsPackageComponentsItemContentsPerContainerUnit,
+)
 
 
-class PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasisPackage(UniversalBaseModel):
-    quantity: str
-    unit: str
+class ListCatalogItemsResponseDataItemCatalogDetailsPackageComponentsItemContentsPerContainer(UniversalBaseModel):
+    value: str
+    unit: ListCatalogItemsResponseDataItemCatalogDetailsPackageComponentsItemContentsPerContainerUnit
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

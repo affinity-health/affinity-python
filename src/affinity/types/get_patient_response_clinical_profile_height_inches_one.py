@@ -2,4 +2,4 @@
 
 import typing
 
-GetPatientResponseClinicalProfileHeightInchesOne = typing.Union[typing.Literal["Infinity", "NaN"], typing.Any]
+GetPatientResponseClinicalProfileHeightInchesOne = typing.Union[typing.Literal["NaN", "Infinity"], typing.Any]

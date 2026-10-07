@@ -3,15 +3,16 @@
 import typing
 
 import pydantic
+import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
-from .platform_public_api_selling_prices_update_selling_price_response_basis_unit_quantity import (
-    PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasisUnitQuantity,
-)
+from ..core.serialization import FieldMetadata
 
 
-class PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasisUnit(UniversalBaseModel):
-    quantity: PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasisUnitQuantity
-    unit: str
+class RetrievePrescribingOptionsResponseCatalogPricingBasisItemQuantityPricesItem(UniversalBaseModel):
+    quantity: str
+    amount_cents: typing_extensions.Annotated[
+        int, FieldMetadata(alias="amountCents"), pydantic.Field(alias="amountCents")
+    ]
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

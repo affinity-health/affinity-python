@@ -2,4 +2,4 @@
 
 import typing
 
-SignAndSubmitOrderResponsePrescriptionsItemErrorStatusOne = typing.Union[typing.Literal["Infinity", "NaN"], typing.Any]
+SignAndSubmitOrderResponsePrescriptionsItemErrorStatusOne = typing.Union[typing.Literal["NaN", "Infinity"], typing.Any]

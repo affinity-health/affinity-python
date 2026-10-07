@@ -2,4 +2,4 @@
 
 import typing
 
-GetPatientResponseMeasurementsItemHeightCentimetersOne = typing.Union[typing.Literal["Infinity", "NaN"], typing.Any]
+GetPatientResponseMeasurementsItemHeightCentimetersOne = typing.Union[typing.Literal["NaN", "Infinity"], typing.Any]

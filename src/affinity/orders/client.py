@@ -246,7 +246,7 @@ class OrdersClient:
                     dispensing=CreateOrderRequestPrescriptionsItemDispensing(),
                     directions="directions",
                     medication_id="cat_01j2y8m6jcc9tt24af5pw9x1bc",
-                    quantity="Infinity",
+                    quantity="NaN",
                     quantity_unit="quantityUnit",
                     refills=1,
                 )
@@ -986,7 +986,7 @@ class AsyncOrdersClient:
                         dispensing=CreateOrderRequestPrescriptionsItemDispensing(),
                         directions="directions",
                         medication_id="cat_01j2y8m6jcc9tt24af5pw9x1bc",
-                        quantity="Infinity",
+                        quantity="NaN",
                         quantity_unit="quantityUnit",
                         refills=1,
                     )

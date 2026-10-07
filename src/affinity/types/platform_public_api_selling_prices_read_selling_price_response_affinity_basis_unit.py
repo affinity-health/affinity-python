@@ -4,13 +4,13 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
-from .platform_public_api_selling_prices_update_selling_price_response_basis_item_quantity import (
-    PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasisItemQuantity,
+from .platform_public_api_selling_prices_read_selling_price_response_affinity_basis_unit_quantity import (
+    PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasisUnitQuantity,
 )
 
 
-class PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasisItem(UniversalBaseModel):
-    quantity: PlatformPublicApiSellingPricesUpdateSellingPriceResponseBasisItemQuantity
+class PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasisUnit(UniversalBaseModel):
+    quantity: PlatformPublicApiSellingPricesReadSellingPriceResponseAffinityBasisUnitQuantity
     unit: str
 
     if IS_PYDANTIC_V2:

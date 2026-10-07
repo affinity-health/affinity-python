@@ -2,12 +2,12 @@
 
 Server-side client for the Affinity API. Requires Python 3.10+.
 
-The new interface is implemented in this source update and has not been published to a registry yet.
+Version 0.3.0 targets the deployed Affinity API contract used by TypeScript SDK 1.16.0. Install this SDK from GitHub; registry publication is deferred.
 
 ## Install from source
 
 ```sh
-python -m pip install "git+https://github.com/affinity-health/affinity-python.git@main"
+python -m pip install "git+https://github.com/affinity-health/affinity-python.git@v0.3.0"
 ```
 
 ## Use

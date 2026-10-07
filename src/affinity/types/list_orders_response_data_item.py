@@ -8,7 +8,7 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 from ..core.serialization import FieldMetadata
 from .list_orders_response_data_item_fulfillments_item import ListOrdersResponseDataItemFulfillmentsItem
 from .list_orders_response_data_item_lifecycle_events_item import ListOrdersResponseDataItemLifecycleEventsItem
-from .list_orders_response_data_item_metadata import ListOrdersResponseDataItemMetadata
+from .list_orders_response_data_item_metadata_value import ListOrdersResponseDataItemMetadataValue
 from .list_orders_response_data_item_object import ListOrdersResponseDataItemObject
 from .list_orders_response_data_item_otc_items_item import ListOrdersResponseDataItemOtcItemsItem
 from .list_orders_response_data_item_prescriptions_item import ListOrdersResponseDataItemPrescriptionsItem
@@ -42,7 +42,7 @@ class ListOrdersResponseDataItem(UniversalBaseModel):
     external_order_id: typing_extensions.Annotated[
         typing.Optional[str], FieldMetadata(alias="externalOrderId"), pydantic.Field(alias="externalOrderId")
     ] = None
-    metadata: ListOrdersResponseDataItemMetadata
+    metadata: typing.Dict[str, typing.Optional[ListOrdersResponseDataItemMetadataValue]]
     created_at: typing_extensions.Annotated[str, FieldMetadata(alias="createdAt"), pydantic.Field(alias="createdAt")]
     fulfillments: typing.List[ListOrdersResponseDataItemFulfillmentsItem]
     id: str

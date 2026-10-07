@@ -2,7 +2,4 @@
 
 import typing
 
-UpdateOrderTestSimulationResponseAvailableActionsItem = typing.Union[
-    typing.Literal["accept", "process", "ship", "deliver", "reject", "confirm_cancellation", "decline_cancellation"],
-    typing.Any,
-]
+UpdateOrderTestSimulationResponseAvailableActionsItem = typing.Union[typing.Literal["ship", "deliver"], typing.Any]

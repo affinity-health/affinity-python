@@ -4,4 +4,4 @@ import enum
 
 
 class AffinityEnvironment(enum.Enum):
-    PRODUCTION = "https://api.joinaffinityai.com"
+    PRODUCTION = "https://api.affinityrx.com"

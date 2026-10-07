@@ -1,7 +1,8 @@
 #!/bin/sh
 set -eu
 sdk_tests_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-python3 "$sdk_tests_dir/fixture-server.py" > /tmp/affinity-sdk-fixtures.log 2>&1 &
+sdk_fixture_source=${SDK_FIXTURE_DIRECTORY:-$sdk_tests_dir}
+python3 "$sdk_fixture_source/fixture-server.py" > /tmp/affinity-sdk-fixtures.log 2>&1 &
 sdk_fixture_pid=$!
 trap 'kill "$sdk_fixture_pid" 2>/dev/null || true' EXIT INT TERM
 python3 - "$sdk_fixture_pid" <<'PY'

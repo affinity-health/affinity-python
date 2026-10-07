@@ -3,6 +3,6 @@
 import typing
 
 UpdateOrderTestSimulationRequestAction = typing.Union[
-    typing.Literal["accept", "process", "ship", "deliver", "reject", "confirm_cancellation", "decline_cancellation"],
+    typing.Literal["ship", "deliver", "accept", "process", "reject", "confirm_cancellation", "decline_cancellation"],
     typing.Any,
 ]

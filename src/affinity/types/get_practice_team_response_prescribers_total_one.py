@@ -2,4 +2,4 @@
 
 import typing
 
-GetPracticeTeamResponsePrescribersTotalOne = typing.Union[typing.Literal["Infinity", "NaN"], typing.Any]
+GetPracticeTeamResponsePrescribersTotalOne = typing.Union[typing.Literal["NaN", "Infinity"], typing.Any]
