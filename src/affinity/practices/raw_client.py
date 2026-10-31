@@ -7,32 +7,32 @@ from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.http_response import AsyncHttpResponse, HttpResponse
 from ..core.jsonable_encoder import encode_path_param
+from ..core.pagination import AsyncPager, SyncPager
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
 from ..core.serialization import convert_and_respect_annotation_metadata
 from ..errors.bad_request_error import BadRequestError
 from ..errors.conflict_error import ConflictError
+from ..errors.content_too_large_error import ContentTooLargeError
 from ..errors.forbidden_error import ForbiddenError
+from ..errors.internal_server_error import InternalServerError
+from ..errors.method_not_allowed_error import MethodNotAllowedError
 from ..errors.not_found_error import NotFoundError
+from ..errors.service_unavailable_error import ServiceUnavailableError
 from ..errors.too_many_requests_error import TooManyRequestsError
 from ..errors.unauthorized_error import UnauthorizedError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
-from ..types.create_practice_response import CreatePracticeResponse
-from ..types.get_practice_response import GetPracticeResponse
-from ..types.list_practices_response import ListPracticesResponse
+from ..errors.unsupported_media_type_error import UnsupportedMediaTypeError
+from ..types.address_input import AddressInput
+from ..types.practice import Practice
+from ..types.practice_list import PracticeList
 from ..types.problem import Problem
-from ..types.update_practice_response import UpdatePracticeResponse
-from .types.create_practice_request_address import CreatePracticeRequestAddress
-from .types.create_practice_request_attestations import CreatePracticeRequestAttestations
-from .types.create_practice_request_compliance_contact import CreatePracticeRequestComplianceContact
-from .types.create_practice_request_prescribers_item import CreatePracticeRequestPrescribersItem
-from .types.create_practice_request_primary_contact import CreatePracticeRequestPrimaryContact
-from .types.update_practice_request_address import UpdatePracticeRequestAddress
-from .types.update_practice_request_attestations import UpdatePracticeRequestAttestations
-from .types.update_practice_request_compliance_contact import UpdatePracticeRequestComplianceContact
-from .types.update_practice_request_prescribers_item import UpdatePracticeRequestPrescribersItem
-from .types.update_practice_request_primary_contact import UpdatePracticeRequestPrimaryContact
+from ..types.problem409 import Problem409
+from ..types.problem429 import Problem429
+from ..types.service_unavailable_error_body import ServiceUnavailableErrorBody
+from .types.list_practices_request_sort import ListPracticesRequestSort
+from .types.update_practices_request_address import UpdatePracticesRequestAddress
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
@@ -46,55 +46,80 @@ class RawPracticesClient:
     def list(
         self,
         *,
-        search: typing.Optional[str] = None,
         ending_before: typing.Optional[str] = None,
         limit: typing.Optional[int] = None,
         starting_after: typing.Optional[str] = None,
+        external_id: typing.Optional[str] = None,
+        query: typing.Optional[str] = None,
+        sort: typing.Optional[ListPracticesRequestSort] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[ListPracticesResponse]:
+    ) -> SyncPager[Practice, PracticeList]:
         """
-        Returns the practices that belong to the platform. The default Affinity-Version is 2026-09-28.
+        List the platform's practices, newest first. Available to platforms only. `sort` takes `name` or `location` (A to Z, practices without a location last), `mode` (Test before Live) or `created` (oldest first); a leading `-` reverses.
 
         Parameters
         ----------
-        search : typing.Optional[str]
-            Case-insensitive search by practice name or external ID.
-
         ending_before : typing.Optional[str]
+            Page backward before this opaque cursor. Keep the same filters, sort, organization and mode. Send either startingAfter or endingBefore.
 
         limit : typing.Optional[int]
+            Maximum records per page, from 1 to 100. Defaults to 25.
 
         starting_after : typing.Optional[str]
+            Page forward using the previous response's nextCursor. Keep the same filters, sort, organization and mode. Use only one cursor parameter.
+
+        external_id : typing.Optional[str]
+            Match the external practice ID exactly, including case. Keep this filter unchanged while paging.
+
+        query : typing.Optional[str]
+            Match practice names containing this text, ignoring case. Restart pagination after changing query.
+
+        sort : typing.Optional[ListPracticesRequestSort]
+            name and location sort A to Z; mode sorts Test before Live; created sorts oldest first. A leading - reverses the order. Defaults to -created. Missing locations sort last. Restart pagination after changing sort.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[ListPracticesResponse]
+        SyncPager[Practice, PracticeList]
             HTTP 200
         """
         _response = self._client_wrapper.httpx_client.request(
             "v1/practices",
             method="GET",
             params={
-                "search": search,
                 "endingBefore": ending_before,
                 "limit": limit,
                 "startingAfter": starting_after,
+                "externalId": external_id,
+                "query": query,
+                "sort": sort,
             },
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    ListPracticesResponse,
+                _parsed_response = typing.cast(
+                    PracticeList,
                     parse_obj_as(
-                        type_=ListPracticesResponse,  # type: ignore
+                        type_=PracticeList,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
-                return HttpResponse(response=_response, data=_data)
+                _items = _parsed_response.data
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+                _get_next = lambda: self.list(
+                    ending_before=ending_before,
+                    limit=limit,
+                    starting_after=_parsed_next,
+                    external_id=external_id,
+                    query=query,
+                    sort=sort,
+                    request_options=request_options,
+                )
+                return SyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
             if _response.status_code == 400:
                 raise BadRequestError(
                     headers=dict(_response.headers),
@@ -139,8 +164,8 @@ class RawPracticesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 409:
-                raise ConflictError(
+            if _response.status_code == 405:
+                raise MethodNotAllowedError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
@@ -150,13 +175,13 @@ class RawPracticesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        Problem,
+                        typing.Any,
                         parse_obj_as(
-                            type_=Problem,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -165,9 +190,31 @@ class RawPracticesClient:
                 raise TooManyRequestsError(
                     headers=dict(_response.headers),
                     body=typing.cast(
+                        Problem429,
+                        parse_obj_as(
+                            type_=Problem429,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 503:
+                raise ServiceUnavailableError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ServiceUnavailableErrorBody,
+                        parse_obj_as(
+                            type_=ServiceUnavailableErrorBody,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -184,98 +231,53 @@ class RawPracticesClient:
     def create(
         self,
         *,
-        address: CreatePracticeRequestAddress,
-        attestations: CreatePracticeRequestAttestations,
+        idempotency_key: str,
+        address: AddressInput,
         name: str,
-        idempotency_key: typing.Optional[str] = None,
-        live_enabled: typing.Optional[bool] = OMIT,
-        compliance_contact: typing.Optional[CreatePracticeRequestComplianceContact] = OMIT,
+        phone: str,
         external_id: typing.Optional[str] = OMIT,
-        legal_name: typing.Optional[str] = OMIT,
-        metadata: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
-        prescribers: typing.Optional[typing.Sequence[CreatePracticeRequestPrescribersItem]] = OMIT,
-        primary_contact: typing.Optional[CreatePracticeRequestPrimaryContact] = OMIT,
-        support_email: typing.Optional[str] = OMIT,
-        support_phone: typing.Optional[str] = OMIT,
-        timezone: typing.Optional[str] = OMIT,
+        live_enabled: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[CreatePracticeResponse]:
+    ) -> HttpResponse[Practice]:
         """
-        Creates a practice owned by the platform. Set liveEnabled to true to enable Live access at creation with an approved platform and a Live request. Defaults to false. Requires practices:write. Send Idempotency-Key when you retry the same request.
+        Platforms only. Name, phone and address are required. The practice starts in Test; `liveEnabled: true` also allows new Live orders, which needs a platform with Live access and a Live caller: a Live key, or a session in Live mode. Turning Live off later preserves access to existing records. A retry with the same key and body returns the stored first response, even if the practice has changed. Use GET /v1/practices/{practiceId} to read the current practice.
 
         Parameters
         ----------
-        address : CreatePracticeRequestAddress
+        idempotency_key : str
+            A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
 
-        attestations : CreatePracticeRequestAttestations
+        address : AddressInput
 
         name : str
 
-        idempotency_key : typing.Optional[str]
-
-        live_enabled : typing.Optional[bool]
-            Enable Live access at creation. Requires an approved platform and a Live request. Defaults to false.
-
-        compliance_contact : typing.Optional[CreatePracticeRequestComplianceContact]
+        phone : str
+            A US phone number: 10 digits, with or without +1 or 1 before them. Spaces, dashes, dots and parentheses are allowed, such as (512) 555-0100. Affinity stores and returns +15125550100.
 
         external_id : typing.Optional[str]
+            Your practice identifier, unique among your platform's active practices.
 
-        legal_name : typing.Optional[str]
-
-        metadata : typing.Optional[typing.Dict[str, typing.Any]]
-
-        prescribers : typing.Optional[typing.Sequence[CreatePracticeRequestPrescribersItem]]
-
-        primary_contact : typing.Optional[CreatePracticeRequestPrimaryContact]
-
-        support_email : typing.Optional[str]
-
-        support_phone : typing.Optional[str]
-
-        timezone : typing.Optional[str]
-            Optional IANA timezone override. Omit to leave unchanged; null clears it. No timezone is inferred when creating a record.
+        live_enabled : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[CreatePracticeResponse]
+        HttpResponse[Practice]
             HTTP 200
         """
         _response = self._client_wrapper.httpx_client.request(
             "v1/practices",
             method="POST",
             json={
-                "liveEnabled": live_enabled,
-                "address": convert_and_respect_annotation_metadata(
-                    object_=address, annotation=CreatePracticeRequestAddress, direction="write"
-                ),
-                "attestations": convert_and_respect_annotation_metadata(
-                    object_=attestations, annotation=CreatePracticeRequestAttestations, direction="write"
-                ),
-                "complianceContact": convert_and_respect_annotation_metadata(
-                    object_=compliance_contact,
-                    annotation=typing.Optional[CreatePracticeRequestComplianceContact],
-                    direction="write",
-                ),
                 "externalId": external_id,
-                "legalName": legal_name,
-                "metadata": metadata,
+                "address": convert_and_respect_annotation_metadata(
+                    object_=address, annotation=AddressInput, direction="write"
+                ),
+                "liveEnabled": live_enabled,
                 "name": name,
-                "prescribers": convert_and_respect_annotation_metadata(
-                    object_=prescribers,
-                    annotation=typing.Optional[typing.Sequence[CreatePracticeRequestPrescribersItem]],
-                    direction="write",
-                ),
-                "primaryContact": convert_and_respect_annotation_metadata(
-                    object_=primary_contact,
-                    annotation=typing.Optional[CreatePracticeRequestPrimaryContact],
-                    direction="write",
-                ),
-                "supportEmail": support_email,
-                "supportPhone": support_phone,
-                "timezone": timezone,
+                "phone": phone,
             },
             headers={
                 "content-type": "application/json",
@@ -287,9 +289,9 @@ class RawPracticesClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    CreatePracticeResponse,
+                    Practice,
                     parse_obj_as(
-                        type_=CreatePracticeResponse,  # type: ignore
+                        type_=Practice,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -338,13 +340,46 @@ class RawPracticesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 409:
-                raise ConflictError(
+            if _response.status_code == 405:
+                raise MethodNotAllowedError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Problem409,
+                        parse_obj_as(
+                            type_=Problem409,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 415:
+                raise UnsupportedMediaTypeError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -364,9 +399,31 @@ class RawPracticesClient:
                 raise TooManyRequestsError(
                     headers=dict(_response.headers),
                     body=typing.cast(
+                        Problem429,
+                        parse_obj_as(
+                            type_=Problem429,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 503:
+                raise ServiceUnavailableError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ServiceUnavailableErrorBody,
+                        parse_obj_as(
+                            type_=ServiceUnavailableErrorBody,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -382,9 +439,9 @@ class RawPracticesClient:
 
     def get(
         self, practice_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[GetPracticeResponse]:
+    ) -> HttpResponse[Practice]:
         """
-        Returns one practice that belongs to the platform.
+        Read one practice accessible to the API key. A platform can read its own practices.
 
         Parameters
         ----------
@@ -395,7 +452,7 @@ class RawPracticesClient:
 
         Returns
         -------
-        HttpResponse[GetPracticeResponse]
+        HttpResponse[Practice]
             HTTP 200
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -406,9 +463,9 @@ class RawPracticesClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    GetPracticeResponse,
+                    Practice,
                     parse_obj_as(
-                        type_=GetPracticeResponse,  # type: ignore
+                        type_=Practice,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -457,8 +514,8 @@ class RawPracticesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 409:
-                raise ConflictError(
+            if _response.status_code == 405:
+                raise MethodNotAllowedError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
@@ -468,13 +525,13 @@ class RawPracticesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        Problem,
+                        typing.Any,
                         parse_obj_as(
-                            type_=Problem,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -483,9 +540,31 @@ class RawPracticesClient:
                 raise TooManyRequestsError(
                     headers=dict(_response.headers),
                     body=typing.cast(
+                        Problem429,
+                        parse_obj_as(
+                            type_=Problem429,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 503:
+                raise ServiceUnavailableError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ServiceUnavailableErrorBody,
+                        parse_obj_as(
+                            type_=ServiceUnavailableErrorBody,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -503,108 +582,59 @@ class RawPracticesClient:
         self,
         practice_id: str,
         *,
-        idempotency_key: typing.Optional[str] = None,
-        live_enabled: typing.Optional[bool] = OMIT,
-        address: typing.Optional[UpdatePracticeRequestAddress] = OMIT,
-        attestations: typing.Optional[UpdatePracticeRequestAttestations] = OMIT,
-        compliance_contact: typing.Optional[UpdatePracticeRequestComplianceContact] = OMIT,
+        idempotency_key: str,
         external_id: typing.Optional[str] = OMIT,
-        legal_name: typing.Optional[str] = OMIT,
-        metadata: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        address: typing.Optional[UpdatePracticesRequestAddress] = OMIT,
+        live_enabled: typing.Optional[bool] = OMIT,
         name: typing.Optional[str] = OMIT,
-        prescribers: typing.Optional[typing.Sequence[UpdatePracticeRequestPrescribersItem]] = OMIT,
-        primary_contact: typing.Optional[UpdatePracticeRequestPrimaryContact] = OMIT,
-        support_email: typing.Optional[str] = OMIT,
-        support_phone: typing.Optional[str] = OMIT,
-        timezone: typing.Optional[str] = OMIT,
+        phone: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[UpdatePracticeResponse]:
+    ) -> HttpResponse[Practice]:
         """
-        Updates one practice owned by the platform. Set liveEnabled to true or false to control Live access with an approved platform and a Live request. Affinity Admin decisions take precedence. Requires practices:write. Send Idempotency-Key when you retry the same request.
+        `liveEnabled` allows or refuses new Live orders. Existing records, cancellation, webhooks and billing keep working. Only its platform changes it; enabling requires platform Live access, and either change needs a Live caller: a Live key (403 live_key_required otherwise) or a session in Live mode (403 live_mode_required otherwise). Live orders send `name`, `phone` and `address` to the pharmacy, so a practice with Live access changes them only with a Live key (403 live_mode_required otherwise). A retry with the same key and body returns the stored first response, even if the practice has changed. Use GET /v1/practices/{practiceId} to read the current practice.
 
         Parameters
         ----------
         practice_id : str
 
-        idempotency_key : typing.Optional[str]
-            Optional in the SDK. A fresh key is generated once per call when omitted. Supply a stable key to retry across calls.
-
-        live_enabled : typing.Optional[bool]
-            Enable or disable Live access for an owned practice. Requires an approved platform and a Live request. Affinity Admin decisions take precedence.
-
-        address : typing.Optional[UpdatePracticeRequestAddress]
-
-        attestations : typing.Optional[UpdatePracticeRequestAttestations]
-
-        compliance_contact : typing.Optional[UpdatePracticeRequestComplianceContact]
+        idempotency_key : str
+            A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
 
         external_id : typing.Optional[str]
+            Your practice identifier, unique among your platform's active practices. Send null to clear it.
 
-        legal_name : typing.Optional[str]
+        address : typing.Optional[UpdatePracticesRequestAddress]
 
-        metadata : typing.Optional[typing.Dict[str, typing.Any]]
+        live_enabled : typing.Optional[bool]
 
         name : typing.Optional[str]
 
-        prescribers : typing.Optional[typing.Sequence[UpdatePracticeRequestPrescribersItem]]
-
-        primary_contact : typing.Optional[UpdatePracticeRequestPrimaryContact]
-
-        support_email : typing.Optional[str]
-
-        support_phone : typing.Optional[str]
-
-        timezone : typing.Optional[str]
-            Optional IANA timezone override. Omit to leave unchanged; null clears it. No timezone is inferred when creating a record.
+        phone : typing.Optional[str]
+            A US phone number: 10 digits, with or without +1 or 1 before them. Spaces, dashes, dots and parentheses are allowed, such as (512) 555-0100. Affinity stores and returns +15125550100. Empty text counts as null.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[UpdatePracticeResponse]
+        HttpResponse[Practice]
             HTTP 200
         """
         _response = self._client_wrapper.httpx_client.request(
             f"v1/practices/{encode_path_param(practice_id)}",
             method="PATCH",
             json={
-                "liveEnabled": live_enabled,
-                "address": convert_and_respect_annotation_metadata(
-                    object_=address, annotation=typing.Optional[UpdatePracticeRequestAddress], direction="write"
-                ),
-                "attestations": convert_and_respect_annotation_metadata(
-                    object_=attestations,
-                    annotation=typing.Optional[UpdatePracticeRequestAttestations],
-                    direction="write",
-                ),
-                "complianceContact": convert_and_respect_annotation_metadata(
-                    object_=compliance_contact,
-                    annotation=typing.Optional[UpdatePracticeRequestComplianceContact],
-                    direction="write",
-                ),
                 "externalId": external_id,
-                "legalName": legal_name,
-                "metadata": metadata,
+                "address": convert_and_respect_annotation_metadata(
+                    object_=address, annotation=typing.Optional[UpdatePracticesRequestAddress], direction="write"
+                ),
+                "liveEnabled": live_enabled,
                 "name": name,
-                "prescribers": convert_and_respect_annotation_metadata(
-                    object_=prescribers,
-                    annotation=typing.Optional[typing.Sequence[UpdatePracticeRequestPrescribersItem]],
-                    direction="write",
-                ),
-                "primaryContact": convert_and_respect_annotation_metadata(
-                    object_=primary_contact,
-                    annotation=typing.Optional[UpdatePracticeRequestPrimaryContact],
-                    direction="write",
-                ),
-                "supportEmail": support_email,
-                "supportPhone": support_phone,
-                "timezone": timezone,
+                "phone": phone,
             },
             headers={
                 "content-type": "application/json",
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else str(__import__("uuid").uuid4())  # affinity-sdk-auto-key
-,
+                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
             },
             request_options=request_options,
             omit=OMIT,
@@ -612,9 +642,9 @@ class RawPracticesClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    UpdatePracticeResponse,
+                    Practice,
                     parse_obj_as(
-                        type_=UpdatePracticeResponse,  # type: ignore
+                        type_=Practice,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -663,13 +693,46 @@ class RawPracticesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 409:
-                raise ConflictError(
+            if _response.status_code == 405:
+                raise MethodNotAllowedError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Problem409,
+                        parse_obj_as(
+                            type_=Problem409,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 415:
+                raise UnsupportedMediaTypeError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -689,9 +752,31 @@ class RawPracticesClient:
                 raise TooManyRequestsError(
                     headers=dict(_response.headers),
                     body=typing.cast(
+                        Problem429,
+                        parse_obj_as(
+                            type_=Problem429,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 503:
+                raise ServiceUnavailableError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ServiceUnavailableErrorBody,
+                        parse_obj_as(
+                            type_=ServiceUnavailableErrorBody,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -713,55 +798,83 @@ class AsyncRawPracticesClient:
     async def list(
         self,
         *,
-        search: typing.Optional[str] = None,
         ending_before: typing.Optional[str] = None,
         limit: typing.Optional[int] = None,
         starting_after: typing.Optional[str] = None,
+        external_id: typing.Optional[str] = None,
+        query: typing.Optional[str] = None,
+        sort: typing.Optional[ListPracticesRequestSort] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[ListPracticesResponse]:
+    ) -> AsyncPager[Practice, PracticeList]:
         """
-        Returns the practices that belong to the platform. The default Affinity-Version is 2026-09-28.
+        List the platform's practices, newest first. Available to platforms only. `sort` takes `name` or `location` (A to Z, practices without a location last), `mode` (Test before Live) or `created` (oldest first); a leading `-` reverses.
 
         Parameters
         ----------
-        search : typing.Optional[str]
-            Case-insensitive search by practice name or external ID.
-
         ending_before : typing.Optional[str]
+            Page backward before this opaque cursor. Keep the same filters, sort, organization and mode. Send either startingAfter or endingBefore.
 
         limit : typing.Optional[int]
+            Maximum records per page, from 1 to 100. Defaults to 25.
 
         starting_after : typing.Optional[str]
+            Page forward using the previous response's nextCursor. Keep the same filters, sort, organization and mode. Use only one cursor parameter.
+
+        external_id : typing.Optional[str]
+            Match the external practice ID exactly, including case. Keep this filter unchanged while paging.
+
+        query : typing.Optional[str]
+            Match practice names containing this text, ignoring case. Restart pagination after changing query.
+
+        sort : typing.Optional[ListPracticesRequestSort]
+            name and location sort A to Z; mode sorts Test before Live; created sorts oldest first. A leading - reverses the order. Defaults to -created. Missing locations sort last. Restart pagination after changing sort.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[ListPracticesResponse]
+        AsyncPager[Practice, PracticeList]
             HTTP 200
         """
         _response = await self._client_wrapper.httpx_client.request(
             "v1/practices",
             method="GET",
             params={
-                "search": search,
                 "endingBefore": ending_before,
                 "limit": limit,
                 "startingAfter": starting_after,
+                "externalId": external_id,
+                "query": query,
+                "sort": sort,
             },
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    ListPracticesResponse,
+                _parsed_response = typing.cast(
+                    PracticeList,
                     parse_obj_as(
-                        type_=ListPracticesResponse,  # type: ignore
+                        type_=PracticeList,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
-                return AsyncHttpResponse(response=_response, data=_data)
+                _items = _parsed_response.data
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+
+                async def _get_next():
+                    return await self.list(
+                        ending_before=ending_before,
+                        limit=limit,
+                        starting_after=_parsed_next,
+                        external_id=external_id,
+                        query=query,
+                        sort=sort,
+                        request_options=request_options,
+                    )
+
+                return AsyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
             if _response.status_code == 400:
                 raise BadRequestError(
                     headers=dict(_response.headers),
@@ -806,8 +919,8 @@ class AsyncRawPracticesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 409:
-                raise ConflictError(
+            if _response.status_code == 405:
+                raise MethodNotAllowedError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
@@ -817,13 +930,13 @@ class AsyncRawPracticesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        Problem,
+                        typing.Any,
                         parse_obj_as(
-                            type_=Problem,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -832,9 +945,31 @@ class AsyncRawPracticesClient:
                 raise TooManyRequestsError(
                     headers=dict(_response.headers),
                     body=typing.cast(
+                        Problem429,
+                        parse_obj_as(
+                            type_=Problem429,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 503:
+                raise ServiceUnavailableError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ServiceUnavailableErrorBody,
+                        parse_obj_as(
+                            type_=ServiceUnavailableErrorBody,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -851,98 +986,53 @@ class AsyncRawPracticesClient:
     async def create(
         self,
         *,
-        address: CreatePracticeRequestAddress,
-        attestations: CreatePracticeRequestAttestations,
+        idempotency_key: str,
+        address: AddressInput,
         name: str,
-        idempotency_key: typing.Optional[str] = None,
-        live_enabled: typing.Optional[bool] = OMIT,
-        compliance_contact: typing.Optional[CreatePracticeRequestComplianceContact] = OMIT,
+        phone: str,
         external_id: typing.Optional[str] = OMIT,
-        legal_name: typing.Optional[str] = OMIT,
-        metadata: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
-        prescribers: typing.Optional[typing.Sequence[CreatePracticeRequestPrescribersItem]] = OMIT,
-        primary_contact: typing.Optional[CreatePracticeRequestPrimaryContact] = OMIT,
-        support_email: typing.Optional[str] = OMIT,
-        support_phone: typing.Optional[str] = OMIT,
-        timezone: typing.Optional[str] = OMIT,
+        live_enabled: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[CreatePracticeResponse]:
+    ) -> AsyncHttpResponse[Practice]:
         """
-        Creates a practice owned by the platform. Set liveEnabled to true to enable Live access at creation with an approved platform and a Live request. Defaults to false. Requires practices:write. Send Idempotency-Key when you retry the same request.
+        Platforms only. Name, phone and address are required. The practice starts in Test; `liveEnabled: true` also allows new Live orders, which needs a platform with Live access and a Live caller: a Live key, or a session in Live mode. Turning Live off later preserves access to existing records. A retry with the same key and body returns the stored first response, even if the practice has changed. Use GET /v1/practices/{practiceId} to read the current practice.
 
         Parameters
         ----------
-        address : CreatePracticeRequestAddress
+        idempotency_key : str
+            A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
 
-        attestations : CreatePracticeRequestAttestations
+        address : AddressInput
 
         name : str
 
-        idempotency_key : typing.Optional[str]
-
-        live_enabled : typing.Optional[bool]
-            Enable Live access at creation. Requires an approved platform and a Live request. Defaults to false.
-
-        compliance_contact : typing.Optional[CreatePracticeRequestComplianceContact]
+        phone : str
+            A US phone number: 10 digits, with or without +1 or 1 before them. Spaces, dashes, dots and parentheses are allowed, such as (512) 555-0100. Affinity stores and returns +15125550100.
 
         external_id : typing.Optional[str]
+            Your practice identifier, unique among your platform's active practices.
 
-        legal_name : typing.Optional[str]
-
-        metadata : typing.Optional[typing.Dict[str, typing.Any]]
-
-        prescribers : typing.Optional[typing.Sequence[CreatePracticeRequestPrescribersItem]]
-
-        primary_contact : typing.Optional[CreatePracticeRequestPrimaryContact]
-
-        support_email : typing.Optional[str]
-
-        support_phone : typing.Optional[str]
-
-        timezone : typing.Optional[str]
-            Optional IANA timezone override. Omit to leave unchanged; null clears it. No timezone is inferred when creating a record.
+        live_enabled : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[CreatePracticeResponse]
+        AsyncHttpResponse[Practice]
             HTTP 200
         """
         _response = await self._client_wrapper.httpx_client.request(
             "v1/practices",
             method="POST",
             json={
-                "liveEnabled": live_enabled,
-                "address": convert_and_respect_annotation_metadata(
-                    object_=address, annotation=CreatePracticeRequestAddress, direction="write"
-                ),
-                "attestations": convert_and_respect_annotation_metadata(
-                    object_=attestations, annotation=CreatePracticeRequestAttestations, direction="write"
-                ),
-                "complianceContact": convert_and_respect_annotation_metadata(
-                    object_=compliance_contact,
-                    annotation=typing.Optional[CreatePracticeRequestComplianceContact],
-                    direction="write",
-                ),
                 "externalId": external_id,
-                "legalName": legal_name,
-                "metadata": metadata,
+                "address": convert_and_respect_annotation_metadata(
+                    object_=address, annotation=AddressInput, direction="write"
+                ),
+                "liveEnabled": live_enabled,
                 "name": name,
-                "prescribers": convert_and_respect_annotation_metadata(
-                    object_=prescribers,
-                    annotation=typing.Optional[typing.Sequence[CreatePracticeRequestPrescribersItem]],
-                    direction="write",
-                ),
-                "primaryContact": convert_and_respect_annotation_metadata(
-                    object_=primary_contact,
-                    annotation=typing.Optional[CreatePracticeRequestPrimaryContact],
-                    direction="write",
-                ),
-                "supportEmail": support_email,
-                "supportPhone": support_phone,
-                "timezone": timezone,
+                "phone": phone,
             },
             headers={
                 "content-type": "application/json",
@@ -954,9 +1044,9 @@ class AsyncRawPracticesClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    CreatePracticeResponse,
+                    Practice,
                     parse_obj_as(
-                        type_=CreatePracticeResponse,  # type: ignore
+                        type_=Practice,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1005,13 +1095,46 @@ class AsyncRawPracticesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 409:
-                raise ConflictError(
+            if _response.status_code == 405:
+                raise MethodNotAllowedError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Problem409,
+                        parse_obj_as(
+                            type_=Problem409,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 415:
+                raise UnsupportedMediaTypeError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1031,9 +1154,31 @@ class AsyncRawPracticesClient:
                 raise TooManyRequestsError(
                     headers=dict(_response.headers),
                     body=typing.cast(
+                        Problem429,
+                        parse_obj_as(
+                            type_=Problem429,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 503:
+                raise ServiceUnavailableError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ServiceUnavailableErrorBody,
+                        parse_obj_as(
+                            type_=ServiceUnavailableErrorBody,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1049,9 +1194,9 @@ class AsyncRawPracticesClient:
 
     async def get(
         self, practice_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[GetPracticeResponse]:
+    ) -> AsyncHttpResponse[Practice]:
         """
-        Returns one practice that belongs to the platform.
+        Read one practice accessible to the API key. A platform can read its own practices.
 
         Parameters
         ----------
@@ -1062,7 +1207,7 @@ class AsyncRawPracticesClient:
 
         Returns
         -------
-        AsyncHttpResponse[GetPracticeResponse]
+        AsyncHttpResponse[Practice]
             HTTP 200
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1073,9 +1218,9 @@ class AsyncRawPracticesClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    GetPracticeResponse,
+                    Practice,
                     parse_obj_as(
-                        type_=GetPracticeResponse,  # type: ignore
+                        type_=Practice,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1124,8 +1269,8 @@ class AsyncRawPracticesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 409:
-                raise ConflictError(
+            if _response.status_code == 405:
+                raise MethodNotAllowedError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
@@ -1135,13 +1280,13 @@ class AsyncRawPracticesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        Problem,
+                        typing.Any,
                         parse_obj_as(
-                            type_=Problem,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1150,9 +1295,31 @@ class AsyncRawPracticesClient:
                 raise TooManyRequestsError(
                     headers=dict(_response.headers),
                     body=typing.cast(
+                        Problem429,
+                        parse_obj_as(
+                            type_=Problem429,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 503:
+                raise ServiceUnavailableError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ServiceUnavailableErrorBody,
+                        parse_obj_as(
+                            type_=ServiceUnavailableErrorBody,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1170,108 +1337,59 @@ class AsyncRawPracticesClient:
         self,
         practice_id: str,
         *,
-        idempotency_key: typing.Optional[str] = None,
-        live_enabled: typing.Optional[bool] = OMIT,
-        address: typing.Optional[UpdatePracticeRequestAddress] = OMIT,
-        attestations: typing.Optional[UpdatePracticeRequestAttestations] = OMIT,
-        compliance_contact: typing.Optional[UpdatePracticeRequestComplianceContact] = OMIT,
+        idempotency_key: str,
         external_id: typing.Optional[str] = OMIT,
-        legal_name: typing.Optional[str] = OMIT,
-        metadata: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        address: typing.Optional[UpdatePracticesRequestAddress] = OMIT,
+        live_enabled: typing.Optional[bool] = OMIT,
         name: typing.Optional[str] = OMIT,
-        prescribers: typing.Optional[typing.Sequence[UpdatePracticeRequestPrescribersItem]] = OMIT,
-        primary_contact: typing.Optional[UpdatePracticeRequestPrimaryContact] = OMIT,
-        support_email: typing.Optional[str] = OMIT,
-        support_phone: typing.Optional[str] = OMIT,
-        timezone: typing.Optional[str] = OMIT,
+        phone: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[UpdatePracticeResponse]:
+    ) -> AsyncHttpResponse[Practice]:
         """
-        Updates one practice owned by the platform. Set liveEnabled to true or false to control Live access with an approved platform and a Live request. Affinity Admin decisions take precedence. Requires practices:write. Send Idempotency-Key when you retry the same request.
+        `liveEnabled` allows or refuses new Live orders. Existing records, cancellation, webhooks and billing keep working. Only its platform changes it; enabling requires platform Live access, and either change needs a Live caller: a Live key (403 live_key_required otherwise) or a session in Live mode (403 live_mode_required otherwise). Live orders send `name`, `phone` and `address` to the pharmacy, so a practice with Live access changes them only with a Live key (403 live_mode_required otherwise). A retry with the same key and body returns the stored first response, even if the practice has changed. Use GET /v1/practices/{practiceId} to read the current practice.
 
         Parameters
         ----------
         practice_id : str
 
-        idempotency_key : typing.Optional[str]
-            Optional in the SDK. A fresh key is generated once per call when omitted. Supply a stable key to retry across calls.
-
-        live_enabled : typing.Optional[bool]
-            Enable or disable Live access for an owned practice. Requires an approved platform and a Live request. Affinity Admin decisions take precedence.
-
-        address : typing.Optional[UpdatePracticeRequestAddress]
-
-        attestations : typing.Optional[UpdatePracticeRequestAttestations]
-
-        compliance_contact : typing.Optional[UpdatePracticeRequestComplianceContact]
+        idempotency_key : str
+            A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
 
         external_id : typing.Optional[str]
+            Your practice identifier, unique among your platform's active practices. Send null to clear it.
 
-        legal_name : typing.Optional[str]
+        address : typing.Optional[UpdatePracticesRequestAddress]
 
-        metadata : typing.Optional[typing.Dict[str, typing.Any]]
+        live_enabled : typing.Optional[bool]
 
         name : typing.Optional[str]
 
-        prescribers : typing.Optional[typing.Sequence[UpdatePracticeRequestPrescribersItem]]
-
-        primary_contact : typing.Optional[UpdatePracticeRequestPrimaryContact]
-
-        support_email : typing.Optional[str]
-
-        support_phone : typing.Optional[str]
-
-        timezone : typing.Optional[str]
-            Optional IANA timezone override. Omit to leave unchanged; null clears it. No timezone is inferred when creating a record.
+        phone : typing.Optional[str]
+            A US phone number: 10 digits, with or without +1 or 1 before them. Spaces, dashes, dots and parentheses are allowed, such as (512) 555-0100. Affinity stores and returns +15125550100. Empty text counts as null.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[UpdatePracticeResponse]
+        AsyncHttpResponse[Practice]
             HTTP 200
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"v1/practices/{encode_path_param(practice_id)}",
             method="PATCH",
             json={
-                "liveEnabled": live_enabled,
-                "address": convert_and_respect_annotation_metadata(
-                    object_=address, annotation=typing.Optional[UpdatePracticeRequestAddress], direction="write"
-                ),
-                "attestations": convert_and_respect_annotation_metadata(
-                    object_=attestations,
-                    annotation=typing.Optional[UpdatePracticeRequestAttestations],
-                    direction="write",
-                ),
-                "complianceContact": convert_and_respect_annotation_metadata(
-                    object_=compliance_contact,
-                    annotation=typing.Optional[UpdatePracticeRequestComplianceContact],
-                    direction="write",
-                ),
                 "externalId": external_id,
-                "legalName": legal_name,
-                "metadata": metadata,
+                "address": convert_and_respect_annotation_metadata(
+                    object_=address, annotation=typing.Optional[UpdatePracticesRequestAddress], direction="write"
+                ),
+                "liveEnabled": live_enabled,
                 "name": name,
-                "prescribers": convert_and_respect_annotation_metadata(
-                    object_=prescribers,
-                    annotation=typing.Optional[typing.Sequence[UpdatePracticeRequestPrescribersItem]],
-                    direction="write",
-                ),
-                "primaryContact": convert_and_respect_annotation_metadata(
-                    object_=primary_contact,
-                    annotation=typing.Optional[UpdatePracticeRequestPrimaryContact],
-                    direction="write",
-                ),
-                "supportEmail": support_email,
-                "supportPhone": support_phone,
-                "timezone": timezone,
+                "phone": phone,
             },
             headers={
                 "content-type": "application/json",
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else str(__import__("uuid").uuid4())  # affinity-sdk-auto-key
-,
+                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
             },
             request_options=request_options,
             omit=OMIT,
@@ -1279,9 +1397,9 @@ class AsyncRawPracticesClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    UpdatePracticeResponse,
+                    Practice,
                     parse_obj_as(
-                        type_=UpdatePracticeResponse,  # type: ignore
+                        type_=Practice,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1330,13 +1448,46 @@ class AsyncRawPracticesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 409:
-                raise ConflictError(
+            if _response.status_code == 405:
+                raise MethodNotAllowedError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Problem409,
+                        parse_obj_as(
+                            type_=Problem409,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 415:
+                raise UnsupportedMediaTypeError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1356,9 +1507,31 @@ class AsyncRawPracticesClient:
                 raise TooManyRequestsError(
                     headers=dict(_response.headers),
                     body=typing.cast(
+                        Problem429,
+                        parse_obj_as(
+                            type_=Problem429,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 503:
+                raise ServiceUnavailableError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ServiceUnavailableErrorBody,
+                        parse_obj_as(
+                            type_=ServiceUnavailableErrorBody,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),

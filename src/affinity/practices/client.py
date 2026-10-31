@@ -3,22 +3,14 @@
 import typing
 
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
+from ..core.pagination import AsyncPager, SyncPager
 from ..core.request_options import RequestOptions
-from ..types.create_practice_response import CreatePracticeResponse
-from ..types.get_practice_response import GetPracticeResponse
-from ..types.list_practices_response import ListPracticesResponse
-from ..types.update_practice_response import UpdatePracticeResponse
+from ..types.address_input import AddressInput
+from ..types.practice import Practice
+from ..types.practice_list import PracticeList
 from .raw_client import AsyncRawPracticesClient, RawPracticesClient
-from .types.create_practice_request_address import CreatePracticeRequestAddress
-from .types.create_practice_request_attestations import CreatePracticeRequestAttestations
-from .types.create_practice_request_compliance_contact import CreatePracticeRequestComplianceContact
-from .types.create_practice_request_prescribers_item import CreatePracticeRequestPrescribersItem
-from .types.create_practice_request_primary_contact import CreatePracticeRequestPrimaryContact
-from .types.update_practice_request_address import UpdatePracticeRequestAddress
-from .types.update_practice_request_attestations import UpdatePracticeRequestAttestations
-from .types.update_practice_request_compliance_contact import UpdatePracticeRequestComplianceContact
-from .types.update_practice_request_prescribers_item import UpdatePracticeRequestPrescribersItem
-from .types.update_practice_request_primary_contact import UpdatePracticeRequestPrimaryContact
+from .types.list_practices_request_sort import ListPracticesRequestSort
+from .types.update_practices_request_address import UpdatePracticesRequestAddress
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -42,32 +34,43 @@ class PracticesClient:
     def list(
         self,
         *,
-        search: typing.Optional[str] = None,
         ending_before: typing.Optional[str] = None,
         limit: typing.Optional[int] = None,
         starting_after: typing.Optional[str] = None,
+        external_id: typing.Optional[str] = None,
+        query: typing.Optional[str] = None,
+        sort: typing.Optional[ListPracticesRequestSort] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ListPracticesResponse:
+    ) -> SyncPager[Practice, PracticeList]:
         """
-        Returns the practices that belong to the platform. The default Affinity-Version is 2026-09-28.
+        List the platform's practices, newest first. Available to platforms only. `sort` takes `name` or `location` (A to Z, practices without a location last), `mode` (Test before Live) or `created` (oldest first); a leading `-` reverses.
 
         Parameters
         ----------
-        search : typing.Optional[str]
-            Case-insensitive search by practice name or external ID.
-
         ending_before : typing.Optional[str]
+            Page backward before this opaque cursor. Keep the same filters, sort, organization and mode. Send either startingAfter or endingBefore.
 
         limit : typing.Optional[int]
+            Maximum records per page, from 1 to 100. Defaults to 25.
 
         starting_after : typing.Optional[str]
+            Page forward using the previous response's nextCursor. Keep the same filters, sort, organization and mode. Use only one cursor parameter.
+
+        external_id : typing.Optional[str]
+            Match the external practice ID exactly, including case. Keep this filter unchanged while paging.
+
+        query : typing.Optional[str]
+            Match practice names containing this text, ignoring case. Restart pagination after changing query.
+
+        sort : typing.Optional[ListPracticesRequestSort]
+            name and location sort A to Z; mode sorts Test before Live; created sorts oldest first. A leading - reverses the order. Defaults to -created. Missing locations sort last. Restart pagination after changing sort.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        ListPracticesResponse
+        SyncPager[Practice, PracticeList]
             HTTP 200
 
         Examples
@@ -75,154 +78,97 @@ class PracticesClient:
         from affinity import Affinity
 
         client = Affinity(
-            affinity_version="YOUR_AFFINITY_VERSION",
-            api_key="YOUR_API_KEY",
+            token="YOUR_TOKEN",
         )
-        client.practices.list(
-            ending_before="prac_01j2y8m6jcc9tt24af5pw9x1bc",
-            starting_after="prac_01j2y8m6jcc9tt24af5pw9x1bc",
-        )
+        response = client.practices.list()
+        for item in response:
+            yield item
+        # alternatively, you can paginate page-by-page
+        for page in response.iter_pages():
+            yield page
         """
-        _response = self._raw_client.list(
-            search=search,
+        return self._raw_client.list(
             ending_before=ending_before,
             limit=limit,
             starting_after=starting_after,
+            external_id=external_id,
+            query=query,
+            sort=sort,
             request_options=request_options,
         )
-        return _response.data
 
     def create(
         self,
         *,
-        address: CreatePracticeRequestAddress,
-        attestations: CreatePracticeRequestAttestations,
+        idempotency_key: str,
+        address: AddressInput,
         name: str,
-        idempotency_key: typing.Optional[str] = None,
-        live_enabled: typing.Optional[bool] = OMIT,
-        compliance_contact: typing.Optional[CreatePracticeRequestComplianceContact] = OMIT,
+        phone: str,
         external_id: typing.Optional[str] = OMIT,
-        legal_name: typing.Optional[str] = OMIT,
-        metadata: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
-        prescribers: typing.Optional[typing.Sequence[CreatePracticeRequestPrescribersItem]] = OMIT,
-        primary_contact: typing.Optional[CreatePracticeRequestPrimaryContact] = OMIT,
-        support_email: typing.Optional[str] = OMIT,
-        support_phone: typing.Optional[str] = OMIT,
-        timezone: typing.Optional[str] = OMIT,
+        live_enabled: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> CreatePracticeResponse:
+    ) -> Practice:
         """
-        Creates a practice owned by the platform. Set liveEnabled to true to enable Live access at creation with an approved platform and a Live request. Defaults to false. Requires practices:write. Send Idempotency-Key when you retry the same request.
+        Platforms only. Name, phone and address are required. The practice starts in Test; `liveEnabled: true` also allows new Live orders, which needs a platform with Live access and a Live caller: a Live key, or a session in Live mode. Turning Live off later preserves access to existing records. A retry with the same key and body returns the stored first response, even if the practice has changed. Use GET /v1/practices/{practiceId} to read the current practice.
 
         Parameters
         ----------
-        address : CreatePracticeRequestAddress
+        idempotency_key : str
+            A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
 
-        attestations : CreatePracticeRequestAttestations
+        address : AddressInput
 
         name : str
 
-        idempotency_key : typing.Optional[str]
-
-        live_enabled : typing.Optional[bool]
-            Enable Live access at creation. Requires an approved platform and a Live request. Defaults to false.
-
-        compliance_contact : typing.Optional[CreatePracticeRequestComplianceContact]
+        phone : str
+            A US phone number: 10 digits, with or without +1 or 1 before them. Spaces, dashes, dots and parentheses are allowed, such as (512) 555-0100. Affinity stores and returns +15125550100.
 
         external_id : typing.Optional[str]
+            Your practice identifier, unique among your platform's active practices.
 
-        legal_name : typing.Optional[str]
-
-        metadata : typing.Optional[typing.Dict[str, typing.Any]]
-
-        prescribers : typing.Optional[typing.Sequence[CreatePracticeRequestPrescribersItem]]
-
-        primary_contact : typing.Optional[CreatePracticeRequestPrimaryContact]
-
-        support_email : typing.Optional[str]
-
-        support_phone : typing.Optional[str]
-
-        timezone : typing.Optional[str]
-            Optional IANA timezone override. Omit to leave unchanged; null clears it. No timezone is inferred when creating a record.
+        live_enabled : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        CreatePracticeResponse
+        Practice
             HTTP 200
 
         Examples
         --------
-        from affinity import Affinity
-        from affinity.practices import (
-            CreatePracticeRequestAddress,
-            CreatePracticeRequestAttestations,
-            CreatePracticeRequestPrescribersItem,
-            CreatePracticeRequestPrimaryContact,
-        )
+        from affinity import AddressInput, Affinity
 
         client = Affinity(
-            affinity_version="YOUR_AFFINITY_VERSION",
-            api_key="YOUR_API_KEY",
+            token="YOUR_TOKEN",
         )
         client.practices.create(
-            address=CreatePracticeRequestAddress(
-                city="Los Angeles",
-                country="US",
-                line1="100 Practice Way",
-                postal_code="90001",
-                state="CA",
+            idempotency_key="Idempotency-Key",
+            address=AddressInput(
+                line1="line1",
+                city="city",
+                state="state",
+                postal_code="postalCode",
             ),
-            attestations=CreatePracticeRequestAttestations(
-                authorized_practice_relationship=True,
-                authorized_phi_transfer=True,
-                minimum_necessary_phi=True,
-                provider_data_accuracy=True,
-            ),
-            external_id="practice_123",
-            legal_name="Example Medical Group PLLC",
-            metadata={"key": "value"},
-            name="Example Medical Group",
-            prescribers=[
-                CreatePracticeRequestPrescribersItem(
-                    credentials="MD",
-                    license_states=["CA"],
-                    name="Alex Morgan",
-                    npi="1234567893",
-                )
-            ],
-            primary_contact=CreatePracticeRequestPrimaryContact(
-                email="operations@example-practice.com",
-                name="Jordan Lee",
-            ),
-            support_email="support@example-practice.com",
+            name="name",
+            phone="phone",
         )
         """
         _response = self._raw_client.create(
-            address=address,
-            attestations=attestations,
-            name=name,
             idempotency_key=idempotency_key,
-            live_enabled=live_enabled,
-            compliance_contact=compliance_contact,
+            address=address,
+            name=name,
+            phone=phone,
             external_id=external_id,
-            legal_name=legal_name,
-            metadata=metadata,
-            prescribers=prescribers,
-            primary_contact=primary_contact,
-            support_email=support_email,
-            support_phone=support_phone,
-            timezone=timezone,
+            live_enabled=live_enabled,
             request_options=request_options,
         )
         return _response.data
 
-    def get(self, practice_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> GetPracticeResponse:
+    def get(self, practice_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Practice:
         """
-        Returns one practice that belongs to the platform.
+        Read one practice accessible to the API key. A platform can read its own practices.
 
         Parameters
         ----------
@@ -233,7 +179,7 @@ class PracticesClient:
 
         Returns
         -------
-        GetPracticeResponse
+        Practice
             HTTP 200
 
         Examples
@@ -241,8 +187,7 @@ class PracticesClient:
         from affinity import Affinity
 
         client = Affinity(
-            affinity_version="YOUR_AFFINITY_VERSION",
-            api_key="YOUR_API_KEY",
+            token="YOUR_TOKEN",
         )
         client.practices.get(
             practice_id="prac_01j2y8m6jcc9tt24af5pw9x1bc",
@@ -255,66 +200,42 @@ class PracticesClient:
         self,
         practice_id: str,
         *,
-        idempotency_key: typing.Optional[str] = None,
-        live_enabled: typing.Optional[bool] = OMIT,
-        address: typing.Optional[UpdatePracticeRequestAddress] = OMIT,
-        attestations: typing.Optional[UpdatePracticeRequestAttestations] = OMIT,
-        compliance_contact: typing.Optional[UpdatePracticeRequestComplianceContact] = OMIT,
+        idempotency_key: str,
         external_id: typing.Optional[str] = OMIT,
-        legal_name: typing.Optional[str] = OMIT,
-        metadata: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        address: typing.Optional[UpdatePracticesRequestAddress] = OMIT,
+        live_enabled: typing.Optional[bool] = OMIT,
         name: typing.Optional[str] = OMIT,
-        prescribers: typing.Optional[typing.Sequence[UpdatePracticeRequestPrescribersItem]] = OMIT,
-        primary_contact: typing.Optional[UpdatePracticeRequestPrimaryContact] = OMIT,
-        support_email: typing.Optional[str] = OMIT,
-        support_phone: typing.Optional[str] = OMIT,
-        timezone: typing.Optional[str] = OMIT,
+        phone: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> UpdatePracticeResponse:
+    ) -> Practice:
         """
-        Updates one practice owned by the platform. Set liveEnabled to true or false to control Live access with an approved platform and a Live request. Affinity Admin decisions take precedence. Requires practices:write. Send Idempotency-Key when you retry the same request.
+        `liveEnabled` allows or refuses new Live orders. Existing records, cancellation, webhooks and billing keep working. Only its platform changes it; enabling requires platform Live access, and either change needs a Live caller: a Live key (403 live_key_required otherwise) or a session in Live mode (403 live_mode_required otherwise). Live orders send `name`, `phone` and `address` to the pharmacy, so a practice with Live access changes them only with a Live key (403 live_mode_required otherwise). A retry with the same key and body returns the stored first response, even if the practice has changed. Use GET /v1/practices/{practiceId} to read the current practice.
 
         Parameters
         ----------
         practice_id : str
 
-        idempotency_key : typing.Optional[str]
-            Optional in the SDK. A fresh key is generated once per call when omitted. Supply a stable key to retry across calls.
-
-        live_enabled : typing.Optional[bool]
-            Enable or disable Live access for an owned practice. Requires an approved platform and a Live request. Affinity Admin decisions take precedence.
-
-        address : typing.Optional[UpdatePracticeRequestAddress]
-
-        attestations : typing.Optional[UpdatePracticeRequestAttestations]
-
-        compliance_contact : typing.Optional[UpdatePracticeRequestComplianceContact]
+        idempotency_key : str
+            A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
 
         external_id : typing.Optional[str]
+            Your practice identifier, unique among your platform's active practices. Send null to clear it.
 
-        legal_name : typing.Optional[str]
+        address : typing.Optional[UpdatePracticesRequestAddress]
 
-        metadata : typing.Optional[typing.Dict[str, typing.Any]]
+        live_enabled : typing.Optional[bool]
 
         name : typing.Optional[str]
 
-        prescribers : typing.Optional[typing.Sequence[UpdatePracticeRequestPrescribersItem]]
-
-        primary_contact : typing.Optional[UpdatePracticeRequestPrimaryContact]
-
-        support_email : typing.Optional[str]
-
-        support_phone : typing.Optional[str]
-
-        timezone : typing.Optional[str]
-            Optional IANA timezone override. Omit to leave unchanged; null clears it. No timezone is inferred when creating a record.
+        phone : typing.Optional[str]
+            A US phone number: 10 digits, with or without +1 or 1 before them. Spaces, dashes, dots and parentheses are allowed, such as (512) 555-0100. Affinity stores and returns +15125550100. Empty text counts as null.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        UpdatePracticeResponse
+        Practice
             HTTP 200
 
         Examples
@@ -322,29 +243,21 @@ class PracticesClient:
         from affinity import Affinity
 
         client = Affinity(
-            affinity_version="YOUR_AFFINITY_VERSION",
-            api_key="YOUR_API_KEY",
+            token="YOUR_TOKEN",
         )
         client.practices.update(
             practice_id="prac_01j2y8m6jcc9tt24af5pw9x1bc",
+            idempotency_key="Idempotency-Key",
         )
         """
         _response = self._raw_client.update(
             practice_id,
             idempotency_key=idempotency_key,
-            live_enabled=live_enabled,
-            address=address,
-            attestations=attestations,
-            compliance_contact=compliance_contact,
             external_id=external_id,
-            legal_name=legal_name,
-            metadata=metadata,
+            address=address,
+            live_enabled=live_enabled,
             name=name,
-            prescribers=prescribers,
-            primary_contact=primary_contact,
-            support_email=support_email,
-            support_phone=support_phone,
-            timezone=timezone,
+            phone=phone,
             request_options=request_options,
         )
         return _response.data
@@ -368,32 +281,43 @@ class AsyncPracticesClient:
     async def list(
         self,
         *,
-        search: typing.Optional[str] = None,
         ending_before: typing.Optional[str] = None,
         limit: typing.Optional[int] = None,
         starting_after: typing.Optional[str] = None,
+        external_id: typing.Optional[str] = None,
+        query: typing.Optional[str] = None,
+        sort: typing.Optional[ListPracticesRequestSort] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ListPracticesResponse:
+    ) -> AsyncPager[Practice, PracticeList]:
         """
-        Returns the practices that belong to the platform. The default Affinity-Version is 2026-09-28.
+        List the platform's practices, newest first. Available to platforms only. `sort` takes `name` or `location` (A to Z, practices without a location last), `mode` (Test before Live) or `created` (oldest first); a leading `-` reverses.
 
         Parameters
         ----------
-        search : typing.Optional[str]
-            Case-insensitive search by practice name or external ID.
-
         ending_before : typing.Optional[str]
+            Page backward before this opaque cursor. Keep the same filters, sort, organization and mode. Send either startingAfter or endingBefore.
 
         limit : typing.Optional[int]
+            Maximum records per page, from 1 to 100. Defaults to 25.
 
         starting_after : typing.Optional[str]
+            Page forward using the previous response's nextCursor. Keep the same filters, sort, organization and mode. Use only one cursor parameter.
+
+        external_id : typing.Optional[str]
+            Match the external practice ID exactly, including case. Keep this filter unchanged while paging.
+
+        query : typing.Optional[str]
+            Match practice names containing this text, ignoring case. Restart pagination after changing query.
+
+        sort : typing.Optional[ListPracticesRequestSort]
+            name and location sort A to Z; mode sorts Test before Live; created sorts oldest first. A leading - reverses the order. Defaults to -created. Missing locations sort last. Restart pagination after changing sort.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        ListPracticesResponse
+        AsyncPager[Practice, PracticeList]
             HTTP 200
 
         Examples
@@ -403,170 +327,112 @@ class AsyncPracticesClient:
         from affinity import AsyncAffinity
 
         client = AsyncAffinity(
-            affinity_version="YOUR_AFFINITY_VERSION",
-            api_key="YOUR_API_KEY",
+            token="YOUR_TOKEN",
         )
 
 
         async def main() -> None:
-            await client.practices.list(
-                ending_before="prac_01j2y8m6jcc9tt24af5pw9x1bc",
-                starting_after="prac_01j2y8m6jcc9tt24af5pw9x1bc",
-            )
+            response = await client.practices.list()
+            async for item in response:
+                yield item
+
+            # alternatively, you can paginate page-by-page
+            async for page in response.iter_pages():
+                yield page
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.list(
-            search=search,
+        return await self._raw_client.list(
             ending_before=ending_before,
             limit=limit,
             starting_after=starting_after,
+            external_id=external_id,
+            query=query,
+            sort=sort,
             request_options=request_options,
         )
-        return _response.data
 
     async def create(
         self,
         *,
-        address: CreatePracticeRequestAddress,
-        attestations: CreatePracticeRequestAttestations,
+        idempotency_key: str,
+        address: AddressInput,
         name: str,
-        idempotency_key: typing.Optional[str] = None,
-        live_enabled: typing.Optional[bool] = OMIT,
-        compliance_contact: typing.Optional[CreatePracticeRequestComplianceContact] = OMIT,
+        phone: str,
         external_id: typing.Optional[str] = OMIT,
-        legal_name: typing.Optional[str] = OMIT,
-        metadata: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
-        prescribers: typing.Optional[typing.Sequence[CreatePracticeRequestPrescribersItem]] = OMIT,
-        primary_contact: typing.Optional[CreatePracticeRequestPrimaryContact] = OMIT,
-        support_email: typing.Optional[str] = OMIT,
-        support_phone: typing.Optional[str] = OMIT,
-        timezone: typing.Optional[str] = OMIT,
+        live_enabled: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> CreatePracticeResponse:
+    ) -> Practice:
         """
-        Creates a practice owned by the platform. Set liveEnabled to true to enable Live access at creation with an approved platform and a Live request. Defaults to false. Requires practices:write. Send Idempotency-Key when you retry the same request.
+        Platforms only. Name, phone and address are required. The practice starts in Test; `liveEnabled: true` also allows new Live orders, which needs a platform with Live access and a Live caller: a Live key, or a session in Live mode. Turning Live off later preserves access to existing records. A retry with the same key and body returns the stored first response, even if the practice has changed. Use GET /v1/practices/{practiceId} to read the current practice.
 
         Parameters
         ----------
-        address : CreatePracticeRequestAddress
+        idempotency_key : str
+            A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
 
-        attestations : CreatePracticeRequestAttestations
+        address : AddressInput
 
         name : str
 
-        idempotency_key : typing.Optional[str]
-
-        live_enabled : typing.Optional[bool]
-            Enable Live access at creation. Requires an approved platform and a Live request. Defaults to false.
-
-        compliance_contact : typing.Optional[CreatePracticeRequestComplianceContact]
+        phone : str
+            A US phone number: 10 digits, with or without +1 or 1 before them. Spaces, dashes, dots and parentheses are allowed, such as (512) 555-0100. Affinity stores and returns +15125550100.
 
         external_id : typing.Optional[str]
+            Your practice identifier, unique among your platform's active practices.
 
-        legal_name : typing.Optional[str]
-
-        metadata : typing.Optional[typing.Dict[str, typing.Any]]
-
-        prescribers : typing.Optional[typing.Sequence[CreatePracticeRequestPrescribersItem]]
-
-        primary_contact : typing.Optional[CreatePracticeRequestPrimaryContact]
-
-        support_email : typing.Optional[str]
-
-        support_phone : typing.Optional[str]
-
-        timezone : typing.Optional[str]
-            Optional IANA timezone override. Omit to leave unchanged; null clears it. No timezone is inferred when creating a record.
+        live_enabled : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        CreatePracticeResponse
+        Practice
             HTTP 200
 
         Examples
         --------
         import asyncio
 
-        from affinity import AsyncAffinity
-        from affinity.practices import (
-            CreatePracticeRequestAddress,
-            CreatePracticeRequestAttestations,
-            CreatePracticeRequestPrescribersItem,
-            CreatePracticeRequestPrimaryContact,
-        )
+        from affinity import AddressInput, AsyncAffinity
 
         client = AsyncAffinity(
-            affinity_version="YOUR_AFFINITY_VERSION",
-            api_key="YOUR_API_KEY",
+            token="YOUR_TOKEN",
         )
 
 
         async def main() -> None:
             await client.practices.create(
-                address=CreatePracticeRequestAddress(
-                    city="Los Angeles",
-                    country="US",
-                    line1="100 Practice Way",
-                    postal_code="90001",
-                    state="CA",
+                idempotency_key="Idempotency-Key",
+                address=AddressInput(
+                    line1="line1",
+                    city="city",
+                    state="state",
+                    postal_code="postalCode",
                 ),
-                attestations=CreatePracticeRequestAttestations(
-                    authorized_practice_relationship=True,
-                    authorized_phi_transfer=True,
-                    minimum_necessary_phi=True,
-                    provider_data_accuracy=True,
-                ),
-                external_id="practice_123",
-                legal_name="Example Medical Group PLLC",
-                metadata={"key": "value"},
-                name="Example Medical Group",
-                prescribers=[
-                    CreatePracticeRequestPrescribersItem(
-                        credentials="MD",
-                        license_states=["CA"],
-                        name="Alex Morgan",
-                        npi="1234567893",
-                    )
-                ],
-                primary_contact=CreatePracticeRequestPrimaryContact(
-                    email="operations@example-practice.com",
-                    name="Jordan Lee",
-                ),
-                support_email="support@example-practice.com",
+                name="name",
+                phone="phone",
             )
 
 
         asyncio.run(main())
         """
         _response = await self._raw_client.create(
-            address=address,
-            attestations=attestations,
-            name=name,
             idempotency_key=idempotency_key,
-            live_enabled=live_enabled,
-            compliance_contact=compliance_contact,
+            address=address,
+            name=name,
+            phone=phone,
             external_id=external_id,
-            legal_name=legal_name,
-            metadata=metadata,
-            prescribers=prescribers,
-            primary_contact=primary_contact,
-            support_email=support_email,
-            support_phone=support_phone,
-            timezone=timezone,
+            live_enabled=live_enabled,
             request_options=request_options,
         )
         return _response.data
 
-    async def get(
-        self, practice_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetPracticeResponse:
+    async def get(self, practice_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Practice:
         """
-        Returns one practice that belongs to the platform.
+        Read one practice accessible to the API key. A platform can read its own practices.
 
         Parameters
         ----------
@@ -577,7 +443,7 @@ class AsyncPracticesClient:
 
         Returns
         -------
-        GetPracticeResponse
+        Practice
             HTTP 200
 
         Examples
@@ -587,8 +453,7 @@ class AsyncPracticesClient:
         from affinity import AsyncAffinity
 
         client = AsyncAffinity(
-            affinity_version="YOUR_AFFINITY_VERSION",
-            api_key="YOUR_API_KEY",
+            token="YOUR_TOKEN",
         )
 
 
@@ -607,66 +472,42 @@ class AsyncPracticesClient:
         self,
         practice_id: str,
         *,
-        idempotency_key: typing.Optional[str] = None,
-        live_enabled: typing.Optional[bool] = OMIT,
-        address: typing.Optional[UpdatePracticeRequestAddress] = OMIT,
-        attestations: typing.Optional[UpdatePracticeRequestAttestations] = OMIT,
-        compliance_contact: typing.Optional[UpdatePracticeRequestComplianceContact] = OMIT,
+        idempotency_key: str,
         external_id: typing.Optional[str] = OMIT,
-        legal_name: typing.Optional[str] = OMIT,
-        metadata: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        address: typing.Optional[UpdatePracticesRequestAddress] = OMIT,
+        live_enabled: typing.Optional[bool] = OMIT,
         name: typing.Optional[str] = OMIT,
-        prescribers: typing.Optional[typing.Sequence[UpdatePracticeRequestPrescribersItem]] = OMIT,
-        primary_contact: typing.Optional[UpdatePracticeRequestPrimaryContact] = OMIT,
-        support_email: typing.Optional[str] = OMIT,
-        support_phone: typing.Optional[str] = OMIT,
-        timezone: typing.Optional[str] = OMIT,
+        phone: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> UpdatePracticeResponse:
+    ) -> Practice:
         """
-        Updates one practice owned by the platform. Set liveEnabled to true or false to control Live access with an approved platform and a Live request. Affinity Admin decisions take precedence. Requires practices:write. Send Idempotency-Key when you retry the same request.
+        `liveEnabled` allows or refuses new Live orders. Existing records, cancellation, webhooks and billing keep working. Only its platform changes it; enabling requires platform Live access, and either change needs a Live caller: a Live key (403 live_key_required otherwise) or a session in Live mode (403 live_mode_required otherwise). Live orders send `name`, `phone` and `address` to the pharmacy, so a practice with Live access changes them only with a Live key (403 live_mode_required otherwise). A retry with the same key and body returns the stored first response, even if the practice has changed. Use GET /v1/practices/{practiceId} to read the current practice.
 
         Parameters
         ----------
         practice_id : str
 
-        idempotency_key : typing.Optional[str]
-            Optional in the SDK. A fresh key is generated once per call when omitted. Supply a stable key to retry across calls.
-
-        live_enabled : typing.Optional[bool]
-            Enable or disable Live access for an owned practice. Requires an approved platform and a Live request. Affinity Admin decisions take precedence.
-
-        address : typing.Optional[UpdatePracticeRequestAddress]
-
-        attestations : typing.Optional[UpdatePracticeRequestAttestations]
-
-        compliance_contact : typing.Optional[UpdatePracticeRequestComplianceContact]
+        idempotency_key : str
+            A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
 
         external_id : typing.Optional[str]
+            Your practice identifier, unique among your platform's active practices. Send null to clear it.
 
-        legal_name : typing.Optional[str]
+        address : typing.Optional[UpdatePracticesRequestAddress]
 
-        metadata : typing.Optional[typing.Dict[str, typing.Any]]
+        live_enabled : typing.Optional[bool]
 
         name : typing.Optional[str]
 
-        prescribers : typing.Optional[typing.Sequence[UpdatePracticeRequestPrescribersItem]]
-
-        primary_contact : typing.Optional[UpdatePracticeRequestPrimaryContact]
-
-        support_email : typing.Optional[str]
-
-        support_phone : typing.Optional[str]
-
-        timezone : typing.Optional[str]
-            Optional IANA timezone override. Omit to leave unchanged; null clears it. No timezone is inferred when creating a record.
+        phone : typing.Optional[str]
+            A US phone number: 10 digits, with or without +1 or 1 before them. Spaces, dashes, dots and parentheses are allowed, such as (512) 555-0100. Affinity stores and returns +15125550100. Empty text counts as null.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        UpdatePracticeResponse
+        Practice
             HTTP 200
 
         Examples
@@ -676,14 +517,14 @@ class AsyncPracticesClient:
         from affinity import AsyncAffinity
 
         client = AsyncAffinity(
-            affinity_version="YOUR_AFFINITY_VERSION",
-            api_key="YOUR_API_KEY",
+            token="YOUR_TOKEN",
         )
 
 
         async def main() -> None:
             await client.practices.update(
                 practice_id="prac_01j2y8m6jcc9tt24af5pw9x1bc",
+                idempotency_key="Idempotency-Key",
             )
 
 
@@ -692,19 +533,11 @@ class AsyncPracticesClient:
         _response = await self._raw_client.update(
             practice_id,
             idempotency_key=idempotency_key,
-            live_enabled=live_enabled,
-            address=address,
-            attestations=attestations,
-            compliance_contact=compliance_contact,
             external_id=external_id,
-            legal_name=legal_name,
-            metadata=metadata,
+            address=address,
+            live_enabled=live_enabled,
             name=name,
-            prescribers=prescribers,
-            primary_contact=primary_contact,
-            support_email=support_email,
-            support_phone=support_phone,
-            timezone=timezone,
+            phone=phone,
             request_options=request_options,
         )
         return _response.data

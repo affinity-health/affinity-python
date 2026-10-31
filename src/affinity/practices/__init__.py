@@ -6,29 +6,10 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
-    from .types import (
-        CreatePracticeRequestAddress,
-        CreatePracticeRequestAttestations,
-        CreatePracticeRequestComplianceContact,
-        CreatePracticeRequestPrescribersItem,
-        CreatePracticeRequestPrimaryContact,
-        UpdatePracticeRequestAddress,
-        UpdatePracticeRequestAttestations,
-        UpdatePracticeRequestComplianceContact,
-        UpdatePracticeRequestPrescribersItem,
-        UpdatePracticeRequestPrimaryContact,
-    )
+    from .types import ListPracticesRequestSort, UpdatePracticesRequestAddress
 _dynamic_imports: typing.Dict[str, str] = {
-    "CreatePracticeRequestAddress": ".types",
-    "CreatePracticeRequestAttestations": ".types",
-    "CreatePracticeRequestComplianceContact": ".types",
-    "CreatePracticeRequestPrescribersItem": ".types",
-    "CreatePracticeRequestPrimaryContact": ".types",
-    "UpdatePracticeRequestAddress": ".types",
-    "UpdatePracticeRequestAttestations": ".types",
-    "UpdatePracticeRequestComplianceContact": ".types",
-    "UpdatePracticeRequestPrescribersItem": ".types",
-    "UpdatePracticeRequestPrimaryContact": ".types",
+    "ListPracticesRequestSort": ".types",
+    "UpdatePracticesRequestAddress": ".types",
 }
 
 
@@ -53,15 +34,4 @@ def __dir__():
     return sorted(lazy_attrs)
 
 
-__all__ = [
-    "CreatePracticeRequestAddress",
-    "CreatePracticeRequestAttestations",
-    "CreatePracticeRequestComplianceContact",
-    "CreatePracticeRequestPrescribersItem",
-    "CreatePracticeRequestPrimaryContact",
-    "UpdatePracticeRequestAddress",
-    "UpdatePracticeRequestAttestations",
-    "UpdatePracticeRequestComplianceContact",
-    "UpdatePracticeRequestPrescribersItem",
-    "UpdatePracticeRequestPrimaryContact",
-]
+__all__ = ["ListPracticesRequestSort", "UpdatePracticesRequestAddress"]

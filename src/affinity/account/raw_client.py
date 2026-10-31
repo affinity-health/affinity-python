@@ -10,14 +10,18 @@ from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
 from ..errors.bad_request_error import BadRequestError
-from ..errors.conflict_error import ConflictError
+from ..errors.content_too_large_error import ContentTooLargeError
 from ..errors.forbidden_error import ForbiddenError
+from ..errors.internal_server_error import InternalServerError
+from ..errors.method_not_allowed_error import MethodNotAllowedError
 from ..errors.not_found_error import NotFoundError
+from ..errors.service_unavailable_error import ServiceUnavailableError
 from ..errors.too_many_requests_error import TooManyRequestsError
 from ..errors.unauthorized_error import UnauthorizedError
-from ..errors.unprocessable_entity_error import UnprocessableEntityError
-from ..types.get_account_response import GetAccountResponse
+from ..types.account import Account
 from ..types.problem import Problem
+from ..types.problem429 import Problem429
+from ..types.service_unavailable_error_body import ServiceUnavailableErrorBody
 from pydantic import ValidationError
 
 
@@ -25,38 +29,31 @@ class RawAccountClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def get(
-        self, *, org_id: typing.Optional[str] = None, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[GetAccountResponse]:
+    def get(self, *, request_options: typing.Optional[RequestOptions] = None) -> HttpResponse[Account]:
         """
-        Returns the platform organization, request livemode, and effective access. API keys report scopes and the service_key role; dashboard sessions report membership permissions. operatingMode describes organization Live access, not the credential's Test/Live mode.
+        Read the organization and Test or Live mode selected by the API key.
 
         Parameters
         ----------
-        org_id : typing.Optional[str]
-
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[GetAccountResponse]
+        HttpResponse[Account]
             HTTP 200
         """
         _response = self._client_wrapper.httpx_client.request(
             "v1/account",
             method="GET",
-            params={
-                "orgId": org_id,
-            },
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    GetAccountResponse,
+                    Account,
                     parse_obj_as(
-                        type_=GetAccountResponse,  # type: ignore
+                        type_=Account,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -105,8 +102,8 @@ class RawAccountClient:
                         ),
                     ),
                 )
-            if _response.status_code == 409:
-                raise ConflictError(
+            if _response.status_code == 405:
+                raise MethodNotAllowedError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
@@ -116,13 +113,13 @@ class RawAccountClient:
                         ),
                     ),
                 )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        Problem,
+                        typing.Any,
                         parse_obj_as(
-                            type_=Problem,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -131,9 +128,31 @@ class RawAccountClient:
                 raise TooManyRequestsError(
                     headers=dict(_response.headers),
                     body=typing.cast(
+                        Problem429,
+                        parse_obj_as(
+                            type_=Problem429,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 503:
+                raise ServiceUnavailableError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ServiceUnavailableErrorBody,
+                        parse_obj_as(
+                            type_=ServiceUnavailableErrorBody,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -152,38 +171,31 @@ class AsyncRawAccountClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def get(
-        self, *, org_id: typing.Optional[str] = None, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[GetAccountResponse]:
+    async def get(self, *, request_options: typing.Optional[RequestOptions] = None) -> AsyncHttpResponse[Account]:
         """
-        Returns the platform organization, request livemode, and effective access. API keys report scopes and the service_key role; dashboard sessions report membership permissions. operatingMode describes organization Live access, not the credential's Test/Live mode.
+        Read the organization and Test or Live mode selected by the API key.
 
         Parameters
         ----------
-        org_id : typing.Optional[str]
-
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[GetAccountResponse]
+        AsyncHttpResponse[Account]
             HTTP 200
         """
         _response = await self._client_wrapper.httpx_client.request(
             "v1/account",
             method="GET",
-            params={
-                "orgId": org_id,
-            },
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    GetAccountResponse,
+                    Account,
                     parse_obj_as(
-                        type_=GetAccountResponse,  # type: ignore
+                        type_=Account,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -232,8 +244,8 @@ class AsyncRawAccountClient:
                         ),
                     ),
                 )
-            if _response.status_code == 409:
-                raise ConflictError(
+            if _response.status_code == 405:
+                raise MethodNotAllowedError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
@@ -243,13 +255,13 @@ class AsyncRawAccountClient:
                         ),
                     ),
                 )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        Problem,
+                        typing.Any,
                         parse_obj_as(
-                            type_=Problem,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -258,9 +270,31 @@ class AsyncRawAccountClient:
                 raise TooManyRequestsError(
                     headers=dict(_response.headers),
                     body=typing.cast(
+                        Problem429,
+                        parse_obj_as(
+                            type_=Problem429,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 503:
+                raise ServiceUnavailableError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ServiceUnavailableErrorBody,
+                        parse_obj_as(
+                            type_=ServiceUnavailableErrorBody,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),

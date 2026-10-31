@@ -6,27 +6,17 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
-    from . import endpoints, events, grants
-    from .endpoints import (
-        CreateWebhookEndpointRequestPayloadStyle,
-        CreateWebhookEndpointRequestSubscribedEventsItem,
-        UpdateWebhookEndpointRequestPayloadStyle,
-        UpdateWebhookEndpointRequestStatus,
-        UpdateWebhookEndpointRequestSubscribedEventsItem,
+    from .types import (
+        CreateWebhooksResponse,
+        CreateWebhooksResponseMode,
+        RemoveWebhooksResponse,
+        ResendFailedWebhooksResponse,
     )
-    from .events import ListEventsRequestStatus
-    from .grants import SaveWebhookGrantRequestScopesItem
 _dynamic_imports: typing.Dict[str, str] = {
-    "CreateWebhookEndpointRequestPayloadStyle": ".endpoints",
-    "CreateWebhookEndpointRequestSubscribedEventsItem": ".endpoints",
-    "ListEventsRequestStatus": ".events",
-    "SaveWebhookGrantRequestScopesItem": ".grants",
-    "UpdateWebhookEndpointRequestPayloadStyle": ".endpoints",
-    "UpdateWebhookEndpointRequestStatus": ".endpoints",
-    "UpdateWebhookEndpointRequestSubscribedEventsItem": ".endpoints",
-    "endpoints": ".endpoints",
-    "events": ".events",
-    "grants": ".grants",
+    "CreateWebhooksResponse": ".types",
+    "CreateWebhooksResponseMode": ".types",
+    "RemoveWebhooksResponse": ".types",
+    "ResendFailedWebhooksResponse": ".types",
 }
 
 
@@ -52,14 +42,8 @@ def __dir__():
 
 
 __all__ = [
-    "CreateWebhookEndpointRequestPayloadStyle",
-    "CreateWebhookEndpointRequestSubscribedEventsItem",
-    "ListEventsRequestStatus",
-    "SaveWebhookGrantRequestScopesItem",
-    "UpdateWebhookEndpointRequestPayloadStyle",
-    "UpdateWebhookEndpointRequestStatus",
-    "UpdateWebhookEndpointRequestSubscribedEventsItem",
-    "endpoints",
-    "events",
-    "grants",
+    "CreateWebhooksResponse",
+    "CreateWebhooksResponseMode",
+    "RemoveWebhooksResponse",
+    "ResendFailedWebhooksResponse",
 ]

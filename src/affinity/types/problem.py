@@ -6,20 +6,21 @@ import pydantic
 import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 from ..core.serialization import FieldMetadata
+from .problem_issues_item import ProblemIssuesItem
 
 
 class Problem(UniversalBaseModel):
     code: str
-    data: typing.Optional[typing.Dict[str, typing.Any]] = None
     detail: str
+    title: str
+    type: str
+    issues: typing.Optional[typing.List[ProblemIssuesItem]] = None
     instance: str
     request_id: typing_extensions.Annotated[str, FieldMetadata(alias="requestId"), pydantic.Field(alias="requestId")]
     status: int
-    title: str
     trace_id: typing_extensions.Annotated[
         typing.Optional[str], FieldMetadata(alias="traceId"), pydantic.Field(alias="traceId")
     ] = None
-    type: str
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

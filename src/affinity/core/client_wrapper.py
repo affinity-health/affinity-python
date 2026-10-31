@@ -11,18 +11,17 @@ class BaseClientWrapper:
     def __init__(
         self,
         *,
-        affinity_version: typing.Optional[str] = None,
-        api_key: str,
+        token: typing.Union[str, typing.Callable[[], str]],
         headers: typing.Optional[typing.Dict[str, str]] = None,
         base_url: str,
         timeout: typing.Optional[float] = None,
-        max_retries: int = 0,
+        max_retries: int = 2,
         stream_reconnection_enabled: typing.Optional[bool] = None,
         max_stream_reconnection_attempts: typing.Optional[int] = None,
         logging: typing.Optional[typing.Union[LogConfig, Logger]] = None,
+        affinity_version: typing.Optional[str] = None,
     ):
-        self._affinity_version = affinity_version
-        self.api_key = api_key
+        self._token = token
         self._headers = headers
         self._base_url = base_url
         self._timeout = timeout
@@ -30,21 +29,28 @@ class BaseClientWrapper:
         self._stream_reconnection_enabled = stream_reconnection_enabled
         self._max_stream_reconnection_attempts = max_stream_reconnection_attempts
         self._logging = logging
+        self._affinity_version = affinity_version
 
-    def get_headers(self) -> typing.Dict[str, str]:
+    def get_headers(self, *, include_token: bool = True) -> typing.Dict[str, str]:
         import platform
 
         headers: typing.Dict[str, str] = {
-            "User-Agent": "affinity/0.3.0",
+            "User-Agent": "affinity/0.4.0",
             "X-Fern-Language": "Python",
             "X-Fern-Runtime": f"python/{platform.python_version()}",
             "X-Fern-Platform": f"{platform.system().lower()}/{platform.release()}",
             **(self.get_custom_headers() or {}),
         }
-        if self._affinity_version is not None:
-            headers["Affinity-Version"] = self._affinity_version
-        headers["x-affinity-api-key"] = self.api_key
+        if include_token:
+            headers["Authorization"] = f"Bearer {self._get_token()}"
+        headers["Affinity-Version"] = self._affinity_version if self._affinity_version is not None else "2026-10-28"
         return headers
+
+    def _get_token(self) -> str:
+        if isinstance(self._token, str):
+            return self._token
+        else:
+            return self._token()
 
     def get_custom_headers(self) -> typing.Optional[typing.Dict[str, str]]:
         return self._headers
@@ -69,20 +75,19 @@ class SyncClientWrapper(BaseClientWrapper):
     def __init__(
         self,
         *,
-        affinity_version: typing.Optional[str] = None,
-        api_key: str,
+        token: typing.Union[str, typing.Callable[[], str]],
         headers: typing.Optional[typing.Dict[str, str]] = None,
         base_url: str,
         timeout: typing.Optional[float] = None,
-        max_retries: int = 0,
+        max_retries: int = 2,
         stream_reconnection_enabled: typing.Optional[bool] = None,
         max_stream_reconnection_attempts: typing.Optional[int] = None,
         logging: typing.Optional[typing.Union[LogConfig, Logger]] = None,
+        affinity_version: typing.Optional[str] = None,
         httpx_client: httpx.Client,
     ):
         super().__init__(
-            affinity_version=affinity_version,
-            api_key=api_key,
+            token=token,
             headers=headers,
             base_url=base_url,
             timeout=timeout,
@@ -90,6 +95,7 @@ class SyncClientWrapper(BaseClientWrapper):
             stream_reconnection_enabled=stream_reconnection_enabled,
             max_stream_reconnection_attempts=max_stream_reconnection_attempts,
             logging=logging,
+            affinity_version=affinity_version,
         )
         self.httpx_client = HttpClient(
             httpx_client=httpx_client,
@@ -105,21 +111,20 @@ class AsyncClientWrapper(BaseClientWrapper):
     def __init__(
         self,
         *,
-        affinity_version: typing.Optional[str] = None,
-        api_key: str,
+        token: typing.Union[str, typing.Callable[[], str]],
         headers: typing.Optional[typing.Dict[str, str]] = None,
         base_url: str,
         timeout: typing.Optional[float] = None,
-        max_retries: int = 0,
+        max_retries: int = 2,
         stream_reconnection_enabled: typing.Optional[bool] = None,
         max_stream_reconnection_attempts: typing.Optional[int] = None,
         logging: typing.Optional[typing.Union[LogConfig, Logger]] = None,
+        affinity_version: typing.Optional[str] = None,
         async_token: typing.Optional[typing.Callable[[], typing.Awaitable[str]]] = None,
         httpx_client: httpx.AsyncClient,
     ):
         super().__init__(
-            affinity_version=affinity_version,
-            api_key=api_key,
+            token=token,
             headers=headers,
             base_url=base_url,
             timeout=timeout,
@@ -127,6 +132,7 @@ class AsyncClientWrapper(BaseClientWrapper):
             stream_reconnection_enabled=stream_reconnection_enabled,
             max_stream_reconnection_attempts=max_stream_reconnection_attempts,
             logging=logging,
+            affinity_version=affinity_version,
         )
         self._async_token = async_token
         self.httpx_client = AsyncHttpClient(
@@ -140,7 +146,7 @@ class AsyncClientWrapper(BaseClientWrapper):
         )
 
     async def async_get_headers(self) -> typing.Dict[str, str]:
-        headers = self.get_headers()
+        headers = self.get_headers(include_token=self._async_token is None)
         if self._async_token is not None:
             token = await self._async_token()
             headers["Authorization"] = f"Bearer {token}"

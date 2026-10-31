@@ -4,7 +4,7 @@ import typing
 
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.request_options import RequestOptions
-from ..types.get_account_response import GetAccountResponse
+from ..types.account import Account
 from .raw_client import AsyncRawAccountClient, RawAccountClient
 
 
@@ -23,22 +23,18 @@ class AccountClient:
         """
         return self._raw_client
 
-    def get(
-        self, *, org_id: typing.Optional[str] = None, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetAccountResponse:
+    def get(self, *, request_options: typing.Optional[RequestOptions] = None) -> Account:
         """
-        Returns the platform organization, request livemode, and effective access. API keys report scopes and the service_key role; dashboard sessions report membership permissions. operatingMode describes organization Live access, not the credential's Test/Live mode.
+        Read the organization and Test or Live mode selected by the API key.
 
         Parameters
         ----------
-        org_id : typing.Optional[str]
-
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        GetAccountResponse
+        Account
             HTTP 200
 
         Examples
@@ -46,14 +42,11 @@ class AccountClient:
         from affinity import Affinity
 
         client = Affinity(
-            affinity_version="YOUR_AFFINITY_VERSION",
-            api_key="YOUR_API_KEY",
+            token="YOUR_TOKEN",
         )
-        client.account.get(
-            org_id="acct_01j2y8m6jcc9tt24af5pw9x1bc",
-        )
+        client.account.get()
         """
-        _response = self._raw_client.get(org_id=org_id, request_options=request_options)
+        _response = self._raw_client.get(request_options=request_options)
         return _response.data
 
 
@@ -72,22 +65,18 @@ class AsyncAccountClient:
         """
         return self._raw_client
 
-    async def get(
-        self, *, org_id: typing.Optional[str] = None, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetAccountResponse:
+    async def get(self, *, request_options: typing.Optional[RequestOptions] = None) -> Account:
         """
-        Returns the platform organization, request livemode, and effective access. API keys report scopes and the service_key role; dashboard sessions report membership permissions. operatingMode describes organization Live access, not the credential's Test/Live mode.
+        Read the organization and Test or Live mode selected by the API key.
 
         Parameters
         ----------
-        org_id : typing.Optional[str]
-
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        GetAccountResponse
+        Account
             HTTP 200
 
         Examples
@@ -97,18 +86,15 @@ class AsyncAccountClient:
         from affinity import AsyncAffinity
 
         client = AsyncAffinity(
-            affinity_version="YOUR_AFFINITY_VERSION",
-            api_key="YOUR_API_KEY",
+            token="YOUR_TOKEN",
         )
 
 
         async def main() -> None:
-            await client.account.get(
-                org_id="acct_01j2y8m6jcc9tt24af5pw9x1bc",
-            )
+            await client.account.get()
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.get(org_id=org_id, request_options=request_options)
+        _response = await self._raw_client.get(request_options=request_options)
         return _response.data

@@ -1,0 +1,19 @@
+# Fern generates src/affinity from spec/affinity.openapi.json; scripts/generate.sh adds the
+# x-fern names and pagination first. Pinned: change a version only with a regenerated, tested SDK.
+api:
+  specs:
+    - openapi: ./openapi.json
+      settings:
+        respect-nullable-schemas: true
+groups:
+  python:
+    generators:
+      - name: fernapi/fern-python-sdk
+        version: 5.41.16
+        output:
+          location: local-file-system
+          path: ../.fern-output
+        config:
+          package_name: affinity
+          client:
+            class_name: Affinity

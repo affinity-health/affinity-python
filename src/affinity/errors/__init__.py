@@ -6,25 +6,31 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
-    from .bad_gateway_error import BadGatewayError
     from .bad_request_error import BadRequestError
     from .conflict_error import ConflictError
+    from .content_too_large_error import ContentTooLargeError
     from .forbidden_error import ForbiddenError
+    from .internal_server_error import InternalServerError
+    from .method_not_allowed_error import MethodNotAllowedError
     from .not_found_error import NotFoundError
     from .service_unavailable_error import ServiceUnavailableError
     from .too_many_requests_error import TooManyRequestsError
     from .unauthorized_error import UnauthorizedError
     from .unprocessable_entity_error import UnprocessableEntityError
+    from .unsupported_media_type_error import UnsupportedMediaTypeError
 _dynamic_imports: typing.Dict[str, str] = {
-    "BadGatewayError": ".bad_gateway_error",
     "BadRequestError": ".bad_request_error",
     "ConflictError": ".conflict_error",
+    "ContentTooLargeError": ".content_too_large_error",
     "ForbiddenError": ".forbidden_error",
+    "InternalServerError": ".internal_server_error",
+    "MethodNotAllowedError": ".method_not_allowed_error",
     "NotFoundError": ".not_found_error",
     "ServiceUnavailableError": ".service_unavailable_error",
     "TooManyRequestsError": ".too_many_requests_error",
     "UnauthorizedError": ".unauthorized_error",
     "UnprocessableEntityError": ".unprocessable_entity_error",
+    "UnsupportedMediaTypeError": ".unsupported_media_type_error",
 }
 
 
@@ -50,13 +56,16 @@ def __dir__():
 
 
 __all__ = [
-    "BadGatewayError",
     "BadRequestError",
     "ConflictError",
+    "ContentTooLargeError",
     "ForbiddenError",
+    "InternalServerError",
+    "MethodNotAllowedError",
     "NotFoundError",
     "ServiceUnavailableError",
     "TooManyRequestsError",
     "UnauthorizedError",
     "UnprocessableEntityError",
+    "UnsupportedMediaTypeError",
 ]

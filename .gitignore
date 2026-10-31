@@ -1,6 +1,6 @@
-node_modules/
-.env*
-!.env.example
+# Fern build artifacts (scripts/generate.sh)
+/fern/openapi.json
+/.fern-output/
 __pycache__/
 *.pyc
 .venv/
@@ -8,6 +8,4 @@ dist/
 build/
 *.egg-info/
 .pytest_cache/
-vendor/
-target/
-.php-cs-fixer.cache
+.env*

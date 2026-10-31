@@ -6,27 +6,11 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
-    from .create_practice_request_address import CreatePracticeRequestAddress
-    from .create_practice_request_attestations import CreatePracticeRequestAttestations
-    from .create_practice_request_compliance_contact import CreatePracticeRequestComplianceContact
-    from .create_practice_request_prescribers_item import CreatePracticeRequestPrescribersItem
-    from .create_practice_request_primary_contact import CreatePracticeRequestPrimaryContact
-    from .update_practice_request_address import UpdatePracticeRequestAddress
-    from .update_practice_request_attestations import UpdatePracticeRequestAttestations
-    from .update_practice_request_compliance_contact import UpdatePracticeRequestComplianceContact
-    from .update_practice_request_prescribers_item import UpdatePracticeRequestPrescribersItem
-    from .update_practice_request_primary_contact import UpdatePracticeRequestPrimaryContact
+    from .list_practices_request_sort import ListPracticesRequestSort
+    from .update_practices_request_address import UpdatePracticesRequestAddress
 _dynamic_imports: typing.Dict[str, str] = {
-    "CreatePracticeRequestAddress": ".create_practice_request_address",
-    "CreatePracticeRequestAttestations": ".create_practice_request_attestations",
-    "CreatePracticeRequestComplianceContact": ".create_practice_request_compliance_contact",
-    "CreatePracticeRequestPrescribersItem": ".create_practice_request_prescribers_item",
-    "CreatePracticeRequestPrimaryContact": ".create_practice_request_primary_contact",
-    "UpdatePracticeRequestAddress": ".update_practice_request_address",
-    "UpdatePracticeRequestAttestations": ".update_practice_request_attestations",
-    "UpdatePracticeRequestComplianceContact": ".update_practice_request_compliance_contact",
-    "UpdatePracticeRequestPrescribersItem": ".update_practice_request_prescribers_item",
-    "UpdatePracticeRequestPrimaryContact": ".update_practice_request_primary_contact",
+    "ListPracticesRequestSort": ".list_practices_request_sort",
+    "UpdatePracticesRequestAddress": ".update_practices_request_address",
 }
 
 
@@ -51,15 +35,4 @@ def __dir__():
     return sorted(lazy_attrs)
 
 
-__all__ = [
-    "CreatePracticeRequestAddress",
-    "CreatePracticeRequestAttestations",
-    "CreatePracticeRequestComplianceContact",
-    "CreatePracticeRequestPrescribersItem",
-    "CreatePracticeRequestPrimaryContact",
-    "UpdatePracticeRequestAddress",
-    "UpdatePracticeRequestAttestations",
-    "UpdatePracticeRequestComplianceContact",
-    "UpdatePracticeRequestPrescribersItem",
-    "UpdatePracticeRequestPrimaryContact",
-]
+__all__ = ["ListPracticesRequestSort", "UpdatePracticesRequestAddress"]

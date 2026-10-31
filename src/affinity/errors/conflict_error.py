@@ -3,9 +3,9 @@
 import typing
 
 from ..core.api_error import ApiError
-from ..types.problem import Problem
+from ..types.problem409 import Problem409
 
 
 class ConflictError(ApiError):
-    def __init__(self, body: Problem, headers: typing.Optional[typing.Dict[str, str]] = None):
+    def __init__(self, body: Problem409, headers: typing.Optional[typing.Dict[str, str]] = None):
         super().__init__(status_code=409, headers=headers, body=body)

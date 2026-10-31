@@ -11,14 +11,10 @@ from .environment import AffinityEnvironment
 
 if typing.TYPE_CHECKING:
     from .account.client import AccountClient, AsyncAccountClient
-    from .api_keys.client import ApiKeysClient, AsyncApiKeysClient
-    from .catalog.client import AsyncCatalogClient, CatalogClient
-    from .locations.client import AsyncLocationsClient, LocationsClient
+    from .feedback.client import AsyncFeedbackClient, FeedbackClient
+    from .medications.client import AsyncMedicationsClient, MedicationsClient
     from .orders.client import AsyncOrdersClient, OrdersClient
-    from .patients.client import AsyncPatientsClient, PatientsClient
-    from .pharmacies.client import AsyncPharmaciesClient, PharmaciesClient
     from .practices.client import AsyncPracticesClient, PracticesClient
-    from .team.client import AsyncTeamClient, TeamClient
     from .webhooks.client import AsyncWebhooksClient, WebhooksClient
 
 
@@ -36,12 +32,11 @@ class Affinity:
 
 
 
-        Defaults to AffinityEnvironment.PRODUCTION
+        Defaults to AffinityEnvironment.DEFAULT
 
 
 
-    affinity_version : typing.Optional[str]
-    api_key : str
+    token : typing.Union[str, typing.Callable[[], str]]
     headers : typing.Optional[typing.Dict[str, str]]
         Additional headers to send with every request.
 
@@ -49,7 +44,7 @@ class Affinity:
         The timeout to be used, in seconds, for requests. By default the timeout is 60 seconds, unless a custom httpx client is used, in which case this default is not enforced.
 
     max_retries : typing.Optional[int]
-        The default maximum number of retries for failed requests. Defaults to 0. Per-request `max_retries` in `request_options` takes precedence over this value.
+        The default maximum number of retries for failed requests. Defaults to 2. Per-request `max_retries` in `request_options` takes precedence over this value.
 
     stream_reconnection_enabled : typing.Optional[bool]
         Whether to automatically reconnect on stream disconnection for resumable streaming endpoints. Defaults to True. Per-request `stream_reconnection_enabled` in `request_options` takes precedence over this value.
@@ -66,13 +61,13 @@ class Affinity:
     logging : typing.Optional[typing.Union[LogConfig, Logger]]
         Configure logging for the SDK. Accepts a LogConfig dict with 'level' (debug/info/warn/error), 'logger' (custom logger implementation), and 'silent' (boolean, defaults to True) fields. You can also pass a pre-configured Logger instance.
 
+    affinity_version : typing.Optional[str]
     Examples
     --------
     from affinity import Affinity
 
     client = Affinity(
-        affinity_version="YOUR_AFFINITY_VERSION",
-        api_key="YOUR_API_KEY",
+        token="YOUR_TOKEN",
     )
     """
 
@@ -80,24 +75,23 @@ class Affinity:
         self,
         *,
         base_url: typing.Optional[str] = None,
-        environment: AffinityEnvironment = AffinityEnvironment.PRODUCTION,
-        affinity_version: typing.Optional[str] = "2026-09-28",
-        api_key: str,
+        environment: AffinityEnvironment = AffinityEnvironment.DEFAULT,
+        token: typing.Union[str, typing.Callable[[], str]],
         headers: typing.Optional[typing.Dict[str, str]] = None,
         timeout: typing.Optional[float] = None,
         max_retries: typing.Optional[int] = None,
         stream_reconnection_enabled: typing.Optional[bool] = None,
         max_stream_reconnection_attempts: typing.Optional[int] = None,
-        follow_redirects: typing.Optional[bool] = False,
+        follow_redirects: typing.Optional[bool] = True,
         httpx_client: typing.Optional[httpx.Client] = None,
         logging: typing.Optional[typing.Union[LogConfig, Logger]] = None,
+        affinity_version: typing.Optional[str] = None,
     ):
         _defaulted_timeout = timeout if timeout is not None else 60 if httpx_client is None else None
-        _defaulted_max_retries = max_retries if max_retries is not None else 0
+        _defaulted_max_retries = max_retries if max_retries is not None else 2
         self._client_wrapper = SyncClientWrapper(
             base_url=_get_base_url(base_url=base_url, environment=environment),
-            affinity_version=affinity_version,
-            api_key=api_key,
+            token=token,
             headers=headers,
             httpx_client=httpx_client
             if httpx_client is not None
@@ -109,33 +103,14 @@ class Affinity:
             stream_reconnection_enabled=stream_reconnection_enabled,
             max_stream_reconnection_attempts=max_stream_reconnection_attempts,
             logging=logging,
+            affinity_version=affinity_version,
         )
-        self._locations: typing.Optional[LocationsClient] = None
-        self._api_keys: typing.Optional[ApiKeysClient] = None
         self._account: typing.Optional[AccountClient] = None
-        self._pharmacies: typing.Optional[PharmaciesClient] = None
+        self._feedback: typing.Optional[FeedbackClient] = None
+        self._medications: typing.Optional[MedicationsClient] = None
         self._orders: typing.Optional[OrdersClient] = None
-        self._team: typing.Optional[TeamClient] = None
         self._practices: typing.Optional[PracticesClient] = None
-        self._patients: typing.Optional[PatientsClient] = None
-        self._catalog: typing.Optional[CatalogClient] = None
         self._webhooks: typing.Optional[WebhooksClient] = None
-
-    @property
-    def locations(self):
-        if self._locations is None:
-            from .locations.client import LocationsClient  # noqa: E402
-
-            self._locations = LocationsClient(client_wrapper=self._client_wrapper)
-        return self._locations
-
-    @property
-    def api_keys(self):
-        if self._api_keys is None:
-            from .api_keys.client import ApiKeysClient  # noqa: E402
-
-            self._api_keys = ApiKeysClient(client_wrapper=self._client_wrapper)
-        return self._api_keys
 
     @property
     def account(self):
@@ -146,12 +121,20 @@ class Affinity:
         return self._account
 
     @property
-    def pharmacies(self):
-        if self._pharmacies is None:
-            from .pharmacies.client import PharmaciesClient  # noqa: E402
+    def feedback(self):
+        if self._feedback is None:
+            from .feedback.client import FeedbackClient  # noqa: E402
 
-            self._pharmacies = PharmaciesClient(client_wrapper=self._client_wrapper)
-        return self._pharmacies
+            self._feedback = FeedbackClient(client_wrapper=self._client_wrapper)
+        return self._feedback
+
+    @property
+    def medications(self):
+        if self._medications is None:
+            from .medications.client import MedicationsClient  # noqa: E402
+
+            self._medications = MedicationsClient(client_wrapper=self._client_wrapper)
+        return self._medications
 
     @property
     def orders(self):
@@ -162,36 +145,12 @@ class Affinity:
         return self._orders
 
     @property
-    def team(self):
-        if self._team is None:
-            from .team.client import TeamClient  # noqa: E402
-
-            self._team = TeamClient(client_wrapper=self._client_wrapper)
-        return self._team
-
-    @property
     def practices(self):
         if self._practices is None:
             from .practices.client import PracticesClient  # noqa: E402
 
             self._practices = PracticesClient(client_wrapper=self._client_wrapper)
         return self._practices
-
-    @property
-    def patients(self):
-        if self._patients is None:
-            from .patients.client import PatientsClient  # noqa: E402
-
-            self._patients = PatientsClient(client_wrapper=self._client_wrapper)
-        return self._patients
-
-    @property
-    def catalog(self):
-        if self._catalog is None:
-            from .catalog.client import CatalogClient  # noqa: E402
-
-            self._catalog = CatalogClient(client_wrapper=self._client_wrapper)
-        return self._catalog
 
     @property
     def webhooks(self):
@@ -234,20 +193,22 @@ class AsyncAffinity:
 
 
 
-        Defaults to AffinityEnvironment.PRODUCTION
+        Defaults to AffinityEnvironment.DEFAULT
 
 
 
-    affinity_version : typing.Optional[str]
-    api_key : str
+    token : typing.Union[str, typing.Callable[[], str]]
     headers : typing.Optional[typing.Dict[str, str]]
         Additional headers to send with every request.
+
+    async_token : typing.Optional[typing.Callable[[], typing.Awaitable[str]]]
+        An async callable that returns a bearer token. Use this when token acquisition involves async I/O (e.g., refreshing tokens via an async HTTP client). When provided, this is used instead of the synchronous token for async requests.
 
     timeout : typing.Optional[float]
         The timeout to be used, in seconds, for requests. By default the timeout is 60 seconds, unless a custom httpx client is used, in which case this default is not enforced.
 
     max_retries : typing.Optional[int]
-        The default maximum number of retries for failed requests. Defaults to 0. Per-request `max_retries` in `request_options` takes precedence over this value.
+        The default maximum number of retries for failed requests. Defaults to 2. Per-request `max_retries` in `request_options` takes precedence over this value.
 
     stream_reconnection_enabled : typing.Optional[bool]
         Whether to automatically reconnect on stream disconnection for resumable streaming endpoints. Defaults to True. Per-request `stream_reconnection_enabled` in `request_options` takes precedence over this value.
@@ -264,13 +225,13 @@ class AsyncAffinity:
     logging : typing.Optional[typing.Union[LogConfig, Logger]]
         Configure logging for the SDK. Accepts a LogConfig dict with 'level' (debug/info/warn/error), 'logger' (custom logger implementation), and 'silent' (boolean, defaults to True) fields. You can also pass a pre-configured Logger instance.
 
+    affinity_version : typing.Optional[str]
     Examples
     --------
     from affinity import AsyncAffinity
 
     client = AsyncAffinity(
-        affinity_version="YOUR_AFFINITY_VERSION",
-        api_key="YOUR_API_KEY",
+        token="YOUR_TOKEN",
     )
     """
 
@@ -278,25 +239,26 @@ class AsyncAffinity:
         self,
         *,
         base_url: typing.Optional[str] = None,
-        environment: AffinityEnvironment = AffinityEnvironment.PRODUCTION,
-        affinity_version: typing.Optional[str] = "2026-09-28",
-        api_key: str,
+        environment: AffinityEnvironment = AffinityEnvironment.DEFAULT,
+        token: typing.Union[str, typing.Callable[[], str]],
         headers: typing.Optional[typing.Dict[str, str]] = None,
+        async_token: typing.Optional[typing.Callable[[], typing.Awaitable[str]]] = None,
         timeout: typing.Optional[float] = None,
         max_retries: typing.Optional[int] = None,
         stream_reconnection_enabled: typing.Optional[bool] = None,
         max_stream_reconnection_attempts: typing.Optional[int] = None,
-        follow_redirects: typing.Optional[bool] = False,
+        follow_redirects: typing.Optional[bool] = True,
         httpx_client: typing.Optional[httpx.AsyncClient] = None,
         logging: typing.Optional[typing.Union[LogConfig, Logger]] = None,
+        affinity_version: typing.Optional[str] = None,
     ):
         _defaulted_timeout = timeout if timeout is not None else 60 if httpx_client is None else None
-        _defaulted_max_retries = max_retries if max_retries is not None else 0
+        _defaulted_max_retries = max_retries if max_retries is not None else 2
         self._client_wrapper = AsyncClientWrapper(
             base_url=_get_base_url(base_url=base_url, environment=environment),
-            affinity_version=affinity_version,
-            api_key=api_key,
+            token=token,
             headers=headers,
+            async_token=async_token,
             httpx_client=httpx_client
             if httpx_client is not None
             else _make_default_async_client(timeout=_defaulted_timeout, follow_redirects=follow_redirects),
@@ -305,33 +267,14 @@ class AsyncAffinity:
             stream_reconnection_enabled=stream_reconnection_enabled,
             max_stream_reconnection_attempts=max_stream_reconnection_attempts,
             logging=logging,
+            affinity_version=affinity_version,
         )
-        self._locations: typing.Optional[AsyncLocationsClient] = None
-        self._api_keys: typing.Optional[AsyncApiKeysClient] = None
         self._account: typing.Optional[AsyncAccountClient] = None
-        self._pharmacies: typing.Optional[AsyncPharmaciesClient] = None
+        self._feedback: typing.Optional[AsyncFeedbackClient] = None
+        self._medications: typing.Optional[AsyncMedicationsClient] = None
         self._orders: typing.Optional[AsyncOrdersClient] = None
-        self._team: typing.Optional[AsyncTeamClient] = None
         self._practices: typing.Optional[AsyncPracticesClient] = None
-        self._patients: typing.Optional[AsyncPatientsClient] = None
-        self._catalog: typing.Optional[AsyncCatalogClient] = None
         self._webhooks: typing.Optional[AsyncWebhooksClient] = None
-
-    @property
-    def locations(self):
-        if self._locations is None:
-            from .locations.client import AsyncLocationsClient  # noqa: E402
-
-            self._locations = AsyncLocationsClient(client_wrapper=self._client_wrapper)
-        return self._locations
-
-    @property
-    def api_keys(self):
-        if self._api_keys is None:
-            from .api_keys.client import AsyncApiKeysClient  # noqa: E402
-
-            self._api_keys = AsyncApiKeysClient(client_wrapper=self._client_wrapper)
-        return self._api_keys
 
     @property
     def account(self):
@@ -342,12 +285,20 @@ class AsyncAffinity:
         return self._account
 
     @property
-    def pharmacies(self):
-        if self._pharmacies is None:
-            from .pharmacies.client import AsyncPharmaciesClient  # noqa: E402
+    def feedback(self):
+        if self._feedback is None:
+            from .feedback.client import AsyncFeedbackClient  # noqa: E402
 
-            self._pharmacies = AsyncPharmaciesClient(client_wrapper=self._client_wrapper)
-        return self._pharmacies
+            self._feedback = AsyncFeedbackClient(client_wrapper=self._client_wrapper)
+        return self._feedback
+
+    @property
+    def medications(self):
+        if self._medications is None:
+            from .medications.client import AsyncMedicationsClient  # noqa: E402
+
+            self._medications = AsyncMedicationsClient(client_wrapper=self._client_wrapper)
+        return self._medications
 
     @property
     def orders(self):
@@ -358,36 +309,12 @@ class AsyncAffinity:
         return self._orders
 
     @property
-    def team(self):
-        if self._team is None:
-            from .team.client import AsyncTeamClient  # noqa: E402
-
-            self._team = AsyncTeamClient(client_wrapper=self._client_wrapper)
-        return self._team
-
-    @property
     def practices(self):
         if self._practices is None:
             from .practices.client import AsyncPracticesClient  # noqa: E402
 
             self._practices = AsyncPracticesClient(client_wrapper=self._client_wrapper)
         return self._practices
-
-    @property
-    def patients(self):
-        if self._patients is None:
-            from .patients.client import AsyncPatientsClient  # noqa: E402
-
-            self._patients = AsyncPatientsClient(client_wrapper=self._client_wrapper)
-        return self._patients
-
-    @property
-    def catalog(self):
-        if self._catalog is None:
-            from .catalog.client import AsyncCatalogClient  # noqa: E402
-
-            self._catalog = AsyncCatalogClient(client_wrapper=self._client_wrapper)
-        return self._catalog
 
     @property
     def webhooks(self):
