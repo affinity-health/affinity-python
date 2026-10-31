@@ -40,7 +40,6 @@ class OrdersClient:
     def list(
         self,
         *,
-        ending_before: typing.Optional[str] = None,
         limit: typing.Optional[int] = None,
         starting_after: typing.Optional[str] = None,
         external_order_id: typing.Optional[str] = None,
@@ -59,9 +58,6 @@ class OrdersClient:
 
         Parameters
         ----------
-        ending_before : typing.Optional[str]
-            Page backward before this opaque cursor. Keep the same filters, sort, organization and mode. Send either startingAfter or endingBefore.
-
         limit : typing.Optional[int]
             Maximum records per page, from 1 to 100. Defaults to 25.
 
@@ -121,7 +117,6 @@ class OrdersClient:
             yield page
         """
         return self._raw_client.list(
-            ending_before=ending_before,
             limit=limit,
             starting_after=starting_after,
             external_order_id=external_order_id,
@@ -332,7 +327,6 @@ class AsyncOrdersClient:
     async def list(
         self,
         *,
-        ending_before: typing.Optional[str] = None,
         limit: typing.Optional[int] = None,
         starting_after: typing.Optional[str] = None,
         external_order_id: typing.Optional[str] = None,
@@ -351,9 +345,6 @@ class AsyncOrdersClient:
 
         Parameters
         ----------
-        ending_before : typing.Optional[str]
-            Page backward before this opaque cursor. Keep the same filters, sort, organization and mode. Send either startingAfter or endingBefore.
-
         limit : typing.Optional[int]
             Maximum records per page, from 1 to 100. Defaults to 25.
 
@@ -422,7 +413,6 @@ class AsyncOrdersClient:
         asyncio.run(main())
         """
         return await self._raw_client.list(
-            ending_before=ending_before,
             limit=limit,
             starting_after=starting_after,
             external_order_id=external_order_id,

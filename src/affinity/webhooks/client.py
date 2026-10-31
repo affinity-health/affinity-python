@@ -34,7 +34,6 @@ class WebhooksClient:
     def list(
         self,
         *,
-        ending_before: typing.Optional[str] = None,
         limit: typing.Optional[int] = None,
         starting_after: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -44,9 +43,6 @@ class WebhooksClient:
 
         Parameters
         ----------
-        ending_before : typing.Optional[str]
-            Page backward before this opaque cursor. Keep the same filters, sort, organization and mode. Send either startingAfter or endingBefore.
-
         limit : typing.Optional[int]
             Maximum records per page, from 1 to 100. Defaults to 25.
 
@@ -75,9 +71,7 @@ class WebhooksClient:
         for page in response.iter_pages():
             yield page
         """
-        return self._raw_client.list(
-            ending_before=ending_before, limit=limit, starting_after=starting_after, request_options=request_options
-        )
+        return self._raw_client.list(limit=limit, starting_after=starting_after, request_options=request_options)
 
     def create(
         self, *, idempotency_key: str, url: str, request_options: typing.Optional[RequestOptions] = None
@@ -251,7 +245,6 @@ class AsyncWebhooksClient:
     async def list(
         self,
         *,
-        ending_before: typing.Optional[str] = None,
         limit: typing.Optional[int] = None,
         starting_after: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -261,9 +254,6 @@ class AsyncWebhooksClient:
 
         Parameters
         ----------
-        ending_before : typing.Optional[str]
-            Page backward before this opaque cursor. Keep the same filters, sort, organization and mode. Send either startingAfter or endingBefore.
-
         limit : typing.Optional[int]
             Maximum records per page, from 1 to 100. Defaults to 25.
 
@@ -301,9 +291,7 @@ class AsyncWebhooksClient:
 
         asyncio.run(main())
         """
-        return await self._raw_client.list(
-            ending_before=ending_before, limit=limit, starting_after=starting_after, request_options=request_options
-        )
+        return await self._raw_client.list(limit=limit, starting_after=starting_after, request_options=request_options)
 
     async def create(
         self, *, idempotency_key: str, url: str, request_options: typing.Optional[RequestOptions] = None

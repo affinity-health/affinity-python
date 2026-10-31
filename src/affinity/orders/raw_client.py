@@ -53,7 +53,6 @@ class RawOrdersClient:
     def list(
         self,
         *,
-        ending_before: typing.Optional[str] = None,
         limit: typing.Optional[int] = None,
         starting_after: typing.Optional[str] = None,
         external_order_id: typing.Optional[str] = None,
@@ -72,9 +71,6 @@ class RawOrdersClient:
 
         Parameters
         ----------
-        ending_before : typing.Optional[str]
-            Page backward before this opaque cursor. Keep the same filters, sort, organization and mode. Send either startingAfter or endingBefore.
-
         limit : typing.Optional[int]
             Maximum records per page, from 1 to 100. Defaults to 25.
 
@@ -120,7 +116,6 @@ class RawOrdersClient:
             "v1/orders",
             method="GET",
             params={
-                "endingBefore": ending_before,
                 "limit": limit,
                 "startingAfter": starting_after,
                 "externalOrderId": external_order_id,
@@ -148,7 +143,6 @@ class RawOrdersClient:
                 _parsed_next = _parsed_response.next_cursor
                 _has_next = _parsed_next is not None and _parsed_next != ""
                 _get_next = lambda: self.list(
-                    ending_before=ending_before,
                     limit=limit,
                     starting_after=_parsed_next,
                     external_order_id=external_order_id,
@@ -813,7 +807,6 @@ class AsyncRawOrdersClient:
     async def list(
         self,
         *,
-        ending_before: typing.Optional[str] = None,
         limit: typing.Optional[int] = None,
         starting_after: typing.Optional[str] = None,
         external_order_id: typing.Optional[str] = None,
@@ -832,9 +825,6 @@ class AsyncRawOrdersClient:
 
         Parameters
         ----------
-        ending_before : typing.Optional[str]
-            Page backward before this opaque cursor. Keep the same filters, sort, organization and mode. Send either startingAfter or endingBefore.
-
         limit : typing.Optional[int]
             Maximum records per page, from 1 to 100. Defaults to 25.
 
@@ -880,7 +870,6 @@ class AsyncRawOrdersClient:
             "v1/orders",
             method="GET",
             params={
-                "endingBefore": ending_before,
                 "limit": limit,
                 "startingAfter": starting_after,
                 "externalOrderId": external_order_id,
@@ -910,7 +899,6 @@ class AsyncRawOrdersClient:
 
                 async def _get_next():
                     return await self.list(
-                        ending_before=ending_before,
                         limit=limit,
                         starting_after=_parsed_next,
                         external_order_id=external_order_id,

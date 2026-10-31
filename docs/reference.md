@@ -399,14 +399,6 @@ client.orders.list(
 <dl>
 <dd>
 
-**ending_before:** `typing.Optional[str]` — Page backward before this opaque cursor. Keep the same filters, sort, organization and mode. Send either startingAfter or endingBefore.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
 **limit:** `typing.Optional[int]` — Maximum records per page, from 1 to 100. Defaults to 25.
     
 </dd>
@@ -876,14 +868,6 @@ client.practices.list()
 <dl>
 <dd>
 
-**ending_before:** `typing.Optional[str]` — Page backward before this opaque cursor. Keep the same filters, sort, organization and mode. Send either startingAfter or endingBefore.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
 **limit:** `typing.Optional[int]` — Maximum records per page, from 1 to 100. Defaults to 25.
     
 </dd>
@@ -1300,14 +1284,6 @@ client.webhooks.list()
 
 <dl>
 <dd>
-
-<dl>
-<dd>
-
-**ending_before:** `typing.Optional[str]` — Page backward before this opaque cursor. Keep the same filters, sort, organization and mode. Send either startingAfter or endingBefore.
-    
-</dd>
-</dl>
 
 <dl>
 <dd>

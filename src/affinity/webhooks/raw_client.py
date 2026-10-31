@@ -45,7 +45,6 @@ class RawWebhooksClient:
     def list(
         self,
         *,
-        ending_before: typing.Optional[str] = None,
         limit: typing.Optional[int] = None,
         starting_after: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -55,9 +54,6 @@ class RawWebhooksClient:
 
         Parameters
         ----------
-        ending_before : typing.Optional[str]
-            Page backward before this opaque cursor. Keep the same filters, sort, organization and mode. Send either startingAfter or endingBefore.
-
         limit : typing.Optional[int]
             Maximum records per page, from 1 to 100. Defaults to 25.
 
@@ -76,7 +72,6 @@ class RawWebhooksClient:
             "v1/webhook-endpoints",
             method="GET",
             params={
-                "endingBefore": ending_before,
                 "limit": limit,
                 "startingAfter": starting_after,
             },
@@ -95,7 +90,6 @@ class RawWebhooksClient:
                 _parsed_next = _parsed_response.next_cursor
                 _has_next = _parsed_next is not None and _parsed_next != ""
                 _get_next = lambda: self.list(
-                    ending_before=ending_before,
                     limit=limit,
                     starting_after=_parsed_next,
                     request_options=request_options,
@@ -905,7 +899,6 @@ class AsyncRawWebhooksClient:
     async def list(
         self,
         *,
-        ending_before: typing.Optional[str] = None,
         limit: typing.Optional[int] = None,
         starting_after: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -915,9 +908,6 @@ class AsyncRawWebhooksClient:
 
         Parameters
         ----------
-        ending_before : typing.Optional[str]
-            Page backward before this opaque cursor. Keep the same filters, sort, organization and mode. Send either startingAfter or endingBefore.
-
         limit : typing.Optional[int]
             Maximum records per page, from 1 to 100. Defaults to 25.
 
@@ -936,7 +926,6 @@ class AsyncRawWebhooksClient:
             "v1/webhook-endpoints",
             method="GET",
             params={
-                "endingBefore": ending_before,
                 "limit": limit,
                 "startingAfter": starting_after,
             },
@@ -957,7 +946,6 @@ class AsyncRawWebhooksClient:
 
                 async def _get_next():
                     return await self.list(
-                        ending_before=ending_before,
                         limit=limit,
                         starting_after=_parsed_next,
                         request_options=request_options,

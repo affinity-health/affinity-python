@@ -2,4 +2,6 @@
 
 import typing
 
-ListPracticesRequestSort = typing.Union[typing.Literal["name", "location", "mode", "created"], typing.Any]
+ListPracticesRequestSort = typing.Union[
+    typing.Literal["name", "-name", "location", "-location", "mode", "-mode", "created", "-created"], typing.Any
+]

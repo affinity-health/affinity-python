@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "affinity-health-sdk"
-version = "0.4.0"
+version = "0.4.1"
 description = "Server-side Python client for the Affinity API."
 readme = "README.md"
 license = "MIT"

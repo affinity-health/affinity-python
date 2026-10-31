@@ -34,7 +34,6 @@ class PracticesClient:
     def list(
         self,
         *,
-        ending_before: typing.Optional[str] = None,
         limit: typing.Optional[int] = None,
         starting_after: typing.Optional[str] = None,
         external_id: typing.Optional[str] = None,
@@ -47,9 +46,6 @@ class PracticesClient:
 
         Parameters
         ----------
-        ending_before : typing.Optional[str]
-            Page backward before this opaque cursor. Keep the same filters, sort, organization and mode. Send either startingAfter or endingBefore.
-
         limit : typing.Optional[int]
             Maximum records per page, from 1 to 100. Defaults to 25.
 
@@ -88,7 +84,6 @@ class PracticesClient:
             yield page
         """
         return self._raw_client.list(
-            ending_before=ending_before,
             limit=limit,
             starting_after=starting_after,
             external_id=external_id,
@@ -281,7 +276,6 @@ class AsyncPracticesClient:
     async def list(
         self,
         *,
-        ending_before: typing.Optional[str] = None,
         limit: typing.Optional[int] = None,
         starting_after: typing.Optional[str] = None,
         external_id: typing.Optional[str] = None,
@@ -294,9 +288,6 @@ class AsyncPracticesClient:
 
         Parameters
         ----------
-        ending_before : typing.Optional[str]
-            Page backward before this opaque cursor. Keep the same filters, sort, organization and mode. Send either startingAfter or endingBefore.
-
         limit : typing.Optional[int]
             Maximum records per page, from 1 to 100. Defaults to 25.
 
@@ -344,7 +335,6 @@ class AsyncPracticesClient:
         asyncio.run(main())
         """
         return await self._raw_client.list(
-            ending_before=ending_before,
             limit=limit,
             starting_after=starting_after,
             external_id=external_id,
