@@ -35,7 +35,7 @@ class BaseClientWrapper:
         import platform
 
         headers: typing.Dict[str, str] = {
-            "User-Agent": "affinity/0.4.1",
+            "User-Agent": "affinity/0.5.0",
             "X-Fern-Language": "Python",
             "X-Fern-Runtime": f"python/{platform.python_version()}",
             "X-Fern-Platform": f"{platform.system().lower()}/{platform.release()}",
@@ -43,7 +43,7 @@ class BaseClientWrapper:
         }
         if include_token:
             headers["Authorization"] = f"Bearer {self._get_token()}"
-        headers["Affinity-Version"] = self._affinity_version if self._affinity_version is not None else "2026-10-28"
+        headers["Affinity-Version"] = self._affinity_version if self._affinity_version is not None else "2026-11-01"
         return headers
 
     def _get_token(self) -> str:

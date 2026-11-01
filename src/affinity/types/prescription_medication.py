@@ -14,7 +14,11 @@ class PrescriptionMedication(UniversalBaseModel):
     The medication details saved when the order was signed.
     """
 
-    fill: typing.Optional[Fill] = None
+    fill: typing.Optional[Fill] = pydantic.Field(default=None)
+    """
+    What the pharmacy dispenses for one price, or null when the complete fill is unknown.
+    """
+
     form: typing.Optional[str] = pydantic.Field(default=None)
     """
     The dosage form, or null when it is unknown.

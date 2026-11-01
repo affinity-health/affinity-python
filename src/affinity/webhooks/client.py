@@ -47,7 +47,7 @@ class WebhooksClient:
             Maximum records per page, from 1 to 100. Defaults to 25.
 
         starting_after : typing.Optional[str]
-            Page forward using the previous response's nextCursor. Keep the same filters, sort, organization and mode. Use only one cursor parameter.
+            Page forward using the previous response's nextCursor. Keep the same filters, sort, organization and mode.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -258,7 +258,7 @@ class AsyncWebhooksClient:
             Maximum records per page, from 1 to 100. Defaults to 25.
 
         starting_after : typing.Optional[str]
-            Page forward using the previous response's nextCursor. Keep the same filters, sort, organization and mode. Use only one cursor parameter.
+            Page forward using the previous response's nextCursor. Keep the same filters, sort, organization and mode.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.

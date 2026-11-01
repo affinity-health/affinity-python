@@ -7,7 +7,11 @@ from ...core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 
 
 class RemoveWebhooksResponse(UniversalBaseModel):
-    deleted: bool
+    deleted: bool = pydantic.Field()
+    """
+    Always true.
+    """
+
     id: str
 
     if IS_PYDANTIC_V2:

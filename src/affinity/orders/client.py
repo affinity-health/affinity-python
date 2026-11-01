@@ -54,7 +54,7 @@ class OrdersClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SyncPager[Order, OrderList]:
         """
-        List accessible orders in the current mode, newest first. `externalOrderId` matches exactly, including case. `updatedAfter` accepts an ISO 8601 timestamp with a timezone and returns strictly later updates. Keep filters fixed while paging. `sort` takes `patient` (lowercase firstName + space + lastName A to Z, then order ID) or `created` (oldest first); a leading `-` reverses. Creation time or patient name and the order ID determine cursor order, even when updatedAt changes.
+        List accessible orders in the current mode, newest first. `externalOrderId` matches exactly, including case. `updatedAfter` accepts an ISO 8601 timestamp with a timezone and returns strictly later updates. Keep filters fixed while paging. `sort` takes `patient` (lowercase firstName + space + lastName A to Z, then order ID) or `created` (oldest first); a `_desc` suffix reverses. Creation time or patient name and the order ID determine cursor order, even when updatedAt changes.
 
         Parameters
         ----------
@@ -62,7 +62,7 @@ class OrdersClient:
             Maximum records per page, from 1 to 100. Defaults to 25.
 
         starting_after : typing.Optional[str]
-            Page forward using the previous response's nextCursor. Keep the same filters, sort, organization and mode. Use only one cursor parameter.
+            Page forward using the previous response's nextCursor. Keep the same filters, sort, organization and mode.
 
         external_order_id : typing.Optional[str]
             Match the external order ID exactly, including case. Combine with practiceId when your platform reuses IDs across practices.
@@ -89,7 +89,7 @@ class OrdersClient:
             true returns only orders whose status is shipped and that shipped in the last 60 days; delivered orders are excluded. false leaves those orders out. Omit to include both.
 
         sort : typing.Optional[ListOrdersRequestSort]
-            patient sorts the lowercase text firstName + space + lastName A to Z, then order ID; created sorts oldest first. A leading - reverses the order. Defaults to -created. Restart pagination after changing sort.
+            patient sorts the lowercase text firstName + space + lastName A to Z, then order ID; created sorts oldest first. A _desc suffix reverses the order. Defaults to created_desc. Restart pagination after changing sort.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -341,7 +341,7 @@ class AsyncOrdersClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncPager[Order, OrderList]:
         """
-        List accessible orders in the current mode, newest first. `externalOrderId` matches exactly, including case. `updatedAfter` accepts an ISO 8601 timestamp with a timezone and returns strictly later updates. Keep filters fixed while paging. `sort` takes `patient` (lowercase firstName + space + lastName A to Z, then order ID) or `created` (oldest first); a leading `-` reverses. Creation time or patient name and the order ID determine cursor order, even when updatedAt changes.
+        List accessible orders in the current mode, newest first. `externalOrderId` matches exactly, including case. `updatedAfter` accepts an ISO 8601 timestamp with a timezone and returns strictly later updates. Keep filters fixed while paging. `sort` takes `patient` (lowercase firstName + space + lastName A to Z, then order ID) or `created` (oldest first); a `_desc` suffix reverses. Creation time or patient name and the order ID determine cursor order, even when updatedAt changes.
 
         Parameters
         ----------
@@ -349,7 +349,7 @@ class AsyncOrdersClient:
             Maximum records per page, from 1 to 100. Defaults to 25.
 
         starting_after : typing.Optional[str]
-            Page forward using the previous response's nextCursor. Keep the same filters, sort, organization and mode. Use only one cursor parameter.
+            Page forward using the previous response's nextCursor. Keep the same filters, sort, organization and mode.
 
         external_order_id : typing.Optional[str]
             Match the external order ID exactly, including case. Combine with practiceId when your platform reuses IDs across practices.
@@ -376,7 +376,7 @@ class AsyncOrdersClient:
             true returns only orders whose status is shipped and that shipped in the last 60 days; delivered orders are excluded. false leaves those orders out. Omit to include both.
 
         sort : typing.Optional[ListOrdersRequestSort]
-            patient sorts the lowercase text firstName + space + lastName A to Z, then order ID; created sorts oldest first. A leading - reverses the order. Defaults to -created. Restart pagination after changing sort.
+            patient sorts the lowercase text firstName + space + lastName A to Z, then order ID; created sorts oldest first. A _desc suffix reverses the order. Defaults to created_desc. Restart pagination after changing sort.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.

@@ -234,7 +234,7 @@ client.medications.list(
 <dl>
 <dd>
 
-**starting_after:** `typing.Optional[str]` — Page forward using the previous response's nextCursor. Keep the same filters, sort, organization and mode. Use only one cursor parameter.
+**starting_after:** `typing.Optional[str]` — Page forward using the previous response's nextCursor. Keep the same filters, sort, organization and mode.
     
 </dd>
 </dl>
@@ -357,7 +357,7 @@ client.medications.get(
 <dl>
 <dd>
 
-List accessible orders in the current mode, newest first. `externalOrderId` matches exactly, including case. `updatedAfter` accepts an ISO 8601 timestamp with a timezone and returns strictly later updates. Keep filters fixed while paging. `sort` takes `patient` (lowercase firstName + space + lastName A to Z, then order ID) or `created` (oldest first); a leading `-` reverses. Creation time or patient name and the order ID determine cursor order, even when updatedAt changes.
+List accessible orders in the current mode, newest first. `externalOrderId` matches exactly, including case. `updatedAfter` accepts an ISO 8601 timestamp with a timezone and returns strictly later updates. Keep filters fixed while paging. `sort` takes `patient` (lowercase firstName + space + lastName A to Z, then order ID) or `created` (oldest first); a `_desc` suffix reverses. Creation time or patient name and the order ID determine cursor order, even when updatedAt changes.
 </dd>
 </dl>
 </dd>
@@ -407,7 +407,7 @@ client.orders.list(
 <dl>
 <dd>
 
-**starting_after:** `typing.Optional[str]` — Page forward using the previous response's nextCursor. Keep the same filters, sort, organization and mode. Use only one cursor parameter.
+**starting_after:** `typing.Optional[str]` — Page forward using the previous response's nextCursor. Keep the same filters, sort, organization and mode.
     
 </dd>
 </dl>
@@ -479,7 +479,7 @@ client.orders.list(
 <dl>
 <dd>
 
-**sort:** `typing.Optional[ListOrdersRequestSort]` — patient sorts the lowercase text firstName + space + lastName A to Z, then order ID; created sorts oldest first. A leading - reverses the order. Defaults to -created. Restart pagination after changing sort.
+**sort:** `typing.Optional[ListOrdersRequestSort]` — patient sorts the lowercase text firstName + space + lastName A to Z, then order ID; created sorts oldest first. A _desc suffix reverses the order. Defaults to created_desc. Restart pagination after changing sort.
     
 </dd>
 </dl>
@@ -829,7 +829,7 @@ client.orders.cancel(
 <dl>
 <dd>
 
-List the platform's practices, newest first. Available to platforms only. `sort` takes `name` or `location` (A to Z, practices without a location last), `mode` (Test before Live) or `created` (oldest first); a leading `-` reverses.
+List the platform's practices, newest first. Available to platforms only. `sort` takes `name` or `location` (A to Z, practices without a location last), `mode` (Test before Live) or `created` (oldest first); a `_desc` suffix reverses.
 </dd>
 </dl>
 </dd>
@@ -876,7 +876,7 @@ client.practices.list()
 <dl>
 <dd>
 
-**starting_after:** `typing.Optional[str]` — Page forward using the previous response's nextCursor. Keep the same filters, sort, organization and mode. Use only one cursor parameter.
+**starting_after:** `typing.Optional[str]` — Page forward using the previous response's nextCursor. Keep the same filters, sort, organization and mode.
     
 </dd>
 </dl>
@@ -900,7 +900,7 @@ client.practices.list()
 <dl>
 <dd>
 
-**sort:** `typing.Optional[ListPracticesRequestSort]` — name and location sort A to Z; mode sorts Test before Live; created sorts oldest first. A leading - reverses the order. Defaults to -created. Missing locations sort last. Restart pagination after changing sort.
+**sort:** `typing.Optional[ListPracticesRequestSort]` — name and location sort A to Z; mode sorts Test before Live; created sorts oldest first. A _desc suffix reverses the order. Defaults to created_desc. Missing locations sort last. Restart pagination after changing sort.
     
 </dd>
 </dl>
@@ -1296,7 +1296,7 @@ client.webhooks.list()
 <dl>
 <dd>
 
-**starting_after:** `typing.Optional[str]` — Page forward using the previous response's nextCursor. Keep the same filters, sort, organization and mode. Use only one cursor parameter.
+**starting_after:** `typing.Optional[str]` — Page forward using the previous response's nextCursor. Keep the same filters, sort, organization and mode.
     
 </dd>
 </dl>

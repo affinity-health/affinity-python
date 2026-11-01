@@ -1,6 +1,6 @@
 # Affinity Python SDK
 
-Typed client for the Affinity API, for Python 3.10 and later. It targets API version `2026-10-28` and sends it in `Affinity-Version` on every request. It has a sync client, `Affinity`, and an async client, `AsyncAffinity`, with the same methods.
+Typed client for the Affinity API, for Python 3.10 and later. It targets API version `2026-11-01` and sends it in `Affinity-Version` on every request. It has a sync client, `Affinity`, and an async client, `AsyncAffinity`, with the same methods.
 
 Use it only on a server. Never put an API key in a browser, a mobile application or a public environment variable.
 
@@ -9,7 +9,7 @@ Use it only on a server. Never put an API key in a browser, a mobile application
 The package is not on PyPI. Install it from GitHub at the release tag:
 
 ```sh
-pip install "affinity-health-sdk @ git+https://github.com/affinity-health/affinity-python@v0.4.1"
+pip install "affinity-health-sdk @ git+https://github.com/affinity-health/affinity-python@v0.5.0"
 ```
 
 The distribution is `affinity-health-sdk`; the import package is `affinity`.
@@ -67,7 +67,7 @@ async for medication in await client.medications.list():
 | Setting | Default | Change it with |
 | --- | --- | --- |
 | Base URL | `https://api.affinityrx.com` | `Affinity(base_url=...)` |
-| `Affinity-Version` | `2026-10-28` | `Affinity(affinity_version=...)` |
+| `Affinity-Version` | `2026-11-01` | `Affinity(affinity_version=...)` |
 | Retries | 2, for 408, 409, 429 and 5xx responses and failed connections, waiting for `Retry-After` | `Affinity(max_retries=...)` or `request_options={"max_retries": ...}` |
 | Timeout | 60 seconds | `Affinity(timeout=...)` or `request_options={"timeout_in_seconds": ...}` |
 

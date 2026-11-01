@@ -2,4 +2,4 @@
 
 import typing
 
-ListOrdersRequestSort = typing.Union[typing.Literal["patient", "-patient", "created", "-created"], typing.Any]
+ListOrdersRequestSort = typing.Union[typing.Literal["patient", "patient_desc", "created", "created_desc"], typing.Any]

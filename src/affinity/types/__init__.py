@@ -26,6 +26,7 @@ if typing.TYPE_CHECKING:
     from .order import Order
     from .order_event import OrderEvent
     from .order_event_data import OrderEventData
+    from .order_event_type import OrderEventType
     from .order_list import OrderList
     from .order_list_object import OrderListObject
     from .order_mode import OrderMode
@@ -48,6 +49,7 @@ if typing.TYPE_CHECKING:
     from .prescription import Prescription
     from .prescription_event import PrescriptionEvent
     from .prescription_event_data import PrescriptionEventData
+    from .prescription_event_type import PrescriptionEventType
     from .prescription_input import PrescriptionInput
     from .prescription_medication import PrescriptionMedication
     from .prescription_status import PrescriptionStatus
@@ -69,17 +71,20 @@ if typing.TYPE_CHECKING:
         ShippingDestination_Practice,
     )
     from .shipping_destination_address import ShippingDestinationAddress
+    from .shipping_destination_address_input import ShippingDestinationAddressInput
+    from .shipping_destination_address_type import ShippingDestinationAddressType
     from .shipping_destination_input import (
         ShippingDestinationInput,
         ShippingDestinationInput_Address,
         ShippingDestinationInput_Patient,
         ShippingDestinationInput_Practice,
     )
-    from .shipping_destination_input_address import ShippingDestinationInputAddress
-    from .shipping_destination_input_patient import ShippingDestinationInputPatient
-    from .shipping_destination_input_practice import ShippingDestinationInputPractice
     from .shipping_destination_patient import ShippingDestinationPatient
+    from .shipping_destination_patient_input import ShippingDestinationPatientInput
+    from .shipping_destination_patient_type import ShippingDestinationPatientType
     from .shipping_destination_practice import ShippingDestinationPractice
+    from .shipping_destination_practice_input import ShippingDestinationPracticeInput
+    from .shipping_destination_practice_type import ShippingDestinationPracticeType
     from .shipping_option import ShippingOption
     from .status_history_entry import StatusHistoryEntry
     from .status_history_entry_status import StatusHistoryEntryStatus
@@ -90,6 +95,7 @@ if typing.TYPE_CHECKING:
     from .webhook_endpoint_list_object import WebhookEndpointListObject
     from .webhook_endpoint_mode import WebhookEndpointMode
     from .webhook_endpoint_test_event import WebhookEndpointTestEvent
+    from .webhook_endpoint_test_event_type import WebhookEndpointTestEventType
     from .webhook_event import (
         WebhookEvent,
         WebhookEvent_OrderCancelled,
@@ -128,6 +134,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "Order": ".order",
     "OrderEvent": ".order_event",
     "OrderEventData": ".order_event_data",
+    "OrderEventType": ".order_event_type",
     "OrderList": ".order_list",
     "OrderListObject": ".order_list_object",
     "OrderMode": ".order_mode",
@@ -150,6 +157,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "Prescription": ".prescription",
     "PrescriptionEvent": ".prescription_event",
     "PrescriptionEventData": ".prescription_event_data",
+    "PrescriptionEventType": ".prescription_event_type",
     "PrescriptionInput": ".prescription_input",
     "PrescriptionMedication": ".prescription_medication",
     "PrescriptionStatus": ".prescription_status",
@@ -166,15 +174,18 @@ _dynamic_imports: typing.Dict[str, str] = {
     "Shipment": ".shipment",
     "ShippingDestination": ".shipping_destination",
     "ShippingDestinationAddress": ".shipping_destination_address",
+    "ShippingDestinationAddressInput": ".shipping_destination_address_input",
+    "ShippingDestinationAddressType": ".shipping_destination_address_type",
     "ShippingDestinationInput": ".shipping_destination_input",
-    "ShippingDestinationInputAddress": ".shipping_destination_input_address",
-    "ShippingDestinationInputPatient": ".shipping_destination_input_patient",
-    "ShippingDestinationInputPractice": ".shipping_destination_input_practice",
     "ShippingDestinationInput_Address": ".shipping_destination_input",
     "ShippingDestinationInput_Patient": ".shipping_destination_input",
     "ShippingDestinationInput_Practice": ".shipping_destination_input",
     "ShippingDestinationPatient": ".shipping_destination_patient",
+    "ShippingDestinationPatientInput": ".shipping_destination_patient_input",
+    "ShippingDestinationPatientType": ".shipping_destination_patient_type",
     "ShippingDestinationPractice": ".shipping_destination_practice",
+    "ShippingDestinationPracticeInput": ".shipping_destination_practice_input",
+    "ShippingDestinationPracticeType": ".shipping_destination_practice_type",
     "ShippingDestination_Address": ".shipping_destination",
     "ShippingDestination_Patient": ".shipping_destination",
     "ShippingDestination_Practice": ".shipping_destination",
@@ -188,6 +199,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "WebhookEndpointListObject": ".webhook_endpoint_list_object",
     "WebhookEndpointMode": ".webhook_endpoint_mode",
     "WebhookEndpointTestEvent": ".webhook_endpoint_test_event",
+    "WebhookEndpointTestEventType": ".webhook_endpoint_test_event_type",
     "WebhookEvent": ".webhook_event",
     "WebhookEvent_OrderCancelled": ".webhook_event",
     "WebhookEvent_OrderDelivered": ".webhook_event",
@@ -248,6 +260,7 @@ __all__ = [
     "Order",
     "OrderEvent",
     "OrderEventData",
+    "OrderEventType",
     "OrderList",
     "OrderListObject",
     "OrderMode",
@@ -270,6 +283,7 @@ __all__ = [
     "Prescription",
     "PrescriptionEvent",
     "PrescriptionEventData",
+    "PrescriptionEventType",
     "PrescriptionInput",
     "PrescriptionMedication",
     "PrescriptionStatus",
@@ -286,15 +300,18 @@ __all__ = [
     "Shipment",
     "ShippingDestination",
     "ShippingDestinationAddress",
+    "ShippingDestinationAddressInput",
+    "ShippingDestinationAddressType",
     "ShippingDestinationInput",
-    "ShippingDestinationInputAddress",
-    "ShippingDestinationInputPatient",
-    "ShippingDestinationInputPractice",
     "ShippingDestinationInput_Address",
     "ShippingDestinationInput_Patient",
     "ShippingDestinationInput_Practice",
     "ShippingDestinationPatient",
+    "ShippingDestinationPatientInput",
+    "ShippingDestinationPatientType",
     "ShippingDestinationPractice",
+    "ShippingDestinationPracticeInput",
+    "ShippingDestinationPracticeType",
     "ShippingDestination_Address",
     "ShippingDestination_Patient",
     "ShippingDestination_Practice",
@@ -308,6 +325,7 @@ __all__ = [
     "WebhookEndpointListObject",
     "WebhookEndpointMode",
     "WebhookEndpointTestEvent",
+    "WebhookEndpointTestEventType",
     "WebhookEvent",
     "WebhookEvent_OrderCancelled",
     "WebhookEvent_OrderDelivered",

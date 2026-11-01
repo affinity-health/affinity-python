@@ -140,13 +140,13 @@ def run() -> None:
     check("practices.list (every page, 1 per page)", every_practice, lambda n: f"{n} practices")
 
     def descending_sort() -> int:
-        newest = [p.id for p in client.practices.list(limit=1, sort="-created")]
+        newest = [p.id for p in client.practices.list(limit=1, sort="created_desc")]
         oldest = [p.id for p in client.practices.list(limit=1, sort="created")]
         if not newest or newest != oldest[::-1]:
-            raise RuntimeError("sort -created is not the reverse of sort created")
+            raise RuntimeError("sort created_desc is not the reverse of sort created")
         return len(newest)
 
-    check("practices.list sort -created (every page)", descending_sort, lambda n: f"{n} practices")
+    check("practices.list sort created_desc (every page)", descending_sort, lambda n: f"{n} practices")
 
     check(
         "medications.list (one page)",

@@ -54,7 +54,7 @@ class RawPracticesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SyncPager[Practice, PracticeList]:
         """
-        List the platform's practices, newest first. Available to platforms only. `sort` takes `name` or `location` (A to Z, practices without a location last), `mode` (Test before Live) or `created` (oldest first); a leading `-` reverses.
+        List the platform's practices, newest first. Available to platforms only. `sort` takes `name` or `location` (A to Z, practices without a location last), `mode` (Test before Live) or `created` (oldest first); a `_desc` suffix reverses.
 
         Parameters
         ----------
@@ -62,7 +62,7 @@ class RawPracticesClient:
             Maximum records per page, from 1 to 100. Defaults to 25.
 
         starting_after : typing.Optional[str]
-            Page forward using the previous response's nextCursor. Keep the same filters, sort, organization and mode. Use only one cursor parameter.
+            Page forward using the previous response's nextCursor. Keep the same filters, sort, organization and mode.
 
         external_id : typing.Optional[str]
             Match the external practice ID exactly, including case. Keep this filter unchanged while paging.
@@ -71,7 +71,7 @@ class RawPracticesClient:
             Match practice names containing this text, ignoring case. Restart pagination after changing query.
 
         sort : typing.Optional[ListPracticesRequestSort]
-            name and location sort A to Z; mode sorts Test before Live; created sorts oldest first. A leading - reverses the order. Defaults to -created. Missing locations sort last. Restart pagination after changing sort.
+            name and location sort A to Z; mode sorts Test before Live; created sorts oldest first. A _desc suffix reverses the order. Defaults to created_desc. Missing locations sort last. Restart pagination after changing sort.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -800,7 +800,7 @@ class AsyncRawPracticesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncPager[Practice, PracticeList]:
         """
-        List the platform's practices, newest first. Available to platforms only. `sort` takes `name` or `location` (A to Z, practices without a location last), `mode` (Test before Live) or `created` (oldest first); a leading `-` reverses.
+        List the platform's practices, newest first. Available to platforms only. `sort` takes `name` or `location` (A to Z, practices without a location last), `mode` (Test before Live) or `created` (oldest first); a `_desc` suffix reverses.
 
         Parameters
         ----------
@@ -808,7 +808,7 @@ class AsyncRawPracticesClient:
             Maximum records per page, from 1 to 100. Defaults to 25.
 
         starting_after : typing.Optional[str]
-            Page forward using the previous response's nextCursor. Keep the same filters, sort, organization and mode. Use only one cursor parameter.
+            Page forward using the previous response's nextCursor. Keep the same filters, sort, organization and mode.
 
         external_id : typing.Optional[str]
             Match the external practice ID exactly, including case. Keep this filter unchanged while paging.
@@ -817,7 +817,7 @@ class AsyncRawPracticesClient:
             Match practice names containing this text, ignoring case. Restart pagination after changing query.
 
         sort : typing.Optional[ListPracticesRequestSort]
-            name and location sort A to Z; mode sorts Test before Live; created sorts oldest first. A leading - reverses the order. Defaults to -created. Missing locations sort last. Restart pagination after changing sort.
+            name and location sort A to Z; mode sorts Test before Live; created sorts oldest first. A _desc suffix reverses the order. Defaults to created_desc. Missing locations sort last. Restart pagination after changing sort.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
