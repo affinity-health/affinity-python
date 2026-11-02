@@ -217,8 +217,10 @@ class PracticesClient:
             Your practice identifier, unique among your platform's active practices. Send null to clear it.
 
         address : typing.Optional[UpdatePracticesRequestAddress]
+            Affinity merges the address parts you send into the saved address. An omitted part keeps its saved value. To move to an address with no suite, send `"line2": null` with the new `line1`, `city`, `state` and `postalCode`.
 
         live_enabled : typing.Optional[bool]
+            Omit it or send null to leave Live unchanged.
 
         name : typing.Optional[str]
 
@@ -484,8 +486,10 @@ class AsyncPracticesClient:
             Your practice identifier, unique among your platform's active practices. Send null to clear it.
 
         address : typing.Optional[UpdatePracticesRequestAddress]
+            Affinity merges the address parts you send into the saved address. An omitted part keeps its saved value. To move to an address with no suite, send `"line2": null` with the new `line1`, `city`, `state` and `postalCode`.
 
         live_enabled : typing.Optional[bool]
+            Omit it or send null to leave Live unchanged.
 
         name : typing.Optional[str]
 

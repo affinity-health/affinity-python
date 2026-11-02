@@ -19,7 +19,7 @@ class PatientInput(UniversalBaseModel):
     address: AddressInput
     allergies: typing.List[PatientInputAllergiesItem] = pydantic.Field()
     """
-    The reported allergies; an empty list means no new allergies reported.
+    The reported allergies. Send `[]` when the patient reports no new allergies.
     """
 
     date_of_birth: typing_extensions.Annotated[

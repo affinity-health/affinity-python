@@ -12,7 +12,7 @@ class UpdatePracticesRequestAddress(UniversalBaseModel):
     line1: typing.Optional[str] = None
     line2: typing.Optional[str] = pydantic.Field(default=None)
     """
-    The apartment or suite, or null when there is none. Empty text counts as null.
+    The apartment or suite. Send null or empty text to remove it. An omitted `line2` keeps the saved suite, also when `line1` changes.
     """
 
     city: typing.Optional[str] = None
