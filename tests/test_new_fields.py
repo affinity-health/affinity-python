@@ -1,11 +1,15 @@
 """API 2026-11-01 additions on the wire: `query` on medications.list and `patient.id` on orders.create."""
 
 import json
+import pathlib
 
 import httpx
 
 from affinity import Affinity, AddressInput, PatientInput, PrescriberInput, PrescriptionInput
 from affinity.orders import OrderInputShipping
+
+
+FIXTURE = json.loads((pathlib.Path(__file__).parent / "fixtures" / "order-unknown-values.json").read_text())
 
 
 def ident(prefix: str, n: int = 1) -> str:
@@ -29,11 +33,34 @@ def recorded(*bodies: dict) -> tuple[Affinity, list[httpx.Request]]:
     return client, requests
 
 
+def medication(n: int) -> dict:
+    return {
+        "id": ident("med", n),
+        "name": f"Semaglutide {n}",
+        "fullName": f"Semaglutide {n} 2.5 mg/mL injection",
+        "category": "weight_loss",
+        "coldChainRequired": True,
+        "compoundingReasons": [],
+        "defaultDirections": None,
+        "fill": None,
+        "form": "injection",
+        "pharmacy": {"id": ident("pharm"), "name": "Test Pharmacy"},
+        "price": 10000,
+        "quantities": [1],
+        "quantityUnit": None,
+        "requirements": [],
+        "restrictedStates": [],
+        "shippingOptions": [],
+        "shippingSuppliesPrice": 0,
+        "strength": "2.5 mg/mL",
+    }
+
+
 def page(n: int, next_cursor: str | None) -> dict:
     return {
         "object": "list",
         "url": "/v1/medications",
-        "data": [{"id": ident("med", n), "name": f"Semaglutide {n}"}],
+        "data": [medication(n)],
         "hasMore": next_cursor is not None,
         "nextCursor": next_cursor,
     }
@@ -56,7 +83,7 @@ def test_medications_list_without_query_sends_no_query() -> None:
 
 
 def test_orders_create_sends_patient_id() -> None:
-    client, requests = recorded({"id": ident("ord"), "patientId": ident("pat")})
+    client, requests = recorded(FIXTURE)
     client.orders.create(
         idempotency_key="order-key-1",
         practice_id=ident("prac"),
