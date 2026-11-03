@@ -9,7 +9,7 @@ Use it only on a server. Never put an API key in a browser, a mobile application
 The package is not on PyPI. Install it from GitHub at the release tag:
 
 ```sh
-pip install "affinity-health-sdk @ git+https://github.com/affinity-health/affinity-python@v0.7.0"
+pip install "affinity-health-sdk @ git+https://github.com/affinity-health/affinity-python@v0.8.0"
 ```
 
 The distribution is `affinity-health-sdk`; the import package is `affinity`.

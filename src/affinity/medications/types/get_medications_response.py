@@ -115,11 +115,11 @@ class GetMedicationsResponse(UniversalBaseModel):
         FieldMetadata(alias="restrictedStates"),
         pydantic.Field(
             alias="restrictedStates",
-            description="The states where this medication cannot ship; other states are permitted subject to pharmacy coverage.",
+            description="Every state where this medication cannot ship, including states the pharmacy does not cover. It can ship to every other state.",
         ),
     ]
     """
-    The states where this medication cannot ship; other states are permitted subject to pharmacy coverage.
+    Every state where this medication cannot ship, including states the pharmacy does not cover. It can ship to every other state.
     """
 
     shipping_options: typing_extensions.Annotated[

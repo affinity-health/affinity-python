@@ -40,10 +40,12 @@ class PatientInput(UniversalBaseModel):
     """
 
     first_name: typing_extensions.Annotated[
-        str, FieldMetadata(alias="firstName"), pydantic.Field(alias="firstName", description="The first name.")
+        str,
+        FieldMetadata(alias="firstName"),
+        pydantic.Field(alias="firstName", description="The first name. N/A, TBD, unknown and none return 422."),
     ]
     """
-    The first name.
+    The first name. N/A, TBD, unknown and none return 422.
     """
 
     sex: PatientInputSex = pydantic.Field()
@@ -52,10 +54,12 @@ class PatientInput(UniversalBaseModel):
     """
 
     last_name: typing_extensions.Annotated[
-        str, FieldMetadata(alias="lastName"), pydantic.Field(alias="lastName", description="The last name.")
+        str,
+        FieldMetadata(alias="lastName"),
+        pydantic.Field(alias="lastName", description="The last name. N/A, TBD, unknown and none return 422."),
     ]
     """
-    The last name.
+    The last name. N/A, TBD, unknown and none return 422.
     """
 
     middle_name: typing_extensions.Annotated[

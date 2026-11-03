@@ -11,12 +11,12 @@ from ...core.serialization import FieldMetadata
 class UpdatePracticesRequestAddress(UniversalBaseModel):
     line1: typing.Optional[str] = pydantic.Field(default=None)
     """
-    The street address.
+    The street address. Line 1 and line 2 together: 70 characters or fewer.
     """
 
     line2: typing.Optional[str] = pydantic.Field(default=None)
     """
-    The apartment or suite. Send null or empty text to remove it. An omitted `line2` keeps the saved suite, also when `line1` changes.
+    The apartment or suite. Send null, empty text, N/A, NA, none or - to remove it. See notes, TBD and unknown return 422. An omitted `line2` keeps the saved suite, also when `line1` changes.
     """
 
     city: typing.Optional[str] = pydantic.Field(default=None)
@@ -26,7 +26,7 @@ class UpdatePracticesRequestAddress(UniversalBaseModel):
 
     state: typing.Optional[str] = pydantic.Field(default=None)
     """
-    The two-letter US state or territory code, such as TX, in any letter case. Affinity stores and returns it in upper case.
+    The two-letter code of a US state, DC or PR, in any letter case. Affinity stores and returns it in upper case.
     """
 
     postal_code: typing_extensions.Annotated[

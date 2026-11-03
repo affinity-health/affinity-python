@@ -20,7 +20,7 @@ class AddressInput(UniversalBaseModel):
 
     line2: typing.Optional[str] = pydantic.Field(default=None)
     """
-    The apartment or suite, or null when there is none. Empty text counts as null.
+    The apartment or suite, or null when there is none. Empty text, N/A, NA, none and - count as null. See notes, TBD and unknown return 422.
     """
 
     city: str = pydantic.Field()

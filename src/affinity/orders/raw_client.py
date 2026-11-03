@@ -199,17 +199,6 @@ class RawOrdersClient:
                         ),
                     ),
                 )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 429:
                 raise TooManyRequestsError(
                     headers=dict(_response.headers),
@@ -534,17 +523,6 @@ class RawOrdersClient:
                 )
             if _response.status_code == 404:
                 raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
@@ -914,17 +892,6 @@ class AsyncRawOrdersClient:
                         ),
                     ),
                 )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 429:
                 raise TooManyRequestsError(
                     headers=dict(_response.headers),
@@ -1251,17 +1218,6 @@ class AsyncRawOrdersClient:
                 )
             if _response.status_code == 404:
                 raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,

@@ -14,16 +14,16 @@ class PrescriptionInput(UniversalBaseModel):
         FieldMetadata(alias="compoundingReason"),
         pydantic.Field(
             alias="compoundingReason",
-            description="The reason for compounding, required when the medication's requirements include it. Empty text counts as null.",
+            description="One of the medication's compoundingReasons values, required when the medication's requirements include it. Another value returns 422. Empty text counts as null.",
         ),
     ] = None
     """
-    The reason for compounding, required when the medication's requirements include it. Empty text counts as null.
+    One of the medication's compoundingReasons values, required when the medication's requirements include it. Another value returns 422. Empty text counts as null.
     """
 
     directions: str = pydantic.Field()
     """
-    The prescriber's directions for use.
+    The prescriber's directions for use, as the clinician wrote them. None, N/A, NA, TBD, unknown and see notes return 422.
     """
 
     medication_id: typing_extensions.Annotated[

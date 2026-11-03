@@ -40,6 +40,7 @@ if typing.TYPE_CHECKING:
     from .patient_sex import PatientSex
     from .pharmacy_reference import PharmacyReference
     from .practice import Practice
+    from .practice_address_input import PracticeAddressInput
     from .practice_list import PracticeList
     from .practice_list_object import PracticeListObject
     from .prescriber_input import PrescriberInput
@@ -142,6 +143,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "PatientSex": ".patient_sex",
     "PharmacyReference": ".pharmacy_reference",
     "Practice": ".practice",
+    "PracticeAddressInput": ".practice_address_input",
     "PracticeList": ".practice_list",
     "PracticeListObject": ".practice_list_object",
     "PrescriberInput": ".prescriber_input",
@@ -262,6 +264,7 @@ __all__ = [
     "PatientSex",
     "PharmacyReference",
     "Practice",
+    "PracticeAddressInput",
     "PracticeList",
     "PracticeListObject",
     "PrescriberInput",

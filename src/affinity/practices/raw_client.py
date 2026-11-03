@@ -23,8 +23,8 @@ from ..errors.too_many_requests_error import TooManyRequestsError
 from ..errors.unauthorized_error import UnauthorizedError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..errors.unsupported_media_type_error import UnsupportedMediaTypeError
-from ..types.address_input import AddressInput
 from ..types.practice import Practice
+from ..types.practice_address_input import PracticeAddressInput
 from ..types.practice_list import PracticeList
 from ..types.problem import Problem
 from ..types.problem409 import Problem409
@@ -156,17 +156,6 @@ class RawPracticesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 429:
                 raise TooManyRequestsError(
                     headers=dict(_response.headers),
@@ -213,7 +202,7 @@ class RawPracticesClient:
         self,
         *,
         idempotency_key: str,
-        address: AddressInput,
+        address: PracticeAddressInput,
         name: str,
         phone: str,
         external_id: typing.Optional[str] = OMIT,
@@ -228,10 +217,10 @@ class RawPracticesClient:
         idempotency_key : str
             A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
 
-        address : AddressInput
+        address : PracticeAddressInput
 
         name : str
-            Text with at least one visible character.
+            The practice name. PerfectRx prints it: use Windows-1252 characters, without < or >.
 
         phone : str
             A US phone number: 10 digits, with or without +1 or 1 before them. Spaces, dashes, dots and parentheses are allowed, such as (512) 555-0100. Affinity stores and returns +15125550100.
@@ -255,7 +244,7 @@ class RawPracticesClient:
             json={
                 "externalId": external_id,
                 "address": convert_and_respect_annotation_metadata(
-                    object_=address, annotation=AddressInput, direction="write"
+                    object_=address, annotation=PracticeAddressInput, direction="write"
                 ),
                 "liveEnabled": live_enabled,
                 "name": name,
@@ -486,17 +475,6 @@ class RawPracticesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 429:
                 raise TooManyRequestsError(
                     headers=dict(_response.headers),
@@ -566,13 +544,13 @@ class RawPracticesClient:
             Your practice identifier, unique among your platform's active practices. Send null to clear it.
 
         address : typing.Optional[UpdatePracticesRequestAddress]
-            Affinity merges the address parts you send into the saved address. An omitted part keeps its saved value. To move to an address with no suite, send `"line2": null` with the new `line1`, `city`, `state` and `postalCode`.
+            Affinity merges the address parts you send into the saved address. An omitted part keeps its saved value. To move to an address with no suite, send `"line2": null` with the new `line1`, `city`, `state` and `postalCode`. PerfectRx prints it: use Windows-1252 characters, without < or >. Line 1 and line 2 together: 70 characters or fewer.
 
         live_enabled : typing.Optional[bool]
             Omit it or send null to leave Live unchanged.
 
         name : typing.Optional[str]
-            Text with at least one visible character.
+            The practice name. PerfectRx prints it: use Windows-1252 characters, without < or >.
 
         phone : typing.Optional[str]
             A US phone number: 10 digits, with or without +1 or 1 before them. Spaces, dashes, dots and parentheses are allowed, such as (512) 555-0100. Affinity stores and returns +15125550100. Empty text counts as null.
@@ -867,17 +845,6 @@ class AsyncRawPracticesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 429:
                 raise TooManyRequestsError(
                     headers=dict(_response.headers),
@@ -924,7 +891,7 @@ class AsyncRawPracticesClient:
         self,
         *,
         idempotency_key: str,
-        address: AddressInput,
+        address: PracticeAddressInput,
         name: str,
         phone: str,
         external_id: typing.Optional[str] = OMIT,
@@ -939,10 +906,10 @@ class AsyncRawPracticesClient:
         idempotency_key : str
             A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
 
-        address : AddressInput
+        address : PracticeAddressInput
 
         name : str
-            Text with at least one visible character.
+            The practice name. PerfectRx prints it: use Windows-1252 characters, without < or >.
 
         phone : str
             A US phone number: 10 digits, with or without +1 or 1 before them. Spaces, dashes, dots and parentheses are allowed, such as (512) 555-0100. Affinity stores and returns +15125550100.
@@ -966,7 +933,7 @@ class AsyncRawPracticesClient:
             json={
                 "externalId": external_id,
                 "address": convert_and_respect_annotation_metadata(
-                    object_=address, annotation=AddressInput, direction="write"
+                    object_=address, annotation=PracticeAddressInput, direction="write"
                 ),
                 "liveEnabled": live_enabled,
                 "name": name,
@@ -1197,17 +1164,6 @@ class AsyncRawPracticesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 429:
                 raise TooManyRequestsError(
                     headers=dict(_response.headers),
@@ -1277,13 +1233,13 @@ class AsyncRawPracticesClient:
             Your practice identifier, unique among your platform's active practices. Send null to clear it.
 
         address : typing.Optional[UpdatePracticesRequestAddress]
-            Affinity merges the address parts you send into the saved address. An omitted part keeps its saved value. To move to an address with no suite, send `"line2": null` with the new `line1`, `city`, `state` and `postalCode`.
+            Affinity merges the address parts you send into the saved address. An omitted part keeps its saved value. To move to an address with no suite, send `"line2": null` with the new `line1`, `city`, `state` and `postalCode`. PerfectRx prints it: use Windows-1252 characters, without < or >. Line 1 and line 2 together: 70 characters or fewer.
 
         live_enabled : typing.Optional[bool]
             Omit it or send null to leave Live unchanged.
 
         name : typing.Optional[str]
-            Text with at least one visible character.
+            The practice name. PerfectRx prints it: use Windows-1252 characters, without < or >.
 
         phone : typing.Optional[str]
             A US phone number: 10 digits, with or without +1 or 1 before them. Spaces, dashes, dots and parentheses are allowed, such as (512) 555-0100. Affinity stores and returns +15125550100. Empty text counts as null.

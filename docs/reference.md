@@ -947,7 +947,7 @@ Platforms only. Name, phone and address are required. The practice starts in Tes
 <dd>
 
 ```python
-from affinity import Affinity, AddressInput
+from affinity import Affinity, PracticeAddressInput
 from affinity.environment import AffinityEnvironment
 
 client = Affinity(
@@ -957,7 +957,7 @@ client = Affinity(
 
 client.practices.create(
     idempotency_key="Idempotency-Key",
-    address=AddressInput(
+    address=PracticeAddressInput(
         line1="line1",
         city="city",
         state="state",
@@ -989,7 +989,7 @@ client.practices.create(
 <dl>
 <dd>
 
-**address:** `AddressInput` 
+**address:** `PracticeAddressInput` 
     
 </dd>
 </dl>
@@ -997,7 +997,7 @@ client.practices.create(
 <dl>
 <dd>
 
-**name:** `str` — Text with at least one visible character.
+**name:** `str` — The practice name. PerfectRx prints it: use Windows-1252 characters, without < or >.
     
 </dd>
 </dl>
@@ -1192,7 +1192,7 @@ client.practices.update(
 <dl>
 <dd>
 
-**address:** `typing.Optional[UpdatePracticesRequestAddress]` — Affinity merges the address parts you send into the saved address. An omitted part keeps its saved value. To move to an address with no suite, send `"line2": null` with the new `line1`, `city`, `state` and `postalCode`.
+**address:** `typing.Optional[UpdatePracticesRequestAddress]` — Affinity merges the address parts you send into the saved address. An omitted part keeps its saved value. To move to an address with no suite, send `"line2": null` with the new `line1`, `city`, `state` and `postalCode`. PerfectRx prints it: use Windows-1252 characters, without < or >. Line 1 and line 2 together: 70 characters or fewer.
     
 </dd>
 </dl>
@@ -1208,7 +1208,7 @@ client.practices.update(
 <dl>
 <dd>
 
-**name:** `typing.Optional[str]` — Text with at least one visible character.
+**name:** `typing.Optional[str]` — The practice name. PerfectRx prints it: use Windows-1252 characters, without < or >.
     
 </dd>
 </dl>

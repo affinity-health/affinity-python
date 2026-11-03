@@ -10,7 +10,6 @@ from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
 from ..errors.bad_request_error import BadRequestError
-from ..errors.content_too_large_error import ContentTooLargeError
 from ..errors.forbidden_error import ForbiddenError
 from ..errors.internal_server_error import InternalServerError
 from ..errors.not_found_error import NotFoundError
@@ -91,17 +90,6 @@ class RawAccountClient:
                 )
             if _response.status_code == 404:
                 raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
@@ -222,17 +210,6 @@ class AsyncRawAccountClient:
                 )
             if _response.status_code == 404:
                 raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
