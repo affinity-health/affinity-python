@@ -10,16 +10,56 @@ from .unsupported_media_type_error_body_code import UnsupportedMediaTypeErrorBod
 
 
 class UnsupportedMediaTypeErrorBody(UniversalBaseModel):
-    code: UnsupportedMediaTypeErrorBodyCode
-    detail: str
-    title: str
-    type: str
-    instance: str
-    request_id: typing_extensions.Annotated[str, FieldMetadata(alias="requestId"), pydantic.Field(alias="requestId")]
-    status: int
+    code: UnsupportedMediaTypeErrorBodyCode = pydantic.Field()
+    """
+    A stable code for the problem. Branch on it, not on detail.
+    """
+
+    detail: str = pydantic.Field()
+    """
+    What went wrong and what to do, for a person to read.
+    """
+
+    title: str = pydantic.Field()
+    """
+    A short summary of the problem's type.
+    """
+
+    type: str = pydantic.Field()
+    """
+    A URI that names the problem's type.
+    """
+
+    instance: str = pydantic.Field()
+    """
+    The path of the request.
+    """
+
+    request_id: typing_extensions.Annotated[
+        str,
+        FieldMetadata(alias="requestId"),
+        pydantic.Field(
+            alias="requestId",
+            description="Identifies the request, as its X-Request-Id header does. Send it when you report a problem.",
+        ),
+    ]
+    """
+    Identifies the request, as its X-Request-Id header does. Send it when you report a problem.
+    """
+
+    status: int = pydantic.Field()
+    """
+    The HTTP status code of the response.
+    """
+
     trace_id: typing_extensions.Annotated[
-        typing.Optional[str], FieldMetadata(alias="traceId"), pydantic.Field(alias="traceId")
+        typing.Optional[str],
+        FieldMetadata(alias="traceId"),
+        pydantic.Field(alias="traceId", description="The request trace ID."),
     ] = None
+    """
+    The request trace ID.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

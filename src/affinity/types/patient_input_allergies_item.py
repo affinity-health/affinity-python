@@ -13,7 +13,10 @@ class PatientInputAllergiesItem(UniversalBaseModel):
     The allergy category.
     """
 
-    display: str
+    display: str = pydantic.Field()
+    """
+    The reported allergy name.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

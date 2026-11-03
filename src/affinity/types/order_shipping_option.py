@@ -19,7 +19,7 @@ class OrderShippingOption(UniversalBaseModel):
 
     price: int = pydantic.Field()
     """
-    The price in integer cents.
+    The shipping price charged, in integer cents.
     """
 
     if IS_PYDANTIC_V2:

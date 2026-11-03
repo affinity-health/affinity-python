@@ -8,10 +8,25 @@ from .problem_issues_item_path_item import ProblemIssuesItemPathItem
 
 
 class ProblemIssuesItem(UniversalBaseModel):
-    code: str
-    field: str
-    message: str
-    path: typing.List[ProblemIssuesItemPathItem]
+    code: str = pydantic.Field()
+    """
+    A stable code for this field's problem.
+    """
+
+    field: str = pydantic.Field()
+    """
+    The field as one string, such as `patient.address.state` or `prescriptions[0].quantity`.
+    """
+
+    message: str = pydantic.Field()
+    """
+    What is wrong with the field and what to send, for a person to read.
+    """
+
+    path: typing.List[ProblemIssuesItemPathItem] = pydantic.Field()
+    """
+    The field as a list of property names and array indexes.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

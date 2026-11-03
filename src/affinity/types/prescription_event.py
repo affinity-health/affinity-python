@@ -11,6 +11,10 @@ from .prescription_event_data import PrescriptionEventData
 
 
 class PrescriptionEvent(UniversalBaseModel):
+    """
+    An event about one prescription of an order. Affinity does not send these yet: no released pharmacy reports a prescription apart from its order. Handle them so that a later release does not break your receiver.
+    """
+
     id: str = pydantic.Field()
     """
     The event identifier; retries and resends keep the same identifier.

@@ -42,7 +42,7 @@ class PracticesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SyncPager[Practice, PracticeList]:
         """
-        List the platform's practices, newest first. Available to platforms only. `sort` takes `name` or `location` (A to Z, practices without a location last), `mode` (Test before Live) or `created` (oldest first); a `_desc` suffix reverses.
+        List the platform's practices, newest first. Available to platforms only. `sort` takes `name` or `location` (A to Z, practices without a location last), `mode` (without Live access, then with it) or `created` (oldest first); a `_desc` suffix reverses.
 
         Parameters
         ----------
@@ -59,7 +59,7 @@ class PracticesClient:
             Match practice names containing this text, ignoring case. Restart pagination after changing query.
 
         sort : typing.Optional[ListPracticesRequestSort]
-            name and location sort A to Z; mode sorts Test before Live; created sorts oldest first. A _desc suffix reverses the order. Defaults to created_desc. Missing locations sort last. Restart pagination after changing sort.
+            name and location sort A to Z; mode sorts practices without Live access before those with it; created sorts oldest first. A _desc suffix reverses the order. Defaults to created_desc. Missing locations sort last. Restart pagination after changing sort.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -67,7 +67,7 @@ class PracticesClient:
         Returns
         -------
         SyncPager[Practice, PracticeList]
-            HTTP 200
+            OK
 
         Examples
         --------
@@ -114,6 +114,7 @@ class PracticesClient:
         address : AddressInput
 
         name : str
+            Text with at least one visible character.
 
         phone : str
             A US phone number: 10 digits, with or without +1 or 1 before them. Spaces, dashes, dots and parentheses are allowed, such as (512) 555-0100. Affinity stores and returns +15125550100.
@@ -129,7 +130,7 @@ class PracticesClient:
         Returns
         -------
         Practice
-            HTTP 200
+            OK
 
         Examples
         --------
@@ -168,6 +169,7 @@ class PracticesClient:
         Parameters
         ----------
         practice_id : str
+            The practice ID.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -175,7 +177,7 @@ class PracticesClient:
         Returns
         -------
         Practice
-            HTTP 200
+            OK
 
         Examples
         --------
@@ -204,11 +206,12 @@ class PracticesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Practice:
         """
-        `liveEnabled` allows or refuses new Live orders. Existing records, cancellation, webhooks and billing keep working. Only its platform changes it; enabling requires platform Live access, and either change needs a Live caller: a Live key (403 live_key_required otherwise) or a session in Live mode (403 live_mode_required otherwise). Live orders send `name`, `phone` and `address` to the pharmacy, so a practice with Live access changes them only with a Live key (403 live_mode_required otherwise). A retry with the same key and body returns the stored first response, even if the practice has changed. Use GET /v1/practices/{practiceId} to read the current practice.
+        `liveEnabled` allows or refuses new Live orders. Existing records, cancellation, webhooks and billing keep working. Only its platform changes it; enabling requires platform Live access, and either change needs a Live caller: a Live key (403 live_key_required otherwise) or a session in Live mode (403 live_mode_required otherwise). Live orders send `name`, `phone` and `address` to the pharmacy, so a practice with Live access changes them only in Live mode, with a Live key or a session in Live mode (403 live_mode_required otherwise). A retry with the same key and body returns the stored first response, even if the practice has changed. Use GET /v1/practices/{practiceId} to read the current practice.
 
         Parameters
         ----------
         practice_id : str
+            The practice ID.
 
         idempotency_key : str
             A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
@@ -223,6 +226,7 @@ class PracticesClient:
             Omit it or send null to leave Live unchanged.
 
         name : typing.Optional[str]
+            Text with at least one visible character.
 
         phone : typing.Optional[str]
             A US phone number: 10 digits, with or without +1 or 1 before them. Spaces, dashes, dots and parentheses are allowed, such as (512) 555-0100. Affinity stores and returns +15125550100. Empty text counts as null.
@@ -233,7 +237,7 @@ class PracticesClient:
         Returns
         -------
         Practice
-            HTTP 200
+            OK
 
         Examples
         --------
@@ -286,7 +290,7 @@ class AsyncPracticesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncPager[Practice, PracticeList]:
         """
-        List the platform's practices, newest first. Available to platforms only. `sort` takes `name` or `location` (A to Z, practices without a location last), `mode` (Test before Live) or `created` (oldest first); a `_desc` suffix reverses.
+        List the platform's practices, newest first. Available to platforms only. `sort` takes `name` or `location` (A to Z, practices without a location last), `mode` (without Live access, then with it) or `created` (oldest first); a `_desc` suffix reverses.
 
         Parameters
         ----------
@@ -303,7 +307,7 @@ class AsyncPracticesClient:
             Match practice names containing this text, ignoring case. Restart pagination after changing query.
 
         sort : typing.Optional[ListPracticesRequestSort]
-            name and location sort A to Z; mode sorts Test before Live; created sorts oldest first. A _desc suffix reverses the order. Defaults to created_desc. Missing locations sort last. Restart pagination after changing sort.
+            name and location sort A to Z; mode sorts practices without Live access before those with it; created sorts oldest first. A _desc suffix reverses the order. Defaults to created_desc. Missing locations sort last. Restart pagination after changing sort.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -311,7 +315,7 @@ class AsyncPracticesClient:
         Returns
         -------
         AsyncPager[Practice, PracticeList]
-            HTTP 200
+            OK
 
         Examples
         --------
@@ -367,6 +371,7 @@ class AsyncPracticesClient:
         address : AddressInput
 
         name : str
+            Text with at least one visible character.
 
         phone : str
             A US phone number: 10 digits, with or without +1 or 1 before them. Spaces, dashes, dots and parentheses are allowed, such as (512) 555-0100. Affinity stores and returns +15125550100.
@@ -382,7 +387,7 @@ class AsyncPracticesClient:
         Returns
         -------
         Practice
-            HTTP 200
+            OK
 
         Examples
         --------
@@ -429,6 +434,7 @@ class AsyncPracticesClient:
         Parameters
         ----------
         practice_id : str
+            The practice ID.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -436,7 +442,7 @@ class AsyncPracticesClient:
         Returns
         -------
         Practice
-            HTTP 200
+            OK
 
         Examples
         --------
@@ -473,11 +479,12 @@ class AsyncPracticesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Practice:
         """
-        `liveEnabled` allows or refuses new Live orders. Existing records, cancellation, webhooks and billing keep working. Only its platform changes it; enabling requires platform Live access, and either change needs a Live caller: a Live key (403 live_key_required otherwise) or a session in Live mode (403 live_mode_required otherwise). Live orders send `name`, `phone` and `address` to the pharmacy, so a practice with Live access changes them only with a Live key (403 live_mode_required otherwise). A retry with the same key and body returns the stored first response, even if the practice has changed. Use GET /v1/practices/{practiceId} to read the current practice.
+        `liveEnabled` allows or refuses new Live orders. Existing records, cancellation, webhooks and billing keep working. Only its platform changes it; enabling requires platform Live access, and either change needs a Live caller: a Live key (403 live_key_required otherwise) or a session in Live mode (403 live_mode_required otherwise). Live orders send `name`, `phone` and `address` to the pharmacy, so a practice with Live access changes them only in Live mode, with a Live key or a session in Live mode (403 live_mode_required otherwise). A retry with the same key and body returns the stored first response, even if the practice has changed. Use GET /v1/practices/{practiceId} to read the current practice.
 
         Parameters
         ----------
         practice_id : str
+            The practice ID.
 
         idempotency_key : str
             A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
@@ -492,6 +499,7 @@ class AsyncPracticesClient:
             Omit it or send null to leave Live unchanged.
 
         name : typing.Optional[str]
+            Text with at least one visible character.
 
         phone : typing.Optional[str]
             A US phone number: 10 digits, with or without +1 or 1 before them. Spaces, dashes, dots and parentheses are allowed, such as (512) 555-0100. Affinity stores and returns +15125550100. Empty text counts as null.
@@ -502,7 +510,7 @@ class AsyncPracticesClient:
         Returns
         -------
         Practice
-            HTTP 200
+            OK
 
         Examples
         --------

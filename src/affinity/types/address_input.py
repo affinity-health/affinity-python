@@ -13,13 +13,21 @@ class AddressInput(UniversalBaseModel):
     The US mailing address.
     """
 
-    line1: str
+    line1: str = pydantic.Field()
+    """
+    The street address.
+    """
+
     line2: typing.Optional[str] = pydantic.Field(default=None)
     """
     The apartment or suite, or null when there is none. Empty text counts as null.
     """
 
-    city: str
+    city: str = pydantic.Field()
+    """
+    The city name.
+    """
+
     state: str = pydantic.Field()
     """
     The two-letter US state or territory code, such as TX, in any letter case. Affinity stores and returns it in upper case.

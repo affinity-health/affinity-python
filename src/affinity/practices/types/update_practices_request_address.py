@@ -9,13 +9,21 @@ from ...core.serialization import FieldMetadata
 
 
 class UpdatePracticesRequestAddress(UniversalBaseModel):
-    line1: typing.Optional[str] = None
+    line1: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    The street address.
+    """
+
     line2: typing.Optional[str] = pydantic.Field(default=None)
     """
     The apartment or suite. Send null or empty text to remove it. An omitted `line2` keeps the saved suite, also when `line1` changes.
     """
 
-    city: typing.Optional[str] = None
+    city: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    The city name.
+    """
+
     state: typing.Optional[str] = pydantic.Field(default=None)
     """
     The two-letter US state or territory code, such as TX, in any letter case. Affinity stores and returns it in upper case.

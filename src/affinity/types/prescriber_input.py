@@ -20,8 +20,20 @@ class PrescriberInput(UniversalBaseModel):
     """
 
     address: typing.Optional[AddressInput] = None
-    first_name: typing_extensions.Annotated[str, FieldMetadata(alias="firstName"), pydantic.Field(alias="firstName")]
-    last_name: typing_extensions.Annotated[str, FieldMetadata(alias="lastName"), pydantic.Field(alias="lastName")]
+    first_name: typing_extensions.Annotated[
+        str, FieldMetadata(alias="firstName"), pydantic.Field(alias="firstName", description="The first name.")
+    ]
+    """
+    The first name.
+    """
+
+    last_name: typing_extensions.Annotated[
+        str, FieldMetadata(alias="lastName"), pydantic.Field(alias="lastName", description="The last name.")
+    ]
+    """
+    The last name.
+    """
+
     npi: str = pydantic.Field()
     """
     The prescribing clinician's 10-digit National Provider Identifier (NPI). Surrounding spaces are removed.

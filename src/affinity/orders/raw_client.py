@@ -19,7 +19,6 @@ from ..errors.conflict_error import ConflictError
 from ..errors.content_too_large_error import ContentTooLargeError
 from ..errors.forbidden_error import ForbiddenError
 from ..errors.internal_server_error import InternalServerError
-from ..errors.method_not_allowed_error import MethodNotAllowedError
 from ..errors.not_found_error import NotFoundError
 from ..errors.service_unavailable_error import ServiceUnavailableError
 from ..errors.too_many_requests_error import TooManyRequestsError
@@ -34,7 +33,6 @@ from ..types.prescription_input import PrescriptionInput
 from ..types.problem import Problem
 from ..types.problem409 import Problem409
 from ..types.problem429 import Problem429
-from ..types.service_unavailable_error_body import ServiceUnavailableErrorBody
 from .types.list_orders_request_cancel_requested import ListOrdersRequestCancelRequested
 from .types.list_orders_request_recently_shipped import ListOrdersRequestRecentlyShipped
 from .types.list_orders_request_sort import ListOrdersRequestSort
@@ -110,7 +108,7 @@ class RawOrdersClient:
         Returns
         -------
         SyncPager[Order, OrderList]
-            HTTP 200
+            OK
         """
         _response = self._client_wrapper.httpx_client.request(
             "v1/orders",
@@ -201,24 +199,13 @@ class RawOrdersClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -249,9 +236,9 @@ class RawOrdersClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -279,7 +266,7 @@ class RawOrdersClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[Order]:
         """
-        One request creates the order, signs it and sends it to the pharmacy. Platforms must send practiceId; practice callers can omit it to use their own practice. With an API key, name the prescriber and send signatureAttestation. Optional prescriber phone and address each default to the practice; no account is looked up by NPI. In the app, the signed-in member signs with the NPI in their settings, or names the prescriber with the same attestation. The patient is found by patient.externalId and updated from the order. Live orders require Live access on the practice and its platform. No payment method is required.
+        One request creates the order, signs it and sends it to the pharmacy. Platforms must send practiceId; practice callers can omit it to use their own practice. With an API key, name the prescriber and send signatureAttestation. Optional prescriber phone and address each default to the practice; no account is looked up by NPI. In the app, the signed-in member signs with the NPI in their settings, or names the prescriber with the same attestation. With patient.externalId, the order reuses that patient of the practice and mode and updates the saved record; without it, each order creates a new patient. When the pharmacy already holds the patient's name, a different firstName or lastName returns 422 invalid_order. Live orders require Live access on the practice and its platform. No payment method is required.
 
         Parameters
         ----------
@@ -298,7 +285,7 @@ class RawOrdersClient:
             Must be true to attest that the named prescriber approved and signed these prescriptions.
 
         external_order_id : typing.Optional[str]
-            Your order identifier, unique within the practice and mode.
+            Your order identifier, unique within the practice and mode. A failed or cancelled order keeps it, so send a new one for a replacement order.
 
         practice_id : typing.Optional[str]
             Required with a platform API key. Send a child practice ID. Independent practice keys can omit this field to use their own practice.
@@ -311,7 +298,7 @@ class RawOrdersClient:
         Returns
         -------
         HttpResponse[Order]
-            HTTP 200
+            OK
         """
         _response = self._client_wrapper.httpx_client.request(
             "v1/orders",
@@ -394,17 +381,6 @@ class RawOrdersClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 409:
                 raise ConflictError(
                     headers=dict(_response.headers),
@@ -420,9 +396,9 @@ class RawOrdersClient:
                 raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        Problem,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -475,9 +451,9 @@ class RawOrdersClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -498,6 +474,7 @@ class RawOrdersClient:
         Parameters
         ----------
         order_id : str
+            The order ID.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -505,7 +482,7 @@ class RawOrdersClient:
         Returns
         -------
         HttpResponse[Order]
-            HTTP 200
+            OK
         """
         _response = self._client_wrapper.httpx_client.request(
             f"v1/orders/{encode_path_param(order_id)}",
@@ -566,24 +543,13 @@ class RawOrdersClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -614,9 +580,9 @@ class RawOrdersClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -634,11 +600,12 @@ class RawOrdersClient:
         self, order_id: str, *, idempotency_key: str, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[Order]:
         """
-        200 with status cancelled when the cancel is confirmed. 202 with cancelRequestedAt when the pharmacy has not confirmed yet: you get order.cancelled when it confirms, or, when it refuses, cancelRequestedAt becomes null and you get order.updated. If an earlier ask may have reached the pharmacy, a refusal keeps cancelRequestedAt and sends no event until the pharmacy ends the order (order.cancelled or order.shipped). 409 when the pharmacy refuses or the order has shipped.
+        200 with status cancelled when the cancel is confirmed. 202 with cancelRequestedAt when the pharmacy has not confirmed yet: you get order.cancelled when it confirms, or, when it refuses, cancelRequestedAt becomes null and you get order.updated. If an earlier ask may have reached the pharmacy, a refusal keeps cancelRequestedAt and sends no event until the pharmacy ends the order (order.cancelled or order.shipped). 409 cannot_cancel when the order is shipped, delivered or failed. 409 cancel_refused when the pharmacy refused the cancel, or when Affinity could not reach the pharmacy; only the second says to retry with a new Idempotency-Key.
 
         Parameters
         ----------
         order_id : str
+            The order ID.
 
         idempotency_key : str
             A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
@@ -649,7 +616,7 @@ class RawOrdersClient:
         Returns
         -------
         HttpResponse[Order]
-            HTTP 200
+            OK
         """
         _response = self._client_wrapper.httpx_client.request(
             f"v1/orders/{encode_path_param(order_id)}/cancel",
@@ -713,17 +680,6 @@ class RawOrdersClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 409:
                 raise ConflictError(
                     headers=dict(_response.headers),
@@ -739,9 +695,9 @@ class RawOrdersClient:
                 raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        Problem,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -783,9 +739,9 @@ class RawOrdersClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -864,7 +820,7 @@ class AsyncRawOrdersClient:
         Returns
         -------
         AsyncPager[Order, OrderList]
-            HTTP 200
+            OK
         """
         _response = await self._client_wrapper.httpx_client.request(
             "v1/orders",
@@ -958,24 +914,13 @@ class AsyncRawOrdersClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1006,9 +951,9 @@ class AsyncRawOrdersClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1036,7 +981,7 @@ class AsyncRawOrdersClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[Order]:
         """
-        One request creates the order, signs it and sends it to the pharmacy. Platforms must send practiceId; practice callers can omit it to use their own practice. With an API key, name the prescriber and send signatureAttestation. Optional prescriber phone and address each default to the practice; no account is looked up by NPI. In the app, the signed-in member signs with the NPI in their settings, or names the prescriber with the same attestation. The patient is found by patient.externalId and updated from the order. Live orders require Live access on the practice and its platform. No payment method is required.
+        One request creates the order, signs it and sends it to the pharmacy. Platforms must send practiceId; practice callers can omit it to use their own practice. With an API key, name the prescriber and send signatureAttestation. Optional prescriber phone and address each default to the practice; no account is looked up by NPI. In the app, the signed-in member signs with the NPI in their settings, or names the prescriber with the same attestation. With patient.externalId, the order reuses that patient of the practice and mode and updates the saved record; without it, each order creates a new patient. When the pharmacy already holds the patient's name, a different firstName or lastName returns 422 invalid_order. Live orders require Live access on the practice and its platform. No payment method is required.
 
         Parameters
         ----------
@@ -1055,7 +1000,7 @@ class AsyncRawOrdersClient:
             Must be true to attest that the named prescriber approved and signed these prescriptions.
 
         external_order_id : typing.Optional[str]
-            Your order identifier, unique within the practice and mode.
+            Your order identifier, unique within the practice and mode. A failed or cancelled order keeps it, so send a new one for a replacement order.
 
         practice_id : typing.Optional[str]
             Required with a platform API key. Send a child practice ID. Independent practice keys can omit this field to use their own practice.
@@ -1068,7 +1013,7 @@ class AsyncRawOrdersClient:
         Returns
         -------
         AsyncHttpResponse[Order]
-            HTTP 200
+            OK
         """
         _response = await self._client_wrapper.httpx_client.request(
             "v1/orders",
@@ -1151,17 +1096,6 @@ class AsyncRawOrdersClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 409:
                 raise ConflictError(
                     headers=dict(_response.headers),
@@ -1177,9 +1111,9 @@ class AsyncRawOrdersClient:
                 raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        Problem,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1232,9 +1166,9 @@ class AsyncRawOrdersClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1257,6 +1191,7 @@ class AsyncRawOrdersClient:
         Parameters
         ----------
         order_id : str
+            The order ID.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1264,7 +1199,7 @@ class AsyncRawOrdersClient:
         Returns
         -------
         AsyncHttpResponse[Order]
-            HTTP 200
+            OK
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"v1/orders/{encode_path_param(order_id)}",
@@ -1325,24 +1260,13 @@ class AsyncRawOrdersClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1373,9 +1297,9 @@ class AsyncRawOrdersClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1393,11 +1317,12 @@ class AsyncRawOrdersClient:
         self, order_id: str, *, idempotency_key: str, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[Order]:
         """
-        200 with status cancelled when the cancel is confirmed. 202 with cancelRequestedAt when the pharmacy has not confirmed yet: you get order.cancelled when it confirms, or, when it refuses, cancelRequestedAt becomes null and you get order.updated. If an earlier ask may have reached the pharmacy, a refusal keeps cancelRequestedAt and sends no event until the pharmacy ends the order (order.cancelled or order.shipped). 409 when the pharmacy refuses or the order has shipped.
+        200 with status cancelled when the cancel is confirmed. 202 with cancelRequestedAt when the pharmacy has not confirmed yet: you get order.cancelled when it confirms, or, when it refuses, cancelRequestedAt becomes null and you get order.updated. If an earlier ask may have reached the pharmacy, a refusal keeps cancelRequestedAt and sends no event until the pharmacy ends the order (order.cancelled or order.shipped). 409 cannot_cancel when the order is shipped, delivered or failed. 409 cancel_refused when the pharmacy refused the cancel, or when Affinity could not reach the pharmacy; only the second says to retry with a new Idempotency-Key.
 
         Parameters
         ----------
         order_id : str
+            The order ID.
 
         idempotency_key : str
             A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
@@ -1408,7 +1333,7 @@ class AsyncRawOrdersClient:
         Returns
         -------
         AsyncHttpResponse[Order]
-            HTTP 200
+            OK
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"v1/orders/{encode_path_param(order_id)}/cancel",
@@ -1472,17 +1397,6 @@ class AsyncRawOrdersClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 409:
                 raise ConflictError(
                     headers=dict(_response.headers),
@@ -1498,9 +1412,9 @@ class AsyncRawOrdersClient:
                 raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        Problem,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1542,9 +1456,9 @@ class AsyncRawOrdersClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),

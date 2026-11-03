@@ -16,7 +16,6 @@ from ..errors.conflict_error import ConflictError
 from ..errors.content_too_large_error import ContentTooLargeError
 from ..errors.forbidden_error import ForbiddenError
 from ..errors.internal_server_error import InternalServerError
-from ..errors.method_not_allowed_error import MethodNotAllowedError
 from ..errors.not_found_error import NotFoundError
 from ..errors.service_unavailable_error import ServiceUnavailableError
 from ..errors.too_many_requests_error import TooManyRequestsError
@@ -26,7 +25,6 @@ from ..errors.unsupported_media_type_error import UnsupportedMediaTypeError
 from ..types.problem import Problem
 from ..types.problem409 import Problem409
 from ..types.problem429 import Problem429
-from ..types.service_unavailable_error_body import ServiceUnavailableErrorBody
 from ..types.webhook_endpoint import WebhookEndpoint
 from ..types.webhook_endpoint_list import WebhookEndpointList
 from .types.create_webhooks_response import CreateWebhooksResponse
@@ -66,7 +64,7 @@ class RawWebhooksClient:
         Returns
         -------
         SyncPager[WebhookEndpoint, WebhookEndpointList]
-            HTTP 200
+            OK
         """
         _response = self._client_wrapper.httpx_client.request(
             "v1/webhook-endpoints",
@@ -139,24 +137,13 @@ class RawWebhooksClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -187,9 +174,9 @@ class RawWebhooksClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -223,7 +210,7 @@ class RawWebhooksClient:
         Returns
         -------
         HttpResponse[CreateWebhooksResponse]
-            HTTP 200
+            OK
         """
         _response = self._client_wrapper.httpx_client.request(
             "v1/webhook-endpoints",
@@ -292,17 +279,6 @@ class RawWebhooksClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 409:
                 raise ConflictError(
                     headers=dict(_response.headers),
@@ -318,9 +294,9 @@ class RawWebhooksClient:
                 raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        Problem,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -373,9 +349,9 @@ class RawWebhooksClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -398,6 +374,7 @@ class RawWebhooksClient:
         Parameters
         ----------
         webhook_endpoint_id : str
+            The webhook endpoint ID.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -405,7 +382,7 @@ class RawWebhooksClient:
         Returns
         -------
         HttpResponse[RemoveWebhooksResponse]
-            HTTP 200
+            OK
         """
         _response = self._client_wrapper.httpx_client.request(
             f"v1/webhook-endpoints/{encode_path_param(webhook_endpoint_id)}",
@@ -466,24 +443,13 @@ class RawWebhooksClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -514,9 +480,9 @@ class RawWebhooksClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -544,6 +510,7 @@ class RawWebhooksClient:
         Parameters
         ----------
         webhook_endpoint_id : str
+            The webhook endpoint ID.
 
         idempotency_key : str
             A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
@@ -556,7 +523,7 @@ class RawWebhooksClient:
         Returns
         -------
         HttpResponse[WebhookEndpoint]
-            HTTP 200
+            OK
         """
         _response = self._client_wrapper.httpx_client.request(
             f"v1/webhook-endpoints/{encode_path_param(webhook_endpoint_id)}",
@@ -625,17 +592,6 @@ class RawWebhooksClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 409:
                 raise ConflictError(
                     headers=dict(_response.headers),
@@ -651,9 +607,9 @@ class RawWebhooksClient:
                 raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        Problem,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -706,9 +662,9 @@ class RawWebhooksClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -731,6 +687,7 @@ class RawWebhooksClient:
         Parameters
         ----------
         webhook_endpoint_id : str
+            The webhook endpoint ID.
 
         idempotency_key : str
             A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
@@ -741,7 +698,7 @@ class RawWebhooksClient:
         Returns
         -------
         HttpResponse[ResendFailedWebhooksResponse]
-            HTTP 200
+            OK
         """
         _response = self._client_wrapper.httpx_client.request(
             f"v1/webhook-endpoints/{encode_path_param(webhook_endpoint_id)}/resend-failed",
@@ -805,17 +762,6 @@ class RawWebhooksClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 409:
                 raise ConflictError(
                     headers=dict(_response.headers),
@@ -831,9 +777,9 @@ class RawWebhooksClient:
                 raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        Problem,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -875,9 +821,9 @@ class RawWebhooksClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -920,7 +866,7 @@ class AsyncRawWebhooksClient:
         Returns
         -------
         AsyncPager[WebhookEndpoint, WebhookEndpointList]
-            HTTP 200
+            OK
         """
         _response = await self._client_wrapper.httpx_client.request(
             "v1/webhook-endpoints",
@@ -996,24 +942,13 @@ class AsyncRawWebhooksClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1044,9 +979,9 @@ class AsyncRawWebhooksClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1080,7 +1015,7 @@ class AsyncRawWebhooksClient:
         Returns
         -------
         AsyncHttpResponse[CreateWebhooksResponse]
-            HTTP 200
+            OK
         """
         _response = await self._client_wrapper.httpx_client.request(
             "v1/webhook-endpoints",
@@ -1149,17 +1084,6 @@ class AsyncRawWebhooksClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 409:
                 raise ConflictError(
                     headers=dict(_response.headers),
@@ -1175,9 +1099,9 @@ class AsyncRawWebhooksClient:
                 raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        Problem,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1230,9 +1154,9 @@ class AsyncRawWebhooksClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1255,6 +1179,7 @@ class AsyncRawWebhooksClient:
         Parameters
         ----------
         webhook_endpoint_id : str
+            The webhook endpoint ID.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1262,7 +1187,7 @@ class AsyncRawWebhooksClient:
         Returns
         -------
         AsyncHttpResponse[RemoveWebhooksResponse]
-            HTTP 200
+            OK
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"v1/webhook-endpoints/{encode_path_param(webhook_endpoint_id)}",
@@ -1323,24 +1248,13 @@ class AsyncRawWebhooksClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1371,9 +1285,9 @@ class AsyncRawWebhooksClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1401,6 +1315,7 @@ class AsyncRawWebhooksClient:
         Parameters
         ----------
         webhook_endpoint_id : str
+            The webhook endpoint ID.
 
         idempotency_key : str
             A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
@@ -1413,7 +1328,7 @@ class AsyncRawWebhooksClient:
         Returns
         -------
         AsyncHttpResponse[WebhookEndpoint]
-            HTTP 200
+            OK
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"v1/webhook-endpoints/{encode_path_param(webhook_endpoint_id)}",
@@ -1482,17 +1397,6 @@ class AsyncRawWebhooksClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 409:
                 raise ConflictError(
                     headers=dict(_response.headers),
@@ -1508,9 +1412,9 @@ class AsyncRawWebhooksClient:
                 raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        Problem,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1563,9 +1467,9 @@ class AsyncRawWebhooksClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1588,6 +1492,7 @@ class AsyncRawWebhooksClient:
         Parameters
         ----------
         webhook_endpoint_id : str
+            The webhook endpoint ID.
 
         idempotency_key : str
             A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
@@ -1598,7 +1503,7 @@ class AsyncRawWebhooksClient:
         Returns
         -------
         AsyncHttpResponse[ResendFailedWebhooksResponse]
-            HTTP 200
+            OK
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"v1/webhook-endpoints/{encode_path_param(webhook_endpoint_id)}/resend-failed",
@@ -1662,17 +1567,6 @@ class AsyncRawWebhooksClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 409:
                 raise ConflictError(
                     headers=dict(_response.headers),
@@ -1688,9 +1582,9 @@ class AsyncRawWebhooksClient:
                 raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        Problem,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1732,9 +1626,9 @@ class AsyncRawWebhooksClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),

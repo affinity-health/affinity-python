@@ -13,7 +13,6 @@ from ..errors.bad_request_error import BadRequestError
 from ..errors.content_too_large_error import ContentTooLargeError
 from ..errors.forbidden_error import ForbiddenError
 from ..errors.internal_server_error import InternalServerError
-from ..errors.method_not_allowed_error import MethodNotAllowedError
 from ..errors.not_found_error import NotFoundError
 from ..errors.service_unavailable_error import ServiceUnavailableError
 from ..errors.too_many_requests_error import TooManyRequestsError
@@ -21,7 +20,6 @@ from ..errors.unauthorized_error import UnauthorizedError
 from ..types.account import Account
 from ..types.problem import Problem
 from ..types.problem429 import Problem429
-from ..types.service_unavailable_error_body import ServiceUnavailableErrorBody
 from pydantic import ValidationError
 
 
@@ -41,7 +39,7 @@ class RawAccountClient:
         Returns
         -------
         HttpResponse[Account]
-            HTTP 200
+            OK
         """
         _response = self._client_wrapper.httpx_client.request(
             "v1/account",
@@ -102,24 +100,13 @@ class RawAccountClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -150,9 +137,9 @@ class RawAccountClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -183,7 +170,7 @@ class AsyncRawAccountClient:
         Returns
         -------
         AsyncHttpResponse[Account]
-            HTTP 200
+            OK
         """
         _response = await self._client_wrapper.httpx_client.request(
             "v1/account",
@@ -244,24 +231,13 @@ class AsyncRawAccountClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -292,9 +268,9 @@ class AsyncRawAccountClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),

@@ -36,7 +36,7 @@ class MedicationsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SyncPager[Medication, MedicationList]:
         """
-        Every medication you can order in the current mode, A to Z by name, then by ID. The list has no search or filters: read every page and choose by name, strength, form and pharmacy. Prices are in cents. `requirements` names the optional prescription fields this pharmacy requires; `compoundingReasons` and `quantities` list the accepted values when the pharmacy limits them, counted in `quantityUnit`. With a `fill`, `price` is per fill and each quantity counts `quantityUnit`, not fills: it is a whole number of fills in units. For a fill of 30 tablets, quantity 60 is two fills. For vials, quantity 1 is one vial and quantity 2 is two vials. A 2 mL vial lists quantities 1–10; its volume is separate from its quantity.
+        Every medication you can order in the current mode, A to Z by name, then by ID. The list has no text search: read every page and choose by name, strength, form and pharmacy. Send practiceId to list what that practice can order, at its prices; without it, the caller's organization is used. Prices are in cents. `requirements` names the optional prescription fields this pharmacy requires; `compoundingReasons` and `quantities` list the accepted values when the pharmacy limits them, counted in `quantityUnit`. With a `fill`, `price` is per fill and each quantity counts `quantityUnit`, not fills: it is a whole number of fills in units. For a fill of 30 tablets, quantity 60 is two fills. For vials, quantity 1 is one vial and quantity 2 is two vials. A 2 mL vial lists quantities 1–10; its volume is separate from its quantity.
 
         Parameters
         ----------
@@ -55,7 +55,7 @@ class MedicationsClient:
         Returns
         -------
         SyncPager[Medication, MedicationList]
-            HTTP 200
+            OK
 
         Examples
         --------
@@ -93,6 +93,7 @@ class MedicationsClient:
         Parameters
         ----------
         medication_id : str
+            The medication ID.
 
         practice_id : typing.Optional[str]
             Quote prices and availability for this practice. A platform may select only its own child practices; a practice may select only itself. Omit to use the caller's organization.
@@ -106,7 +107,7 @@ class MedicationsClient:
         Returns
         -------
         GetMedicationsResponse
-            HTTP 200
+            OK
 
         Examples
         --------
@@ -150,7 +151,7 @@ class AsyncMedicationsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncPager[Medication, MedicationList]:
         """
-        Every medication you can order in the current mode, A to Z by name, then by ID. The list has no search or filters: read every page and choose by name, strength, form and pharmacy. Prices are in cents. `requirements` names the optional prescription fields this pharmacy requires; `compoundingReasons` and `quantities` list the accepted values when the pharmacy limits them, counted in `quantityUnit`. With a `fill`, `price` is per fill and each quantity counts `quantityUnit`, not fills: it is a whole number of fills in units. For a fill of 30 tablets, quantity 60 is two fills. For vials, quantity 1 is one vial and quantity 2 is two vials. A 2 mL vial lists quantities 1–10; its volume is separate from its quantity.
+        Every medication you can order in the current mode, A to Z by name, then by ID. The list has no text search: read every page and choose by name, strength, form and pharmacy. Send practiceId to list what that practice can order, at its prices; without it, the caller's organization is used. Prices are in cents. `requirements` names the optional prescription fields this pharmacy requires; `compoundingReasons` and `quantities` list the accepted values when the pharmacy limits them, counted in `quantityUnit`. With a `fill`, `price` is per fill and each quantity counts `quantityUnit`, not fills: it is a whole number of fills in units. For a fill of 30 tablets, quantity 60 is two fills. For vials, quantity 1 is one vial and quantity 2 is two vials. A 2 mL vial lists quantities 1–10; its volume is separate from its quantity.
 
         Parameters
         ----------
@@ -169,7 +170,7 @@ class AsyncMedicationsClient:
         Returns
         -------
         AsyncPager[Medication, MedicationList]
-            HTTP 200
+            OK
 
         Examples
         --------
@@ -216,6 +217,7 @@ class AsyncMedicationsClient:
         Parameters
         ----------
         medication_id : str
+            The medication ID.
 
         practice_id : typing.Optional[str]
             Quote prices and availability for this practice. A platform may select only its own child practices; a practice may select only itself. Omit to use the caller's organization.
@@ -229,7 +231,7 @@ class AsyncMedicationsClient:
         Returns
         -------
         GetMedicationsResponse
-            HTTP 200
+            OK
 
         Examples
         --------

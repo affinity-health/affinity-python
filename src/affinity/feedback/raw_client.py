@@ -13,7 +13,6 @@ from ..errors.bad_request_error import BadRequestError
 from ..errors.conflict_error import ConflictError
 from ..errors.content_too_large_error import ContentTooLargeError
 from ..errors.internal_server_error import InternalServerError
-from ..errors.method_not_allowed_error import MethodNotAllowedError
 from ..errors.service_unavailable_error import ServiceUnavailableError
 from ..errors.too_many_requests_error import TooManyRequestsError
 from ..errors.unauthorized_error import UnauthorizedError
@@ -21,7 +20,6 @@ from ..errors.unsupported_media_type_error import UnsupportedMediaTypeError
 from ..types.problem import Problem
 from ..types.problem409 import Problem409
 from ..types.problem429 import Problem429
-from ..types.service_unavailable_error_body import ServiceUnavailableErrorBody
 from .types.create_feedback_response import CreateFeedbackResponse
 from pydantic import ValidationError
 
@@ -51,11 +49,12 @@ class RawFeedbackClient:
             A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
 
         message : str
+            Text with at least one visible character.
 
         page_url : typing.Optional[str]
 
         request_id : typing.Optional[str]
-            The `requestId` of the response, as the API returned it.
+            The `requestId` of the response, as the API returned it: a UUID or its `req_` form.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -63,7 +62,7 @@ class RawFeedbackClient:
         Returns
         -------
         HttpResponse[CreateFeedbackResponse]
-            HTTP 202
+            Accepted
         """
         _response = self._client_wrapper.httpx_client.request(
             "v1/feedback",
@@ -112,17 +111,6 @@ class RawFeedbackClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 409:
                 raise ConflictError(
                     headers=dict(_response.headers),
@@ -138,9 +126,9 @@ class RawFeedbackClient:
                 raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        Problem,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -182,9 +170,9 @@ class RawFeedbackClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -221,11 +209,12 @@ class AsyncRawFeedbackClient:
             A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
 
         message : str
+            Text with at least one visible character.
 
         page_url : typing.Optional[str]
 
         request_id : typing.Optional[str]
-            The `requestId` of the response, as the API returned it.
+            The `requestId` of the response, as the API returned it: a UUID or its `req_` form.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -233,7 +222,7 @@ class AsyncRawFeedbackClient:
         Returns
         -------
         AsyncHttpResponse[CreateFeedbackResponse]
-            HTTP 202
+            Accepted
         """
         _response = await self._client_wrapper.httpx_client.request(
             "v1/feedback",
@@ -282,17 +271,6 @@ class AsyncRawFeedbackClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 409:
                 raise ConflictError(
                     headers=dict(_response.headers),
@@ -308,9 +286,9 @@ class AsyncRawFeedbackClient:
                 raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        Problem,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -352,9 +330,9 @@ class AsyncRawFeedbackClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),

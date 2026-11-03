@@ -15,7 +15,6 @@ from ..errors.bad_request_error import BadRequestError
 from ..errors.content_too_large_error import ContentTooLargeError
 from ..errors.forbidden_error import ForbiddenError
 from ..errors.internal_server_error import InternalServerError
-from ..errors.method_not_allowed_error import MethodNotAllowedError
 from ..errors.not_found_error import NotFoundError
 from ..errors.service_unavailable_error import ServiceUnavailableError
 from ..errors.too_many_requests_error import TooManyRequestsError
@@ -24,7 +23,6 @@ from ..types.medication import Medication
 from ..types.medication_list import MedicationList
 from ..types.problem import Problem
 from ..types.problem429 import Problem429
-from ..types.service_unavailable_error_body import ServiceUnavailableErrorBody
 from .types.get_medications_request_expand_item import GetMedicationsRequestExpandItem
 from .types.get_medications_response import GetMedicationsResponse
 from pydantic import ValidationError
@@ -43,7 +41,7 @@ class RawMedicationsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SyncPager[Medication, MedicationList]:
         """
-        Every medication you can order in the current mode, A to Z by name, then by ID. The list has no search or filters: read every page and choose by name, strength, form and pharmacy. Prices are in cents. `requirements` names the optional prescription fields this pharmacy requires; `compoundingReasons` and `quantities` list the accepted values when the pharmacy limits them, counted in `quantityUnit`. With a `fill`, `price` is per fill and each quantity counts `quantityUnit`, not fills: it is a whole number of fills in units. For a fill of 30 tablets, quantity 60 is two fills. For vials, quantity 1 is one vial and quantity 2 is two vials. A 2 mL vial lists quantities 1–10; its volume is separate from its quantity.
+        Every medication you can order in the current mode, A to Z by name, then by ID. The list has no text search: read every page and choose by name, strength, form and pharmacy. Send practiceId to list what that practice can order, at its prices; without it, the caller's organization is used. Prices are in cents. `requirements` names the optional prescription fields this pharmacy requires; `compoundingReasons` and `quantities` list the accepted values when the pharmacy limits them, counted in `quantityUnit`. With a `fill`, `price` is per fill and each quantity counts `quantityUnit`, not fills: it is a whole number of fills in units. For a fill of 30 tablets, quantity 60 is two fills. For vials, quantity 1 is one vial and quantity 2 is two vials. A 2 mL vial lists quantities 1–10; its volume is separate from its quantity.
 
         Parameters
         ----------
@@ -62,7 +60,7 @@ class RawMedicationsClient:
         Returns
         -------
         SyncPager[Medication, MedicationList]
-            HTTP 200
+            OK
         """
         _response = self._client_wrapper.httpx_client.request(
             "v1/medications",
@@ -137,24 +135,13 @@ class RawMedicationsClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -185,9 +172,9 @@ class RawMedicationsClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -217,6 +204,7 @@ class RawMedicationsClient:
         Parameters
         ----------
         medication_id : str
+            The medication ID.
 
         practice_id : typing.Optional[str]
             Quote prices and availability for this practice. A platform may select only its own child practices; a practice may select only itself. Omit to use the caller's organization.
@@ -230,7 +218,7 @@ class RawMedicationsClient:
         Returns
         -------
         HttpResponse[GetMedicationsResponse]
-            HTTP 200
+            OK
         """
         _response = self._client_wrapper.httpx_client.request(
             f"v1/medications/{encode_path_param(medication_id)}",
@@ -295,24 +283,13 @@ class RawMedicationsClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -343,9 +320,9 @@ class RawMedicationsClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -373,7 +350,7 @@ class AsyncRawMedicationsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncPager[Medication, MedicationList]:
         """
-        Every medication you can order in the current mode, A to Z by name, then by ID. The list has no search or filters: read every page and choose by name, strength, form and pharmacy. Prices are in cents. `requirements` names the optional prescription fields this pharmacy requires; `compoundingReasons` and `quantities` list the accepted values when the pharmacy limits them, counted in `quantityUnit`. With a `fill`, `price` is per fill and each quantity counts `quantityUnit`, not fills: it is a whole number of fills in units. For a fill of 30 tablets, quantity 60 is two fills. For vials, quantity 1 is one vial and quantity 2 is two vials. A 2 mL vial lists quantities 1–10; its volume is separate from its quantity.
+        Every medication you can order in the current mode, A to Z by name, then by ID. The list has no text search: read every page and choose by name, strength, form and pharmacy. Send practiceId to list what that practice can order, at its prices; without it, the caller's organization is used. Prices are in cents. `requirements` names the optional prescription fields this pharmacy requires; `compoundingReasons` and `quantities` list the accepted values when the pharmacy limits them, counted in `quantityUnit`. With a `fill`, `price` is per fill and each quantity counts `quantityUnit`, not fills: it is a whole number of fills in units. For a fill of 30 tablets, quantity 60 is two fills. For vials, quantity 1 is one vial and quantity 2 is two vials. A 2 mL vial lists quantities 1–10; its volume is separate from its quantity.
 
         Parameters
         ----------
@@ -392,7 +369,7 @@ class AsyncRawMedicationsClient:
         Returns
         -------
         AsyncPager[Medication, MedicationList]
-            HTTP 200
+            OK
         """
         _response = await self._client_wrapper.httpx_client.request(
             "v1/medications",
@@ -470,24 +447,13 @@ class AsyncRawMedicationsClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -518,9 +484,9 @@ class AsyncRawMedicationsClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -550,6 +516,7 @@ class AsyncRawMedicationsClient:
         Parameters
         ----------
         medication_id : str
+            The medication ID.
 
         practice_id : typing.Optional[str]
             Quote prices and availability for this practice. A platform may select only its own child practices; a practice may select only itself. Omit to use the caller's organization.
@@ -563,7 +530,7 @@ class AsyncRawMedicationsClient:
         Returns
         -------
         AsyncHttpResponse[GetMedicationsResponse]
-            HTTP 200
+            OK
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"v1/medications/{encode_path_param(medication_id)}",
@@ -628,24 +595,13 @@ class AsyncRawMedicationsClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -676,9 +632,9 @@ class AsyncRawMedicationsClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),

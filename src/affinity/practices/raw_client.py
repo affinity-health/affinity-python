@@ -17,7 +17,6 @@ from ..errors.conflict_error import ConflictError
 from ..errors.content_too_large_error import ContentTooLargeError
 from ..errors.forbidden_error import ForbiddenError
 from ..errors.internal_server_error import InternalServerError
-from ..errors.method_not_allowed_error import MethodNotAllowedError
 from ..errors.not_found_error import NotFoundError
 from ..errors.service_unavailable_error import ServiceUnavailableError
 from ..errors.too_many_requests_error import TooManyRequestsError
@@ -30,7 +29,6 @@ from ..types.practice_list import PracticeList
 from ..types.problem import Problem
 from ..types.problem409 import Problem409
 from ..types.problem429 import Problem429
-from ..types.service_unavailable_error_body import ServiceUnavailableErrorBody
 from .types.list_practices_request_sort import ListPracticesRequestSort
 from .types.update_practices_request_address import UpdatePracticesRequestAddress
 from pydantic import ValidationError
@@ -54,7 +52,7 @@ class RawPracticesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SyncPager[Practice, PracticeList]:
         """
-        List the platform's practices, newest first. Available to platforms only. `sort` takes `name` or `location` (A to Z, practices without a location last), `mode` (Test before Live) or `created` (oldest first); a `_desc` suffix reverses.
+        List the platform's practices, newest first. Available to platforms only. `sort` takes `name` or `location` (A to Z, practices without a location last), `mode` (without Live access, then with it) or `created` (oldest first); a `_desc` suffix reverses.
 
         Parameters
         ----------
@@ -71,7 +69,7 @@ class RawPracticesClient:
             Match practice names containing this text, ignoring case. Restart pagination after changing query.
 
         sort : typing.Optional[ListPracticesRequestSort]
-            name and location sort A to Z; mode sorts Test before Live; created sorts oldest first. A _desc suffix reverses the order. Defaults to created_desc. Missing locations sort last. Restart pagination after changing sort.
+            name and location sort A to Z; mode sorts practices without Live access before those with it; created sorts oldest first. A _desc suffix reverses the order. Defaults to created_desc. Missing locations sort last. Restart pagination after changing sort.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -79,7 +77,7 @@ class RawPracticesClient:
         Returns
         -------
         SyncPager[Practice, PracticeList]
-            HTTP 200
+            OK
         """
         _response = self._client_wrapper.httpx_client.request(
             "v1/practices",
@@ -158,24 +156,13 @@ class RawPracticesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -206,9 +193,9 @@ class RawPracticesClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -244,6 +231,7 @@ class RawPracticesClient:
         address : AddressInput
 
         name : str
+            Text with at least one visible character.
 
         phone : str
             A US phone number: 10 digits, with or without +1 or 1 before them. Spaces, dashes, dots and parentheses are allowed, such as (512) 555-0100. Affinity stores and returns +15125550100.
@@ -259,7 +247,7 @@ class RawPracticesClient:
         Returns
         -------
         HttpResponse[Practice]
-            HTTP 200
+            OK
         """
         _response = self._client_wrapper.httpx_client.request(
             "v1/practices",
@@ -334,17 +322,6 @@ class RawPracticesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 409:
                 raise ConflictError(
                     headers=dict(_response.headers),
@@ -360,9 +337,9 @@ class RawPracticesClient:
                 raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        Problem,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -415,9 +392,9 @@ class RawPracticesClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -440,6 +417,7 @@ class RawPracticesClient:
         Parameters
         ----------
         practice_id : str
+            The practice ID.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -447,7 +425,7 @@ class RawPracticesClient:
         Returns
         -------
         HttpResponse[Practice]
-            HTTP 200
+            OK
         """
         _response = self._client_wrapper.httpx_client.request(
             f"v1/practices/{encode_path_param(practice_id)}",
@@ -508,24 +486,13 @@ class RawPracticesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -556,9 +523,9 @@ class RawPracticesClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -585,11 +552,12 @@ class RawPracticesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[Practice]:
         """
-        `liveEnabled` allows or refuses new Live orders. Existing records, cancellation, webhooks and billing keep working. Only its platform changes it; enabling requires platform Live access, and either change needs a Live caller: a Live key (403 live_key_required otherwise) or a session in Live mode (403 live_mode_required otherwise). Live orders send `name`, `phone` and `address` to the pharmacy, so a practice with Live access changes them only with a Live key (403 live_mode_required otherwise). A retry with the same key and body returns the stored first response, even if the practice has changed. Use GET /v1/practices/{practiceId} to read the current practice.
+        `liveEnabled` allows or refuses new Live orders. Existing records, cancellation, webhooks and billing keep working. Only its platform changes it; enabling requires platform Live access, and either change needs a Live caller: a Live key (403 live_key_required otherwise) or a session in Live mode (403 live_mode_required otherwise). Live orders send `name`, `phone` and `address` to the pharmacy, so a practice with Live access changes them only in Live mode, with a Live key or a session in Live mode (403 live_mode_required otherwise). A retry with the same key and body returns the stored first response, even if the practice has changed. Use GET /v1/practices/{practiceId} to read the current practice.
 
         Parameters
         ----------
         practice_id : str
+            The practice ID.
 
         idempotency_key : str
             A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
@@ -604,6 +572,7 @@ class RawPracticesClient:
             Omit it or send null to leave Live unchanged.
 
         name : typing.Optional[str]
+            Text with at least one visible character.
 
         phone : typing.Optional[str]
             A US phone number: 10 digits, with or without +1 or 1 before them. Spaces, dashes, dots and parentheses are allowed, such as (512) 555-0100. Affinity stores and returns +15125550100. Empty text counts as null.
@@ -614,7 +583,7 @@ class RawPracticesClient:
         Returns
         -------
         HttpResponse[Practice]
-            HTTP 200
+            OK
         """
         _response = self._client_wrapper.httpx_client.request(
             f"v1/practices/{encode_path_param(practice_id)}",
@@ -689,17 +658,6 @@ class RawPracticesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 409:
                 raise ConflictError(
                     headers=dict(_response.headers),
@@ -715,9 +673,9 @@ class RawPracticesClient:
                 raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        Problem,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -770,9 +728,9 @@ class RawPracticesClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -802,7 +760,7 @@ class AsyncRawPracticesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncPager[Practice, PracticeList]:
         """
-        List the platform's practices, newest first. Available to platforms only. `sort` takes `name` or `location` (A to Z, practices without a location last), `mode` (Test before Live) or `created` (oldest first); a `_desc` suffix reverses.
+        List the platform's practices, newest first. Available to platforms only. `sort` takes `name` or `location` (A to Z, practices without a location last), `mode` (without Live access, then with it) or `created` (oldest first); a `_desc` suffix reverses.
 
         Parameters
         ----------
@@ -819,7 +777,7 @@ class AsyncRawPracticesClient:
             Match practice names containing this text, ignoring case. Restart pagination after changing query.
 
         sort : typing.Optional[ListPracticesRequestSort]
-            name and location sort A to Z; mode sorts Test before Live; created sorts oldest first. A _desc suffix reverses the order. Defaults to created_desc. Missing locations sort last. Restart pagination after changing sort.
+            name and location sort A to Z; mode sorts practices without Live access before those with it; created sorts oldest first. A _desc suffix reverses the order. Defaults to created_desc. Missing locations sort last. Restart pagination after changing sort.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -827,7 +785,7 @@ class AsyncRawPracticesClient:
         Returns
         -------
         AsyncPager[Practice, PracticeList]
-            HTTP 200
+            OK
         """
         _response = await self._client_wrapper.httpx_client.request(
             "v1/practices",
@@ -909,24 +867,13 @@ class AsyncRawPracticesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -957,9 +904,9 @@ class AsyncRawPracticesClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -995,6 +942,7 @@ class AsyncRawPracticesClient:
         address : AddressInput
 
         name : str
+            Text with at least one visible character.
 
         phone : str
             A US phone number: 10 digits, with or without +1 or 1 before them. Spaces, dashes, dots and parentheses are allowed, such as (512) 555-0100. Affinity stores and returns +15125550100.
@@ -1010,7 +958,7 @@ class AsyncRawPracticesClient:
         Returns
         -------
         AsyncHttpResponse[Practice]
-            HTTP 200
+            OK
         """
         _response = await self._client_wrapper.httpx_client.request(
             "v1/practices",
@@ -1085,17 +1033,6 @@ class AsyncRawPracticesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 409:
                 raise ConflictError(
                     headers=dict(_response.headers),
@@ -1111,9 +1048,9 @@ class AsyncRawPracticesClient:
                 raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        Problem,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1166,9 +1103,9 @@ class AsyncRawPracticesClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1191,6 +1128,7 @@ class AsyncRawPracticesClient:
         Parameters
         ----------
         practice_id : str
+            The practice ID.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1198,7 +1136,7 @@ class AsyncRawPracticesClient:
         Returns
         -------
         AsyncHttpResponse[Practice]
-            HTTP 200
+            OK
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"v1/practices/{encode_path_param(practice_id)}",
@@ -1259,24 +1197,13 @@ class AsyncRawPracticesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
+            if _response.status_code == 413:
+                raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         Problem,
                         parse_obj_as(
                             type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1307,9 +1234,9 @@ class AsyncRawPracticesClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1336,11 +1263,12 @@ class AsyncRawPracticesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[Practice]:
         """
-        `liveEnabled` allows or refuses new Live orders. Existing records, cancellation, webhooks and billing keep working. Only its platform changes it; enabling requires platform Live access, and either change needs a Live caller: a Live key (403 live_key_required otherwise) or a session in Live mode (403 live_mode_required otherwise). Live orders send `name`, `phone` and `address` to the pharmacy, so a practice with Live access changes them only with a Live key (403 live_mode_required otherwise). A retry with the same key and body returns the stored first response, even if the practice has changed. Use GET /v1/practices/{practiceId} to read the current practice.
+        `liveEnabled` allows or refuses new Live orders. Existing records, cancellation, webhooks and billing keep working. Only its platform changes it; enabling requires platform Live access, and either change needs a Live caller: a Live key (403 live_key_required otherwise) or a session in Live mode (403 live_mode_required otherwise). Live orders send `name`, `phone` and `address` to the pharmacy, so a practice with Live access changes them only in Live mode, with a Live key or a session in Live mode (403 live_mode_required otherwise). A retry with the same key and body returns the stored first response, even if the practice has changed. Use GET /v1/practices/{practiceId} to read the current practice.
 
         Parameters
         ----------
         practice_id : str
+            The practice ID.
 
         idempotency_key : str
             A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
@@ -1355,6 +1283,7 @@ class AsyncRawPracticesClient:
             Omit it or send null to leave Live unchanged.
 
         name : typing.Optional[str]
+            Text with at least one visible character.
 
         phone : typing.Optional[str]
             A US phone number: 10 digits, with or without +1 or 1 before them. Spaces, dashes, dots and parentheses are allowed, such as (512) 555-0100. Affinity stores and returns +15125550100. Empty text counts as null.
@@ -1365,7 +1294,7 @@ class AsyncRawPracticesClient:
         Returns
         -------
         AsyncHttpResponse[Practice]
-            HTTP 200
+            OK
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"v1/practices/{encode_path_param(practice_id)}",
@@ -1440,17 +1369,6 @@ class AsyncRawPracticesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 405:
-                raise MethodNotAllowedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Problem,
-                        parse_obj_as(
-                            type_=Problem,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 409:
                 raise ConflictError(
                     headers=dict(_response.headers),
@@ -1466,9 +1384,9 @@ class AsyncRawPracticesClient:
                 raise ContentTooLargeError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        Problem,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1521,9 +1439,9 @@ class AsyncRawPracticesClient:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ServiceUnavailableErrorBody,
+                        Problem,
                         parse_obj_as(
-                            type_=ServiceUnavailableErrorBody,  # type: ignore
+                            type_=Problem,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),

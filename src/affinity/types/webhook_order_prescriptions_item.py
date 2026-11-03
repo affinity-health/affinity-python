@@ -24,11 +24,12 @@ class WebhookOrderPrescriptionsItem(UniversalBaseModel):
         typing.Optional[str],
         FieldMetadata(alias="failureReason"),
         pydantic.Field(
-            alias="failureReason", description="The failure or cancellation refusal reason, or null when there is none."
+            alias="failureReason",
+            description="Why the order failed, for a person to read. Null unless the order failed; a refused cancel leaves it null.",
         ),
     ] = None
     """
-    The failure or cancellation refusal reason, or null when there is none.
+    Why the order failed, for a person to read. Null unless the order failed; a refused cancel leaves it null.
     """
 
     if IS_PYDANTIC_V2:

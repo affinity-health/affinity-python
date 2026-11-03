@@ -33,22 +33,24 @@ class WebhookOrder(UniversalBaseModel):
         typing.Optional[str],
         FieldMetadata(alias="externalOrderId"),
         pydantic.Field(
-            alias="externalOrderId", description="Your order identifier, unique within the practice and mode."
+            alias="externalOrderId",
+            description="Your order identifier, unique within the practice and mode. A failed or cancelled order keeps it.",
         ),
     ] = None
     """
-    Your order identifier, unique within the practice and mode.
+    Your order identifier, unique within the practice and mode. A failed or cancelled order keeps it.
     """
 
     failure_reason: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="failureReason"),
         pydantic.Field(
-            alias="failureReason", description="The failure or cancellation refusal reason, or null when there is none."
+            alias="failureReason",
+            description="Why the order failed, for a person to read. Null unless the order failed; a refused cancel leaves it null.",
         ),
     ] = None
     """
-    The failure or cancellation refusal reason, or null when there is none.
+    Why the order failed, for a person to read. Null unless the order failed; a refused cancel leaves it null.
     """
 
     id: str = pydantic.Field()
@@ -76,11 +78,11 @@ class WebhookOrder(UniversalBaseModel):
         FieldMetadata(alias="trackingUrl"),
         pydantic.Field(
             alias="trackingUrl",
-            description="The carrier's tracking page for the newest package, or null before the order ships.",
+            description="The carrier's tracking page for the newest package. Null when there is no package yet or the carrier has no tracking page.",
         ),
     ] = None
     """
-    The carrier's tracking page for the newest package, or null before the order ships.
+    The carrier's tracking page for the newest package. Null when there is no package yet or the carrier has no tracking page.
     """
 
     updated_at: typing_extensions.Annotated[

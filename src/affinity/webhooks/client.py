@@ -55,7 +55,7 @@ class WebhooksClient:
         Returns
         -------
         SyncPager[WebhookEndpoint, WebhookEndpointList]
-            HTTP 200
+            OK
 
         Examples
         --------
@@ -93,7 +93,7 @@ class WebhooksClient:
         Returns
         -------
         CreateWebhooksResponse
-            HTTP 200
+            OK
 
         Examples
         --------
@@ -119,6 +119,7 @@ class WebhooksClient:
         Parameters
         ----------
         webhook_endpoint_id : str
+            The webhook endpoint ID.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -126,7 +127,7 @@ class WebhooksClient:
         Returns
         -------
         RemoveWebhooksResponse
-            HTTP 200
+            OK
 
         Examples
         --------
@@ -156,6 +157,7 @@ class WebhooksClient:
         Parameters
         ----------
         webhook_endpoint_id : str
+            The webhook endpoint ID.
 
         idempotency_key : str
             A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
@@ -168,7 +170,7 @@ class WebhooksClient:
         Returns
         -------
         WebhookEndpoint
-            HTTP 200
+            OK
 
         Examples
         --------
@@ -197,6 +199,7 @@ class WebhooksClient:
         Parameters
         ----------
         webhook_endpoint_id : str
+            The webhook endpoint ID.
 
         idempotency_key : str
             A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
@@ -207,7 +210,7 @@ class WebhooksClient:
         Returns
         -------
         ResendFailedWebhooksResponse
-            HTTP 200
+            OK
 
         Examples
         --------
@@ -266,7 +269,7 @@ class AsyncWebhooksClient:
         Returns
         -------
         AsyncPager[WebhookEndpoint, WebhookEndpointList]
-            HTTP 200
+            OK
 
         Examples
         --------
@@ -313,7 +316,7 @@ class AsyncWebhooksClient:
         Returns
         -------
         CreateWebhooksResponse
-            HTTP 200
+            OK
 
         Examples
         --------
@@ -349,6 +352,7 @@ class AsyncWebhooksClient:
         Parameters
         ----------
         webhook_endpoint_id : str
+            The webhook endpoint ID.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -356,7 +360,7 @@ class AsyncWebhooksClient:
         Returns
         -------
         RemoveWebhooksResponse
-            HTTP 200
+            OK
 
         Examples
         --------
@@ -394,6 +398,7 @@ class AsyncWebhooksClient:
         Parameters
         ----------
         webhook_endpoint_id : str
+            The webhook endpoint ID.
 
         idempotency_key : str
             A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
@@ -406,7 +411,7 @@ class AsyncWebhooksClient:
         Returns
         -------
         WebhookEndpoint
-            HTTP 200
+            OK
 
         Examples
         --------
@@ -443,6 +448,7 @@ class AsyncWebhooksClient:
         Parameters
         ----------
         webhook_endpoint_id : str
+            The webhook endpoint ID.
 
         idempotency_key : str
             A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
@@ -453,7 +459,7 @@ class AsyncWebhooksClient:
         Returns
         -------
         ResendFailedWebhooksResponse
-            HTTP 200
+            OK
 
         Examples
         --------

@@ -21,7 +21,11 @@ class PrescriptionInput(UniversalBaseModel):
     The reason for compounding, required when the medication's requirements include it. Empty text counts as null.
     """
 
-    directions: str
+    directions: str = pydantic.Field()
+    """
+    The prescriber's directions for use.
+    """
+
     medication_id: typing_extensions.Annotated[
         str,
         FieldMetadata(alias="medicationId"),

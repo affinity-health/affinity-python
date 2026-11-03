@@ -39,13 +39,25 @@ class PatientInput(UniversalBaseModel):
     The patient's email address.
     """
 
-    first_name: typing_extensions.Annotated[str, FieldMetadata(alias="firstName"), pydantic.Field(alias="firstName")]
+    first_name: typing_extensions.Annotated[
+        str, FieldMetadata(alias="firstName"), pydantic.Field(alias="firstName", description="The first name.")
+    ]
+    """
+    The first name.
+    """
+
     sex: PatientInputSex = pydantic.Field()
     """
     The patient's sex as sent to the pharmacy.
     """
 
-    last_name: typing_extensions.Annotated[str, FieldMetadata(alias="lastName"), pydantic.Field(alias="lastName")]
+    last_name: typing_extensions.Annotated[
+        str, FieldMetadata(alias="lastName"), pydantic.Field(alias="lastName", description="The last name.")
+    ]
+    """
+    The last name.
+    """
+
     middle_name: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="middleName"),

@@ -37,18 +37,19 @@ class Prescription(UniversalBaseModel):
     pharmacy: PharmacyReference
     status: PrescriptionStatus = pydantic.Field()
     """
-    The current fulfillment status.
+    The order's current status; every prescription of the order has the same value.
     """
 
     failure_reason: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="failureReason"),
         pydantic.Field(
-            alias="failureReason", description="The failure or cancellation refusal reason, or null when there is none."
+            alias="failureReason",
+            description="Why the order failed, for a person to read; every prescription of the order has the same value. Null unless the order failed; a refused cancel leaves it null.",
         ),
     ] = None
     """
-    The failure or cancellation refusal reason, or null when there is none.
+    Why the order failed, for a person to read; every prescription of the order has the same value. Null unless the order failed; a refused cancel leaves it null.
     """
 
     medication: PrescriptionMedication = pydantic.Field()
@@ -63,7 +64,7 @@ class Prescription(UniversalBaseModel):
 
     price: int = pydantic.Field()
     """
-    The price in integer cents.
+    The prescription's price in integer cents: with a fill, the price per fill times the number of fills.
     """
 
     quantity: int = pydantic.Field()

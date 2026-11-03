@@ -35,7 +35,7 @@ class AccountClient:
         Returns
         -------
         Account
-            HTTP 200
+            OK
 
         Examples
         --------
@@ -77,7 +77,7 @@ class AsyncAccountClient:
         Returns
         -------
         Account
-            HTTP 200
+            OK
 
         Examples
         --------

@@ -44,11 +44,12 @@ class FeedbackClient:
             A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
 
         message : str
+            Text with at least one visible character.
 
         page_url : typing.Optional[str]
 
         request_id : typing.Optional[str]
-            The `requestId` of the response, as the API returned it.
+            The `requestId` of the response, as the API returned it: a UUID or its `req_` form.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -56,7 +57,7 @@ class FeedbackClient:
         Returns
         -------
         CreateFeedbackResponse
-            HTTP 202
+            Accepted
 
         Examples
         --------
@@ -115,11 +116,12 @@ class AsyncFeedbackClient:
             A unique key per operation, 1 to 255 printable ASCII characters without spaces. Retry the same key and body to avoid repeating the action. The replay response depends on the operation. See https://docs.affinityrx.com/guides/#retry-safely.
 
         message : str
+            Text with at least one visible character.
 
         page_url : typing.Optional[str]
 
         request_id : typing.Optional[str]
-            The `requestId` of the response, as the API returned it.
+            The `requestId` of the response, as the API returned it: a UUID or its `req_` form.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -127,7 +129,7 @@ class AsyncFeedbackClient:
         Returns
         -------
         CreateFeedbackResponse
-            HTTP 202
+            Accepted
 
         Examples
         --------

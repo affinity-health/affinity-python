@@ -5,6 +5,20 @@ All notable changes to `affinity-health-sdk` are documented here. This project u
 
 ## Unreleased
 
+## 0.7.0 - 2026-11-03
+
+Generated from the corrected API `2026-11-01` document. Requests and responses on the wire are
+unchanged.
+
+### Removed
+
+- `affinity.errors.MethodNotAllowedError`. The API does not answer `405` to an SDK call. A `405` from a proxy raises `ApiError`.
+- The `ContentTooLargeErrorBody`, `ServiceUnavailableErrorBody` and their `…Code` and `…CodeCode` types. `ContentTooLargeError.body` and `ServiceUnavailableError.body` are now `Problem`, like the other errors.
+
+### Changed
+
+- Clearer descriptions in the types and reference. Every enum member keeps its name.
+
 ## 0.6.0 - 2026-11-02
 
 This release is generated from the API `2026-11-01` contract that production serves. That contract
