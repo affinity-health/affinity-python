@@ -4,12 +4,8 @@ import json
 
 import httpx
 
-from affinity import Affinity
-from affinity.types.address_input import AddressInput
-from affinity.types.order_input_shipping import OrderInputShipping
-from affinity.types.patient_input import PatientInput
-from affinity.types.prescriber_input import PrescriberInput
-from affinity.types.prescription_input import PrescriptionInput
+from affinity import Affinity, AddressInput, PatientInput, PrescriberInput, PrescriptionInput
+from affinity.orders import OrderInputShipping
 
 
 def ident(prefix: str, n: int = 1) -> str:

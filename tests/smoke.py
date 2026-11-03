@@ -335,8 +335,8 @@ def run() -> None:
 
         def every_order() -> int:
             count = sum(1 for _ in client.orders.list(limit=1, practice_id=practice.id))
-            if count != 1:
-                raise RuntimeError(f"{count} orders for a practice with 1")
+            if count != len(order_ids):
+                raise RuntimeError(f"{count} orders for a practice with {len(order_ids)}")
             return count
 
         check("orders.list (every page, 1 per page)", every_order)
