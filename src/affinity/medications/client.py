@@ -33,10 +33,11 @@ class MedicationsClient:
         practice_id: typing.Optional[str] = None,
         limit: typing.Optional[int] = None,
         starting_after: typing.Optional[str] = None,
+        query: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SyncPager[Medication, MedicationList]:
         """
-        Every medication you can order in the current mode, A to Z by name, then by ID. The list has no text search: read every page and choose by name, strength, form and pharmacy. Send practiceId to list what that practice can order, at its prices; without it, the caller's organization is used. Prices are in cents. `requirements` names the optional prescription fields this pharmacy requires; `compoundingReasons` and `quantities` list the accepted values when the pharmacy limits them, counted in `quantityUnit`. With a `fill`, `price` is per fill and each quantity counts `quantityUnit`, not fills: it is a whole number of fills in units. For a fill of 30 tablets, quantity 60 is two fills. For vials, quantity 1 is one vial and quantity 2 is two vials. A 2 mL vial lists quantities 1–10; its volume is separate from its quantity.
+        Every medication you can order in the current mode, A to Z by name, then by ID. Send query to find medications by name: every word must appear in the name, so check the spelling when nothing matches. Then choose by name, strength, form and pharmacy. Send practiceId to list what that practice can order, at its prices; without it, the caller's organization is used. Prices are in cents. `requirements` names the optional prescription fields this pharmacy requires; `compoundingReasons` and `quantities` list the accepted values when the pharmacy limits them, counted in `quantityUnit`. With a `fill`, `price` is per fill and each quantity counts `quantityUnit`, not fills: it is a whole number of fills in units. For a fill of 30 tablets, quantity 60 is two fills. For vials, quantity 1 is one vial and quantity 2 is two vials. A 2 mL vial lists quantities 1–10; its volume is separate from its quantity.
 
         Parameters
         ----------
@@ -48,6 +49,9 @@ class MedicationsClient:
 
         starting_after : typing.Optional[str]
             Page forward using the previous response's nextCursor. Keep the same filters, sort, organization and mode.
+
+        query : typing.Optional[str]
+            Match medication names that contain every word of this text, in any order, ignoring case and accents. Each word must appear in the name, so a misspelled word matches nothing. Strength, form and pharmacy are not searched. An empty query lists every medication. Restart pagination after changing query.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -74,7 +78,11 @@ class MedicationsClient:
             yield page
         """
         return self._raw_client.list(
-            practice_id=practice_id, limit=limit, starting_after=starting_after, request_options=request_options
+            practice_id=practice_id,
+            limit=limit,
+            starting_after=starting_after,
+            query=query,
+            request_options=request_options,
         )
 
     def get(
@@ -148,10 +156,11 @@ class AsyncMedicationsClient:
         practice_id: typing.Optional[str] = None,
         limit: typing.Optional[int] = None,
         starting_after: typing.Optional[str] = None,
+        query: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncPager[Medication, MedicationList]:
         """
-        Every medication you can order in the current mode, A to Z by name, then by ID. The list has no text search: read every page and choose by name, strength, form and pharmacy. Send practiceId to list what that practice can order, at its prices; without it, the caller's organization is used. Prices are in cents. `requirements` names the optional prescription fields this pharmacy requires; `compoundingReasons` and `quantities` list the accepted values when the pharmacy limits them, counted in `quantityUnit`. With a `fill`, `price` is per fill and each quantity counts `quantityUnit`, not fills: it is a whole number of fills in units. For a fill of 30 tablets, quantity 60 is two fills. For vials, quantity 1 is one vial and quantity 2 is two vials. A 2 mL vial lists quantities 1–10; its volume is separate from its quantity.
+        Every medication you can order in the current mode, A to Z by name, then by ID. Send query to find medications by name: every word must appear in the name, so check the spelling when nothing matches. Then choose by name, strength, form and pharmacy. Send practiceId to list what that practice can order, at its prices; without it, the caller's organization is used. Prices are in cents. `requirements` names the optional prescription fields this pharmacy requires; `compoundingReasons` and `quantities` list the accepted values when the pharmacy limits them, counted in `quantityUnit`. With a `fill`, `price` is per fill and each quantity counts `quantityUnit`, not fills: it is a whole number of fills in units. For a fill of 30 tablets, quantity 60 is two fills. For vials, quantity 1 is one vial and quantity 2 is two vials. A 2 mL vial lists quantities 1–10; its volume is separate from its quantity.
 
         Parameters
         ----------
@@ -163,6 +172,9 @@ class AsyncMedicationsClient:
 
         starting_after : typing.Optional[str]
             Page forward using the previous response's nextCursor. Keep the same filters, sort, organization and mode.
+
+        query : typing.Optional[str]
+            Match medication names that contain every word of this text, in any order, ignoring case and accents. Each word must appear in the name, so a misspelled word matches nothing. Strength, form and pharmacy are not searched. An empty query lists every medication. Restart pagination after changing query.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -198,7 +210,11 @@ class AsyncMedicationsClient:
         asyncio.run(main())
         """
         return await self._raw_client.list(
-            practice_id=practice_id, limit=limit, starting_after=starting_after, request_options=request_options
+            practice_id=practice_id,
+            limit=limit,
+            starting_after=starting_after,
+            query=query,
+            request_options=request_options,
         )
 
     async def get(

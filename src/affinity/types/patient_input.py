@@ -84,11 +84,16 @@ class PatientInput(UniversalBaseModel):
         FieldMetadata(alias="externalId"),
         pydantic.Field(
             alias="externalId",
-            description="Your patient identifier within the practice and mode; omit it to create a new patient for each order.",
+            description="Your patient identifier within the practice and mode. Omit it and id to create a new patient for each order. With id, send the saved patient's externalId or omit it. If the saved patient has none, this value is added to it.",
         ),
     ] = None
     """
-    Your patient identifier within the practice and mode; omit it to create a new patient for each order.
+    Your patient identifier within the practice and mode. Omit it and id to create a new patient for each order. With id, send the saved patient's externalId or omit it. If the saved patient has none, this value is added to it.
+    """
+
+    id: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    The pat_ ID of a saved patient of the order's practice, in the same Test or Live mode. The order reuses that patient and updates it from the sent fields. Send all other patient fields as usual. GET /v1/orders returns the patientId of each order. An unknown ID, or an ID of a different practice or mode, returns 404 not_found.
     """
 
     if IS_PYDANTIC_V2:

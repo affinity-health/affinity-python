@@ -15,6 +15,7 @@ from __future__ import annotations
 import asyncio
 import datetime as dt
 import os
+import re
 import sys
 import traceback
 import typing
@@ -185,6 +186,21 @@ def run() -> None:
         lambda page: f"{len(page.items or [])}",
     )
 
+    # `query` matches names that contain every word, ignoring case. Search for the chosen
+    # medication's longest word.
+    word = max(re.split(r"[^A-Za-z]+", medication.name), key=len)
+
+    def medications_by_query() -> int:
+        found = list(client.medications.list(query=word.lower()))
+        if medication.id not in {m.id for m in found}:
+            raise RuntimeError(f"{medication.id} is not in the results")
+        other = next((m for m in found if word.lower() not in m.name.lower()), None)
+        if other is not None:
+            raise RuntimeError(f'"{other.name}" does not contain "{word}"')
+        return len(found)
+
+    check("medications.list query", medications_by_query, lambda n: f'"{word}": {n} of {len(medications)}')
+
     def order_input(quantity: int) -> dict[str, typing.Any]:
         prescription = PrescriptionInput(
             medication_id=medication.id,
@@ -237,6 +253,32 @@ def run() -> None:
         return again.id
 
     check("orders.create again with the same key returns the same order", create_again)
+
+    def reuse_patient_by_id() -> object:
+        reused_request = order_input(quantity)
+        saved = request["patient"]
+        reused_request["patient"] = PatientInput(
+            id=order.patient_id,
+            first_name=saved.first_name,
+            last_name=saved.last_name,
+            date_of_birth=saved.date_of_birth,
+            sex=saved.sex,
+            email=saved.email,
+            phone="+15125550177",
+            allergies=[],
+            address=saved.address,
+        )
+        reused = created(reused_request)
+        if reused.patient_id != order.patient_id or reused.patient.phone != "+15125550177":
+            raise RuntimeError(f"patient {reused.patient_id}, phone {reused.patient.phone}")
+        return reused
+
+    if order is not None:
+        check(
+            "orders.create with patient.id reuses the saved patient",
+            reuse_patient_by_id,
+            lambda o: f"{o.id} for {o.patient_id}",
+        )
 
     def quantity_issue(error: UnprocessableEntityError) -> str | None:
         issues = error.body.issues or []
