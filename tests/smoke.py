@@ -27,6 +27,7 @@ from affinity import (
     BadRequestError,
     NotFoundError,
     PatientInput,
+    PracticeAddressInput,
     PrescriberInput,
     PrescriptionInput,
     UnauthorizedError,
@@ -118,7 +119,7 @@ def run() -> None:
             idempotency_key=key(),
             name=label,
             phone="+15125550100",
-            address=AddressInput(line1="100 Congress Ave", city="Austin", state="TX", postal_code="78701"),
+            address=PracticeAddressInput(line1="100 Congress Ave", city="Austin", state="TX", postal_code="78701"),
         ),
         lambda p: p.id,
     )
